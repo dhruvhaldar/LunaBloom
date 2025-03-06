@@ -1,5 +1,7 @@
 import { useState, useEffect } from 'react';
 import { StyleSheet, Platform, TouchableOpacity, TextInput, ScrollView, Alert, View, Text } from 'react-native';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+
 import DatePicker from 'react-native-date-picker';
 import { ThemedText } from '@/components/ThemedText';
 import { ThemedView } from '@/components/ThemedView';
@@ -78,10 +80,33 @@ export default function HomeScreen() {
     calculatePredictions();
   }, [lastPeriod, cycleLength]);
 
-  const logPeriod = () => {
-    // Add your logging logic here
-    setSelectedSymptoms([]);
-    setNotes('');
+  const logPeriod = async () => {
+    try {
+      const entry = {
+        date: new Date().toISOString(),
+        lastPeriod,
+        cycleLength,
+        selectedSymptoms,
+        notes,
+      };
+  
+      // Retrieve existing entries
+      const existingEntries = await AsyncStorage.getItem('periodEntries');
+      const entries = existingEntries ? JSON.parse(existingEntries) : [];
+  
+      // Add the new entry
+      entries.push(entry);
+  
+      // Save back to AsyncStorage
+      await AsyncStorage.setItem('periodEntries', JSON.stringify(entries));
+  
+      // Clear current inputs
+      setSelectedSymptoms([]);
+      setNotes('');
+      Alert.alert('Success', 'Your period start has been logged.');
+    } catch (error) {
+      console.error('Error saving period entry:', error);
+    }
   };
 
   return (
