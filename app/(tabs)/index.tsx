@@ -1,12 +1,10 @@
 import { useState, useEffect } from 'react';
-import { StyleSheet, Platform, TouchableOpacity, TextInput, ScrollView } from 'react-native';
+import { StyleSheet, Platform, TouchableOpacity, TextInput, ScrollView, Alert, View, Text } from 'react-native';
 import DatePicker from 'react-native-date-picker';
 import { ThemedText } from '@/components/ThemedText';
 import { ThemedView } from '@/components/ThemedView';
 import ParallaxScrollView from '@/components/ParallaxScrollView';
 import { Image } from 'react-native';
-import { Alert, View, Text } from 'react-native';
-
 
 export default function HomeScreen() {
   const [lastPeriod, setLastPeriod] = useState(new Date());
@@ -14,7 +12,7 @@ export default function HomeScreen() {
   const [predictedPeriods, setPredictedPeriods] = useState<Date[]>([]);
   const [selectedSymptoms, setSelectedSymptoms] = useState<string[]>([]);
   const [notes, setNotes] = useState('');
-  const [date, setDate] = useState(new Date())
+  const [date, setDate] = useState(new Date());
   const [datePickerOpen, setDatePickerOpen] = useState(false);
 
   const handleCycleLengthChange = (text) => {
@@ -24,10 +22,24 @@ export default function HomeScreen() {
     // Parse the filtered text to an integer
     let number = parseInt(filteredText, 10);
 
+    // Clamp the number to a maximum of 120
+    if (number > 120) {
+      number = 120;
+    }
+
     // If the parsed number is NaN, set it to an empty string
     if (isNaN(number)) {
       setCycleLength('');
       return;
+    }
+
+    // Show an alert if the number is less than 21 and more than 7, and the input is not empty
+    if (number < 21 && filteredText !== '' && number > 7) {
+      Alert.alert(
+        "Attention",
+        "A cycle length shorter than 21 days can be a sign of frequent ovulation or other hormonal imbalances. Please consult a doctor for advice.",
+        [{ text: "OK" }]
+      );
     }
 
     // Show an alert if the number exceeds 35
@@ -38,7 +50,7 @@ export default function HomeScreen() {
         [{ text: "OK" }]
       );
     }
-    
+
     // Update the state with the new value
     setCycleLength(number.toString());
   };
@@ -72,11 +84,6 @@ export default function HomeScreen() {
     setNotes('');
   };
 
-  
-  
-  
-  
-  
   return (
     <ParallaxScrollView
       headerBackgroundColor={{ light: '#A1CEDC', dark: '#1D3D47' }}
@@ -91,63 +98,37 @@ export default function HomeScreen() {
           <ThemedText type="subtitle">Cycle Settings</ThemedText>
           
           <ThemedView style={styles.inputGroup}>
-        <ThemedText>Last Period Start:</ThemedText>
-        
-
-
-        <TouchableOpacity 
+            <ThemedText>Last Period Start:</ThemedText>
+            <TouchableOpacity 
               onPress={() => setDatePickerOpen(true)}
-          style={styles.dateButton}
-        >
-          <ThemedText style={styles.dateText}>
-            {lastPeriod.toLocaleDateString()}
-          </ThemedText>
-        </TouchableOpacity>
+              style={styles.dateButton}
+            >
+              <ThemedText style={styles.dateText}>
+                {lastPeriod.toLocaleDateString()}
+              </ThemedText>
+            </TouchableOpacity>
             <DatePicker
-        modal
-        datePickerOpen={datePickerOpen}
-        date={date}
-        onConfirm={(date: any) => {
-          setDatePickerOpen(false)
-          setDatePickerOpen(date)
-        }}
-        onCancel={() => {
-          setDatePickerOpen(false)
-            }}
-          />
-      </ThemedView>
+              modal
+              datePickerOpen={datePickerOpen}
+              date={date}
+              onConfirm={(date: any) => {
+                setDatePickerOpen(false);
+                setLastPeriod(date);
+              }}
+              onCancel={() => {
+                setDatePickerOpen(false);
+              }}
+            />
+          </ThemedView>
 
-          
-          
           <ThemedView style={styles.inputGroup}>
             <ThemedText>Cycle Length (days):</ThemedText>
             <TextInput
-            style={styles.input}
-            keyboardType="numeric"
-            value={cycleLength}
-            onChangeText={(text) => {
-            // Remove any non-numeric characters
-            const filteredText = text.replace(/[^0-9]/g, '');
-
-            // Parse the filtered text to an integer
-            let number = parseInt(filteredText, 10);
-
-            // If the parsed number is NaN, set it to an empty string
-            if (isNaN(number)) {
-              setCycleLength('');
-              return;
-            }
-
-            // Clamp the number to the maximum value (e.g., 35)
-            if (number > 35) {
-              number = 35;
-            }
-
-          // Update the state with the clamped value
-          setCycleLength(number.toString());
-          }}
-          />
-
+              style={styles.input}
+              keyboardType="numeric"
+              value={cycleLength}
+              onChangeText={handleCycleLengthChange}
+            />
           </ThemedView>
         </ThemedView>
 
@@ -177,7 +158,7 @@ export default function HomeScreen() {
                     prev.includes(symptom)
                       ? prev.filter(s => s !== symptom)
                       : [...prev, symptom]
-                  )
+                  );
                 }}
               >
                 <ThemedText style={selectedSymptoms.includes(symptom) && styles.symptomText}>
@@ -206,7 +187,6 @@ export default function HomeScreen() {
         </TouchableOpacity>
       </ThemedView>
     </ParallaxScrollView>
-    
   );
 }
 
