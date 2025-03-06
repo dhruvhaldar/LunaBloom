@@ -1,24 +1,42 @@
-import { StyleSheet, Image, Platform } from 'react-native';
-
+import React, { useState, useEffect } from 'react';
+import { StyleSheet, Image, Platform, View, Text, SectionList } from 'react-native';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 import { Collapsible } from '@/components/Collapsible';
 import { ExternalLink } from '@/components/ExternalLink';
-import ParallaxScrollView from '@/components/ParallaxScrollView';
 import { ThemedText } from '@/components/ThemedText';
 import { ThemedView } from '@/components/ThemedView';
 import { IconSymbol } from '@/components/ui/IconSymbol';
 
 export default function TabTwoScreen() {
-  return (
-    <ParallaxScrollView
-      headerBackgroundColor={{ light: '#D0D0D0', dark: '#353636' }}
-      headerImage={
-        <IconSymbol
-          size={310}
-          color="#808080"
-          name="chevron.left.forwardslash.chevron.right"
-          style={styles.headerImage}
-        />
-      }>
+  const [entries, setEntries] = useState([]);
+
+  useEffect(() => {
+    const fetchEntries = async () => {
+      try {
+        const storedEntries = await AsyncStorage.getItem('periodEntries');
+        const parsedEntries = storedEntries ? JSON.parse(storedEntries) : [];
+        
+        // Sort entries by date
+        parsedEntries.sort((a, b) => new Date(b.date) - new Date(a.date));
+        
+        setEntries(parsedEntries);
+      } catch (error) {
+        console.error('Error fetching period entries:', error);
+      }
+    };
+
+    fetchEntries();
+  }, []);
+
+  const sections = [
+    {
+      title: 'Logged Period Entries',
+      data: entries,
+    },
+  ];
+
+  const renderHeader = () => (
+    <View style={styles.headerContainer}>
       <ThemedView style={styles.titleContainer}>
         <ThemedText type="title">Explore</ThemedText>
       </ThemedView>
@@ -91,11 +109,34 @@ export default function TabTwoScreen() {
           ),
         })}
       </Collapsible>
-    </ParallaxScrollView>
+    </View>
+  );
+
+  return (
+    <SectionList
+      sections={sections}
+      keyExtractor={(item) => item.date}
+      ListHeaderComponent={renderHeader}
+      renderSectionHeader={({ section: { title } }) => (
+        <ThemedText type="subtitle" style={styles.sectionHeader}>{title}</ThemedText>
+      )}
+      renderItem={({ item }) => (
+        <View style={styles.entry}>
+          <Text>Date: {new Date(item.date).toLocaleDateString()}</Text>
+          <Text>Last Period: {new Date(item.lastPeriod).toLocaleDateString()}</Text>
+          <Text>Cycle Length: {item.cycleLength} days</Text>
+          <Text>Symptoms: {item.selectedSymptoms.join(', ')}</Text>
+          <Text>Notes: {item.notes}</Text>
+        </View>
+      )}
+    />
   );
 }
 
 const styles = StyleSheet.create({
+  headerContainer: {
+    padding: 16,
+  },
   headerImage: {
     color: '#808080',
     bottom: -90,
@@ -105,5 +146,15 @@ const styles = StyleSheet.create({
   titleContainer: {
     flexDirection: 'row',
     gap: 8,
+    marginBottom: 16,
+  },
+  sectionHeader: {
+    padding: 16,
+    backgroundColor: '#f0f0f0',
+  },
+  entry: {
+    padding: 12,
+    borderBottomWidth: 1,
+    borderBottomColor: '#ccc',
   },
 });
