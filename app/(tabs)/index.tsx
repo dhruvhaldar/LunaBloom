@@ -12,6 +12,7 @@ export default function HomeScreen() {
   const [predictedPeriods, setPredictedPeriods] = useState<Date[]>([]);
   const [selectedSymptoms, setSelectedSymptoms] = useState<string[]>([]);
   const [notes, setNotes] = useState('');
+  const [date, setDate] = useState(new Date())
   const [datePickerOpen, setDatePickerOpen] = useState(false);
 
   const symptomsList = [
@@ -69,6 +70,18 @@ export default function HomeScreen() {
                 {lastPeriod.toLocaleDateString()}
               </ThemedText>
             </TouchableOpacity>
+            <DatePicker
+        modal
+        datePickerOpen={datePickerOpen}
+        date={date}
+        onConfirm={(date) => {
+          setDatePickerOpen(false)
+          setDatePickerOpen(date)
+        }}
+        onCancel={() => {
+          setDatePickerOpen(false)
+        }}
+      />
           </ThemedView>
 
           <ThemedView style={styles.inputGroup}>
