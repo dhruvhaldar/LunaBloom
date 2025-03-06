@@ -5,6 +5,8 @@ import { ThemedText } from '@/components/ThemedText';
 import { ThemedView } from '@/components/ThemedView';
 import ParallaxScrollView from '@/components/ParallaxScrollView';
 import { Image } from 'react-native';
+import { Alert, View, Text } from 'react-native';
+
 
 export default function HomeScreen() {
   const [lastPeriod, setLastPeriod] = useState(new Date());
@@ -14,6 +16,32 @@ export default function HomeScreen() {
   const [notes, setNotes] = useState('');
   const [date, setDate] = useState(new Date())
   const [datePickerOpen, setDatePickerOpen] = useState(false);
+
+  const handleCycleLengthChange = (text) => {
+    // Remove any non-numeric characters
+    const filteredText = text.replace(/[^0-9]/g, '');
+
+    // Parse the filtered text to an integer
+    let number = parseInt(filteredText, 10);
+
+    // If the parsed number is NaN, set it to an empty string
+    if (isNaN(number)) {
+      setCycleLength('');
+      return;
+    }
+
+    // Show an alert if the number exceeds 35
+    if (number > 35) {
+      Alert.alert(
+        "Attention",
+        "A cycle length greater than 35 days might indicate a condition like polycystic ovary syndrome (PCOS). Please consult a doctor for advice.",
+        [{ text: "OK" }]
+      );
+    }
+    
+    // Update the state with the new value
+    setCycleLength(number.toString());
+  };
 
   const symptomsList = [
     'Cramps', 'Bloating', 'Headache', 
@@ -44,14 +72,16 @@ export default function HomeScreen() {
     setNotes('');
   };
 
+  
+  
+  
+  
+  
   return (
     <ParallaxScrollView
       headerBackgroundColor={{ light: '#A1CEDC', dark: '#1D3D47' }}
       headerImage={
-        <Image
-          source={require('@/assets/images/partial-react-logo.png')}
-          style={styles.reactLogo}
-        />
+        <Image source={require('@/assets/images/partial-react-logo.png')} style={styles.reactLogo}/>
       }>
       <ThemedView style={styles.container}>
         <ThemedText type="title" style={styles.header}>LunaBloom Cycle Tracker</ThemedText>
@@ -61,37 +91,63 @@ export default function HomeScreen() {
           <ThemedText type="subtitle">Cycle Settings</ThemedText>
           
           <ThemedView style={styles.inputGroup}>
-            <ThemedText>Last Period Start:</ThemedText>
-            <TouchableOpacity 
+        <ThemedText>Last Period Start:</ThemedText>
+        
+
+
+        <TouchableOpacity 
               onPress={() => setDatePickerOpen(true)}
-              style={styles.dateButton}
-            >
-              <ThemedText style={styles.dateText}>
-                {lastPeriod.toLocaleDateString()}
-              </ThemedText>
-            </TouchableOpacity>
+          style={styles.dateButton}
+        >
+          <ThemedText style={styles.dateText}>
+            {lastPeriod.toLocaleDateString()}
+          </ThemedText>
+        </TouchableOpacity>
             <DatePicker
         modal
         datePickerOpen={datePickerOpen}
         date={date}
-        onConfirm={(date) => {
+        onConfirm={(date: any) => {
           setDatePickerOpen(false)
           setDatePickerOpen(date)
         }}
         onCancel={() => {
           setDatePickerOpen(false)
-        }}
-      />
-          </ThemedView>
+            }}
+          />
+      </ThemedView>
 
+          
+          
           <ThemedView style={styles.inputGroup}>
             <ThemedText>Cycle Length (days):</ThemedText>
             <TextInput
-              style={styles.input}
-              keyboardType="numeric"
-              value={cycleLength}
-              onChangeText={setCycleLength}
-            />
+            style={styles.input}
+            keyboardType="numeric"
+            value={cycleLength}
+            onChangeText={(text) => {
+            // Remove any non-numeric characters
+            const filteredText = text.replace(/[^0-9]/g, '');
+
+            // Parse the filtered text to an integer
+            let number = parseInt(filteredText, 10);
+
+            // If the parsed number is NaN, set it to an empty string
+            if (isNaN(number)) {
+              setCycleLength('');
+              return;
+            }
+
+            // Clamp the number to the maximum value (e.g., 35)
+            if (number > 35) {
+              number = 35;
+            }
+
+          // Update the state with the clamped value
+          setCycleLength(number.toString());
+          }}
+          />
+
           </ThemedView>
         </ThemedView>
 
