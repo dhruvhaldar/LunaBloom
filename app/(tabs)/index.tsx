@@ -123,7 +123,7 @@ export default function HomeScreen() {
             <ThemedText style={{ color: textColor }}>Last Period Start:</ThemedText>
             <TouchableOpacity 
               onPress={() => setOpen(true)}
-              style={styles.dateButton}
+              style={[styles.dateButton, { borderColor: textColor }]} // Dynamically set borderColor
             >
               <ThemedText style={[styles.dateText, { color: textColor, borderColor: textColor }]}>
                 {lastPeriod.toLocaleDateString()}
