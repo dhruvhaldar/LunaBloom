@@ -1,13 +1,15 @@
 import React, { useState, useEffect } from 'react';
-import { StyleSheet, Platform, TouchableOpacity, TextInput, ScrollView, Alert, View, Text, useColorScheme } from 'react-native';
+import { StyleSheet, TouchableOpacity, TextInput, Alert, useColorScheme, View, Button } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import DatePicker from 'react-datepicker';
+import DateTimePicker from '@react-native-community/datetimepicker'; // Native DateTimePicker
 import { ThemedText } from '@/components/ThemedText';
 import { ThemedView } from '@/components/ThemedView';
 import ParallaxScrollView from '@/components/ParallaxScrollView';
 import { Image } from 'react-native';
 
 import "react-datepicker/dist/react-datepicker.css";
+import { SafeAreaView } from 'react-native-safe-area-context';
 
 export default function HomeScreen() {
   const [lastPeriod, setLastPeriod] = useState(new Date());
@@ -15,18 +17,42 @@ export default function HomeScreen() {
   const [predictedPeriods, setPredictedPeriods] = useState<Date[]>([]);
   const [selectedSymptoms, setSelectedSymptoms] = useState<string[]>([]);
   const [notes, setNotes] = useState('');
-  const [startDate, setStartDate] = useState(new Date());
   const [open, setOpen] = useState(false);
-  const colorScheme = useColorScheme();
 
+  const colorScheme = useColorScheme();
   const textColor = colorScheme === 'dark' ? '#f0f0f0' : '#413c58';
-  const predictionBackgroundColor = colorScheme === 'dark' ? '#EE2D60' : '#f0f0f0';
   const sectionHeadingtextColor = colorScheme === 'dark' ? '#ee2d60' : '#ee2d60';
   const symptomtextColor = colorScheme === 'dark' ? '#f0f0f0' : '#ee2d60';  
-  const predictedtextColor = colorScheme === 'dark' ? '#444444' : '#413c58';
   const predictedsectionHeadingtextColor = colorScheme === 'dark' ? '#f0f0f0' : '#413c58';
   const selectedSymptomBackgroundColor = colorScheme === 'dark' ? '#413c58' : '#ffdde2';
   const symptomButtonBorderColor = colorScheme === 'dark' ? '#f0f0f0' : '#413c58';
+
+  const [date, setDate] = useState(new Date());
+  const [mode, setMode] = useState('date');
+  const [show, setShow] = useState(false);
+
+  const onChange = (event: any, selectedDate: any) => {
+    if (selectedDate) {
+      setShow(false);
+      setDate(selectedDate);
+      setLastPeriod(selectedDate);
+    }
+  };  
+
+  const showMode = (currentMode: React.SetStateAction<string>) => {
+    setShow(true);
+    setMode(currentMode);
+  };
+
+  const showDatepicker = () => {
+    showMode('date');
+  };
+
+  const showTimepicker = () => {
+    showMode('time');
+  };
+
+
 
   const handleCycleLengthChange = (text) => {
     const filteredText = text.replace(/[^0-9]/g, '');
@@ -93,20 +119,31 @@ export default function HomeScreen() {
         notes,
       };
   
-      const existingEntries = await AsyncStorage.getItem('periodEntries');
-      const entries = existingEntries ? JSON.parse(existingEntries) : [];
+      let entries = [];
+      try {
+        const existingEntries = await AsyncStorage.getItem('periodEntries');
+        entries = existingEntries ? JSON.parse(existingEntries) : [];
+      } catch (parseError) {
+        console.error('Error parsing period entries:', parseError);
+        entries = [];
+      }
   
       entries.push(entry);
   
-      await AsyncStorage.setItem('periodEntries', JSON.stringify(entries));
-  
-      setSelectedSymptoms([]);
-      setNotes('');
-      Alert.alert('Success', 'Your period start has been logged.');
+      try {
+        await AsyncStorage.setItem('periodEntries', JSON.stringify(entries));
+        setSelectedSymptoms([]);
+        setNotes('');
+        Alert.alert('Success', 'Your period start has been logged.');
+      } catch (saveError) {
+        console.error('Error saving period entry:', saveError);
+        Alert.alert('Error', 'Failed to save period entry. Please try again.');
+      }
     } catch (error) {
-      console.error('Error saving period entry:', error);
+      console.error('Unexpected error in logPeriod:', error);
+      Alert.alert('Error', 'Something went wrong. Please try again.');
     }
-  };
+  };    
 
   return (
     <ParallaxScrollView
@@ -124,17 +161,24 @@ export default function HomeScreen() {
           <ThemedView style={styles.inputGroup}>
             <ThemedText style={{ color: textColor }}>Last Period Start:</ThemedText>
             <TouchableOpacity 
-              onPress={() => setOpen(true)}
+              onPress={showDatepicker}
               style={[styles.dateButton, { borderColor: textColor }]} // Dynamically set borderColor
             >
-              <ThemedText style={[styles.dateText, { color: textColor, borderColor: textColor }]}>
-                {lastPeriod.toLocaleDateString()}
+              <ThemedText style={[styles.dateText, { color: textColor }]}>
+              {lastPeriod.toLocaleDateString()}
               </ThemedText>
             </TouchableOpacity>
-            
-            // Date Picker bug
-
+            {show && (
+              <DateTimePicker
+                testID="dateTimePicker"
+                value={date}
+                is24Hour={true}
+                display="default"
+                onChange={onChange}
+              />
+            )}
           </ThemedView>
+
 
           <ThemedView style={styles.inputGroup}>
             <ThemedText style={{ color: textColor }}>Cycle Length (days):</ThemedText>
@@ -198,7 +242,8 @@ export default function HomeScreen() {
           <ThemedText type="subtitle" style={{ color: predictedsectionHeadingtextColor, marginBottom: 10 }}>Predicted Periods</ThemedText>
           {predictedPeriods.map((date, index) => (
             <ThemedView key={index} style={[styles.predictionItem, { borderColor: textColor, borderWidth: 1 }]}>
-              <ThemedText style={{ color: textColor  }}>{date.toLocaleDateString()}</ThemedText>
+              <ThemedText style={{ color: textColor  }}>{date.toLocaleDateString('en-GB', { day: 'numeric', month: 'long' })}
+              </ThemedText>
             </ThemedView>
           ))}
         </ThemedView>
@@ -240,6 +285,9 @@ const styles = StyleSheet.create({
   },
   dateText: {
     color: '#6b46c1',
+  },
+  datePickerWrapper: {
+    marginTop: 10,
   },
   symptomsGrid: {
     flexDirection: 'row',
