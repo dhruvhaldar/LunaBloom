@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useCallback } from 'react';
-import { StyleSheet, View, Text, ScrollView, Alert, Button, useColorScheme } from 'react-native';
+import { StyleSheet, View, Text, ScrollView, Alert, Button, useColorScheme, Platform, UIManager, Vibration, LayoutAnimation } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { ThemedText } from '@/components/ThemedText';
 import { ThemedView } from '@/components/ThemedView';
@@ -44,22 +44,38 @@ export default function TabTwoScreen() {
   };
   
 
-  const deleteEntry = async (index) => {
-    Alert.alert('Confirm Deletion', 'Are you sure you want to delete this entry?', [
+  // Enable LayoutAnimation on Android
+if (Platform.OS === 'android' && UIManager.setLayoutAnimationEnabledExperimental) {
+  UIManager.setLayoutAnimationEnabledExperimental(true);
+}
+
+const deleteEntry = async (index: number) => {
+  Alert.alert(
+    '🗑️ Confirm Deletion',
+    'Are you sure you want to delete this entry? This action cannot be undone.',
+    [
       { text: 'Cancel', style: 'cancel' },
-      { text: 'Delete', style: 'destructive', onPress: async () => {
+      {
+        text: '🗑️ Delete',
+        style: 'destructive',
+        onPress: async () => {
           try {
+            Vibration.vibrate(50); // Haptic feedback
             const updatedEntries = entries.filter((_, i) => i !== index);
+
             await AsyncStorage.setItem('periodEntries', JSON.stringify(updatedEntries));
+            
+            LayoutAnimation.easeInEaseOut(); // Smooth UI transition
             setEntries(updatedEntries);
           } catch (error) {
             console.error('Error deleting entry:', error);
+            Alert.alert('Error', 'Failed to delete the entry. Please try again.');
           }
-        }
-      }
-    ]);
-  };
-
+        },
+      },
+    ]
+  );
+};
   const textColor = colorScheme === 'dark' ? '#FFFFFF' : '#000000';
   const sectionHeaderBackgroundColor = colorScheme === 'dark' ? '#444444' : '#f0f0f0';
 

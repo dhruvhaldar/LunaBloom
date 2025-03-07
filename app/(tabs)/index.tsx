@@ -69,19 +69,19 @@ export default function HomeScreen() {
 
     if (number < 21 && filteredText !== '' && number > 7) {
       Alert.alert(
-        "Attention",
-        "A cycle length shorter than 21 days can be a sign of frequent ovulation or other hormonal imbalances. Please consult a doctor for advice.",
-        [{ text: "OK" }]
+        "⚠️ Short Cycle Length",
+        "Your cycle length is less than 21 days. This may indicate frequent ovulation or hormonal imbalances. 💡 Consider consulting a doctor for guidance. 🩺",
+        [{ text: "Got it! ✅" }]
       );
     }
-
+    
     if (number > 35) {
       Alert.alert(
-        "Attention",
-        "A cycle length greater than 35 days might indicate a condition like polycystic ovary syndrome (PCOS). Please consult a doctor for advice.",
-        [{ text: "OK" }]
+        "⚠️ Long Cycle Length",
+        "Your cycle length is over 35 days. This could be linked to conditions like polycystic ovary syndrome (PCOS). 🏥 It might be good to consult a doctor for further insights. 💙",
+        [{ text: "Understood! 👍" }]
       );
-    }
+    }    
 
     setCycleLength(number.toString());
   };
