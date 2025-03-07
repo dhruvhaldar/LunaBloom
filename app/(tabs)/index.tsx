@@ -17,7 +17,8 @@ export default function HomeScreen() {
   const [datePickerOpen, setDatePickerOpen] = useState(false);
   const colorScheme = useColorScheme();
 
-  const textColor = colorScheme === 'dark' ? '#FFFFFF' : '#000000';
+  const textColor = colorScheme === 'dark' ? '#f0f0f0' : '#413c58';
+  const predictedtextColor = colorScheme === 'dark' ? '#444444' : '#413c58';
   const sectionBackgroundColor = colorScheme === 'dark' ? '#444444' : '#f0f0f0';
 
   const handleCycleLengthChange = (text) => {
@@ -102,12 +103,12 @@ export default function HomeScreen() {
 
   return (
     <ParallaxScrollView
-      headerBackgroundColor={{ light: '#A1CEDC', dark: '#1D3D47' }}
+      headerBackgroundColor={{ light: '#FFFFFF', dark: '#1D3D47' }}
       headerImage={
-        <Image source={require('@/assets/images/LunaBloom.png')} style={styles.reactLogo}/>
+        <Image source={require('@/assets/images/l.png')} style={styles.reactLogo}/>
       }>
       <ThemedView style={styles.container}>
-        <ThemedText type="title" style={[styles.header, { color: textColor }]}>LunaBloom Cycle Tracker</ThemedText>
+        <ThemedText type="title" style={[styles.header, { color: textColor }]}>Period Tracker</ThemedText>
 
         {/* Cycle Configuration */}
         <ThemedView style={[styles.section, { backgroundColor: sectionBackgroundColor }]}>
@@ -153,7 +154,7 @@ export default function HomeScreen() {
           <ThemedText type="subtitle" style={{ color: textColor }}>Predicted Periods</ThemedText>
           {predictedPeriods.map((date, index) => (
             <ThemedView key={index} style={styles.predictionItem}>
-              <ThemedText style={{ color: textColor }}>{date.toLocaleDateString()}</ThemedText>
+              <ThemedText style={{ color: predictedtextColor }}>{date.toLocaleDateString()}</ThemedText>
             </ThemedView>
           ))}
         </ThemedView>
@@ -177,7 +178,7 @@ export default function HomeScreen() {
                   );
                 }}
               >
-                <ThemedText style={[selectedSymptoms.includes(symptom) && styles.symptomText, { color: textColor }]}>
+                <ThemedText style={[selectedSymptoms.includes(symptom) && styles.symptomText, { color: predictedtextColor }]}>
                   {symptom}
                 </ThemedText>
               </TouchableOpacity>
@@ -208,9 +209,10 @@ export default function HomeScreen() {
 
 const styles = StyleSheet.create({
   container: {
-    padding: 16,
+    padding: 0,
   },
   header: {
+    marginTop: -16,
     marginBottom: 10,
     textAlign: 'center',
   },
@@ -251,13 +253,14 @@ const styles = StyleSheet.create({
   },
   selectedSymptom: {
     backgroundColor: '#6b46c1',
+    fontWeight: 'bold',
   },
   symptomText: {
-    color: 'black',
+    color: 'white',
   },
   predictionItem: {
     padding: 12,
-    borderRadius: 8,
+    borderRadius: 18,
     marginBottom: 8,
     backgroundColor: '#f0f4f8',
   },
@@ -269,8 +272,8 @@ const styles = StyleSheet.create({
     textAlignVertical: 'top',
   },
   logButton: {
-    backgroundColor: '#6b46c1',
-    borderRadius: 8,
+    backgroundColor: '#413c58',
+    borderRadius: 18,
     padding: 16,
     marginTop: 20,
     alignItems: 'center',
