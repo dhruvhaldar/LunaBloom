@@ -1,11 +1,13 @@
 import React, { useState, useEffect } from 'react';
 import { StyleSheet, Platform, TouchableOpacity, TextInput, ScrollView, Alert, View, Text, useColorScheme } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import DatePicker from 'react-native-date-picker';
+import DatePicker from 'react-datepicker';
 import { ThemedText } from '@/components/ThemedText';
 import { ThemedView } from '@/components/ThemedView';
 import ParallaxScrollView from '@/components/ParallaxScrollView';
 import { Image } from 'react-native';
+
+import "react-datepicker/dist/react-datepicker.css";
 
 export default function HomeScreen() {
   const [lastPeriod, setLastPeriod] = useState(new Date());
@@ -13,7 +15,7 @@ export default function HomeScreen() {
   const [predictedPeriods, setPredictedPeriods] = useState<Date[]>([]);
   const [selectedSymptoms, setSelectedSymptoms] = useState<string[]>([]);
   const [notes, setNotes] = useState('');
-  const [date, setDate] = useState(new Date());
+  const [startDate, setStartDate] = useState(new Date());
   const [open, setOpen] = useState(false);
   const colorScheme = useColorScheme();
 
@@ -129,18 +131,9 @@ export default function HomeScreen() {
                 {lastPeriod.toLocaleDateString()}
               </ThemedText>
             </TouchableOpacity>
-            <DatePicker
-              modal
-              open={open}
-              date={date}
-              onConfirm={(date: any) => {
-                setOpen(false);
-                setLastPeriod(date);
-              }}
-              onCancel={() => {
-                setOpen(false);
-              }}
-            />
+            
+            // Date Picker bug
+
           </ThemedView>
 
           <ThemedView style={styles.inputGroup}>
