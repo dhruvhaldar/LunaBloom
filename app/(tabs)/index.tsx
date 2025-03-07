@@ -14,12 +14,17 @@ export default function HomeScreen() {
   const [selectedSymptoms, setSelectedSymptoms] = useState<string[]>([]);
   const [notes, setNotes] = useState('');
   const [date, setDate] = useState(new Date());
-  const [datePickerOpen, setDatePickerOpen] = useState(false);
+  const [open, setOpen] = useState(false);
   const colorScheme = useColorScheme();
 
   const textColor = colorScheme === 'dark' ? '#f0f0f0' : '#413c58';
+  const predictionBackgroundColor = colorScheme === 'dark' ? '#EE2D60' : '#f0f0f0';
+  const sectionHeadingtextColor = colorScheme === 'dark' ? '#ee2d60' : '#ee2d60';
+  const symptomtextColor = colorScheme === 'dark' ? '#f0f0f0' : '#ee2d60';  
   const predictedtextColor = colorScheme === 'dark' ? '#444444' : '#413c58';
-  const sectionBackgroundColor = colorScheme === 'dark' ? '#444444' : '#f0f0f0';
+  const sectionBackgroundColor = colorScheme === 'dark' ? '#444444' : '#EE2D60';  
+  const selectedSymptomBackgroundColor = colorScheme === 'dark' ? '#413c58' : '#ffdde2';
+  const symptomButtonBorderColor = colorScheme === 'dark' ? '#f0f0f0' : '#413c58';
 
   const handleCycleLengthChange = (text) => {
     const filteredText = text.replace(/[^0-9]/g, '');
@@ -103,37 +108,37 @@ export default function HomeScreen() {
 
   return (
     <ParallaxScrollView
-      headerBackgroundColor={{ light: '#FFFFFF', dark: '#1D3D47' }}
+      headerBackgroundColor={{ light: '#ffdde2', dark: '#ffdde2' }}
       headerImage={
-        <Image source={require('@/assets/images/l.png')} style={styles.reactLogo}/>
+        <Image source={require('@/assets/images/LunaBloom_adaptive.png')} style={styles.reactLogo}/>
       }>
       <ThemedView style={styles.container}>
         <ThemedText type="title" style={[styles.header, { color: textColor }]}>Period Tracker</ThemedText>
 
         {/* Cycle Configuration */}
-        <ThemedView style={[styles.section, { backgroundColor: sectionBackgroundColor }]}>
-          <ThemedText type="subtitle" style={{ color: textColor }}>Cycle Settings</ThemedText>
+        <ThemedView style={[styles.section]}>
+          <ThemedText type="subtitle" style={{ color: sectionHeadingtextColor , marginBottom: 10}}>Cycle Settings</ThemedText>
           
           <ThemedView style={styles.inputGroup}>
             <ThemedText style={{ color: textColor }}>Last Period Start:</ThemedText>
             <TouchableOpacity 
-              onPress={() => setDatePickerOpen(true)}
+              onPress={() => setOpen(true)}
               style={styles.dateButton}
             >
-              <ThemedText style={[styles.dateText, { color: textColor }]}>
+              <ThemedText style={[styles.dateText, { color: textColor, borderColor: textColor }]}>
                 {lastPeriod.toLocaleDateString()}
               </ThemedText>
             </TouchableOpacity>
             <DatePicker
               modal
-              datePickerOpen={datePickerOpen}
+              open={open}
               date={date}
               onConfirm={(date: any) => {
-                setDatePickerOpen(false);
+                setOpen(false);
                 setLastPeriod(date);
               }}
               onCancel={() => {
-                setDatePickerOpen(false);
+                setOpen(false);
               }}
             />
           </ThemedView>
@@ -149,26 +154,17 @@ export default function HomeScreen() {
           </ThemedView>
         </ThemedView>
 
-        {/* Predictions */}
-        <ThemedView style={[styles.section, { backgroundColor: sectionBackgroundColor }]}>
-          <ThemedText type="subtitle" style={{ color: textColor }}>Predicted Periods</ThemedText>
-          {predictedPeriods.map((date, index) => (
-            <ThemedView key={index} style={styles.predictionItem}>
-              <ThemedText style={{ color: predictedtextColor }}>{date.toLocaleDateString()}</ThemedText>
-            </ThemedView>
-          ))}
-        </ThemedView>
-
         {/* Symptom Tracker */}
-        <ThemedView style={[styles.section, { backgroundColor: sectionBackgroundColor }]}>
-          <ThemedText type="subtitle" style={{ color: textColor }}>Today's Symptoms</ThemedText>
+        <ThemedView style={[styles.section]}>
+          <ThemedText type="subtitle" style={{ color: sectionHeadingtextColor, marginBottom: 10 }}>Today's Symptoms</ThemedText>
           <ThemedView style={styles.symptomsGrid}>
             {symptomsList.map((symptom) => (
               <TouchableOpacity
                 key={symptom}
                 style={[
                   styles.symptomButton,
-                  selectedSymptoms.includes(symptom) && styles.selectedSymptom
+                  { borderColor: symptomButtonBorderColor }, // Dynamically setting border color
+                  selectedSymptoms.includes(symptom) && { backgroundColor: selectedSymptomBackgroundColor }
                 ]}
                 onPress={() => {
                   setSelectedSymptoms(prev =>
@@ -178,7 +174,7 @@ export default function HomeScreen() {
                   );
                 }}
               >
-                <ThemedText style={[selectedSymptoms.includes(symptom) && styles.symptomText, { color: predictedtextColor }]}>
+                <ThemedText style={[{ color: symptomtextColor }, selectedSymptoms.includes(symptom) && styles.symptomText]}>
                   {symptom}
                 </ThemedText>
               </TouchableOpacity>
@@ -187,8 +183,8 @@ export default function HomeScreen() {
         </ThemedView>
 
         {/* Notes */}
-        <ThemedView style={[styles.section, { backgroundColor: sectionBackgroundColor }]}>
-          <ThemedText type="subtitle" style={{ color: textColor }}>Notes</ThemedText>
+        <ThemedView style={[styles.section]}>
+          <ThemedText type="subtitle" style={{ color: sectionHeadingtextColor, marginBottom: 10 }}>Notes</ThemedText>
           <TextInput
             style={[styles.notesInput, { color: textColor, borderColor: textColor }]}
             multiline
@@ -203,6 +199,16 @@ export default function HomeScreen() {
           <ThemedText style={styles.logButtonText}>Log Period Start</ThemedText>
         </TouchableOpacity>
       </ThemedView>
+
+      {/* Predictions */}
+      <ThemedView style={[styles.section, { backgroundColor: predictionBackgroundColor }]}>
+          <ThemedText type="subtitle" style={{ color: sectionBackgroundColor, marginBottom: 10 }}>Predicted Periods</ThemedText>
+          {predictedPeriods.map((date, index) => (
+            <ThemedView key={index} style={styles.predictionItem}>
+              <ThemedText style={{ color: predictedtextColor }}>{date.toLocaleDateString()}</ThemedText>
+            </ThemedView>
+          ))}
+        </ThemedView>
     </ParallaxScrollView>
   );
 }
@@ -218,8 +224,8 @@ const styles = StyleSheet.create({
   },
   section: {
     borderRadius: 8,
-    padding: 16,
-    marginBottom: 16,
+    padding: 5,
+    marginBottom: 12,
   },
   inputGroup: {
     flexDirection: 'row',
@@ -236,6 +242,7 @@ const styles = StyleSheet.create({
   },
   dateButton: {
     padding: 8,
+    borderWidth: 1,
     borderRadius: 8,
   },
   dateText: {
@@ -249,18 +256,15 @@ const styles = StyleSheet.create({
   symptomButton: {
     padding: 8,
     borderRadius: 20,
-    backgroundColor: '#e2e8f0',
+    borderWidth: 1,
   },
+
   selectedSymptom: {
-    backgroundColor: '#6b46c1',
     fontWeight: 'bold',
-  },
-  symptomText: {
-    color: 'white',
   },
   predictionItem: {
     padding: 12,
-    borderRadius: 18,
+    borderRadius: 8,
     marginBottom: 8,
     backgroundColor: '#f0f4f8',
   },
@@ -284,9 +288,9 @@ const styles = StyleSheet.create({
   },
   reactLogo: {
     height: 200,
-    width: 390,
+    width: 830,
     bottom: -50,
-    left: 0,
+    left: -220,
     position: 'relative',
   },
 });
