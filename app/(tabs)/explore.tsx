@@ -1,34 +1,64 @@
-import React, { useState, useEffect } from 'react';
-import { StyleSheet, Image, View, Text, ScrollView, useColorScheme } from 'react-native';
+import React, { useState, useEffect, useCallback } from 'react';
+import { StyleSheet, View, Text, ScrollView, Alert, Button, useColorScheme } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import { Collapsible } from '@/components/Collapsible';
-import { ExternalLink } from '@/components/ExternalLink';
 import { ThemedText } from '@/components/ThemedText';
 import { ThemedView } from '@/components/ThemedView';
-import { IconSymbol } from '@/components/ui/IconSymbol';
 import ParallaxScrollView from '@/components/ParallaxScrollView';
+import { useFocusEffect } from '@react-navigation/native';
 
 export default function TabTwoScreen() {
   const [entries, setEntries] = useState([]);
   const colorScheme = useColorScheme();
 
-  useEffect(() => {
-    const fetchEntries = async () => {
-      try {
-        const storedEntries = await AsyncStorage.getItem('periodEntries');
-        const parsedEntries = storedEntries ? JSON.parse(storedEntries) : [];
-        
-        // Sort entries by date
-        parsedEntries.sort((a, b) => new Date(b.date) - new Date(a.date));
-        
-        setEntries(parsedEntries);
-      } catch (error) {
-        console.error('Error fetching period entries:', error);
-      }
-    };
+  useFocusEffect(
+    useCallback(() => {
+      fetchEntries();
+    }, [])
+  );
 
-    fetchEntries();
-  }, []);
+  const fetchEntries = async () => {
+    try {
+      const storedEntries = await AsyncStorage.getItem('periodEntries');
+      
+      if (storedEntries !== null) {
+        try {
+          const parsedEntries = JSON.parse(storedEntries);
+          
+          if (Array.isArray(parsedEntries)) {
+            parsedEntries.sort((a, b) => new Date(b.date) - new Date(a.date));
+            setEntries(parsedEntries);
+          } else {
+            console.error('Fetched data is not an array');
+            setEntries([]);
+          }
+        } catch (parseError) {
+          console.error('Error parsing stored period entries:', parseError);
+          setEntries([]);
+        }
+      } else {
+        setEntries([]);
+      }
+    } catch (error) {
+      console.error('Error fetching period entries:', error);
+    }
+  };
+  
+
+  const deleteEntry = async (index) => {
+    Alert.alert('Confirm Deletion', 'Are you sure you want to delete this entry?', [
+      { text: 'Cancel', style: 'cancel' },
+      { text: 'Delete', style: 'destructive', onPress: async () => {
+          try {
+            const updatedEntries = entries.filter((_, i) => i !== index);
+            await AsyncStorage.setItem('periodEntries', JSON.stringify(updatedEntries));
+            setEntries(updatedEntries);
+          } catch (error) {
+            console.error('Error deleting entry:', error);
+          }
+        }
+      }
+    ]);
+  };
 
   const textColor = colorScheme === 'dark' ? '#FFFFFF' : '#000000';
   const sectionHeaderBackgroundColor = colorScheme === 'dark' ? '#444444' : '#f0f0f0';
@@ -36,24 +66,8 @@ export default function TabTwoScreen() {
   return (
     <ParallaxScrollView
       headerBackgroundColor={{ light: '#D0D0D0', dark: '#353636' }}
-      headerImage={
-        <IconSymbol
-          size={310}
-          color="#808080"
-          name="chevron.left.forwardslash.chevron.right"
-          style={styles.headerImage}
-        />
-      }>
+    >
       <ScrollView contentContainerStyle={styles.contentContainer}>
-        <View style={styles.headerContainer}>
-          <ThemedView style={styles.titleContainer}>
-            <ThemedText type="title" style={{ color: textColor }}>Explore</ThemedText>
-          </ThemedView>
-          <ThemedText style={{ color: textColor }}>This app includes example code to help you get started.</ThemedText>
-          {/* Add more collapsible sections as needed */}
-        </View>
-
-        {/* Entries */}
         <View style={styles.entriesContainer}>
           <ThemedText
             type="subtitle"
@@ -68,6 +82,7 @@ export default function TabTwoScreen() {
               <Text style={{ color: textColor }}>Cycle Length: {item.cycleLength} days</Text>
               <Text style={{ color: textColor }}>Symptoms: {item.selectedSymptoms.join(', ')}</Text>
               <Text style={{ color: textColor }}>Notes: {item.notes}</Text>
+              <Button title="Delete" color="red" onPress={() => deleteEntry(index)} />
             </View>
           ))}
         </View>
@@ -79,20 +94,6 @@ export default function TabTwoScreen() {
 const styles = StyleSheet.create({
   contentContainer: {
     padding: 16,
-  },
-  headerContainer: {
-    marginBottom: 16,
-  },
-  headerImage: {
-    color: '#808080',
-    bottom: -90,
-    left: -35,
-    position: 'absolute',
-  },
-  titleContainer: {
-    flexDirection: 'row',
-    gap: 8,
-    marginBottom: 16,
   },
   sectionHeader: {
     padding: 16,
