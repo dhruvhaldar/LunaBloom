@@ -201,11 +201,11 @@ export default function HomeScreen() {
       </ThemedView>
 
       {/* Predictions */}
-      <ThemedView style={[styles.section, { backgroundColor: predictionBackgroundColor }]}>
+      <ThemedView style={[styles.section]}>
           <ThemedText type="subtitle" style={{ color: predictedsectionHeadingtextColor, marginBottom: 10 }}>Predicted Periods</ThemedText>
           {predictedPeriods.map((date, index) => (
-            <ThemedView key={index} style={styles.predictionItem}>
-              <ThemedText style={{ color: predictedtextColor }}>{date.toLocaleDateString()}</ThemedText>
+            <ThemedView key={index} style={[styles.predictionItem, { borderColor: textColor, borderWidth: 1 }]}>
+              <ThemedText style={{ color: textColor  }}>{date.toLocaleDateString()}</ThemedText>
             </ThemedView>
           ))}
         </ThemedView>
@@ -266,7 +266,7 @@ const styles = StyleSheet.create({
     padding: 12,
     borderRadius: 8,
     marginBottom: 8,
-    backgroundColor: '#f0f4f8',
+    // backgroundColor: '#f0f4f8',
   },
   notesInput: {
     borderWidth: 1,
