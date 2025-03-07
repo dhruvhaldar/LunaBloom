@@ -22,7 +22,7 @@ export default function HomeScreen() {
   const sectionHeadingtextColor = colorScheme === 'dark' ? '#ee2d60' : '#ee2d60';
   const symptomtextColor = colorScheme === 'dark' ? '#f0f0f0' : '#ee2d60';  
   const predictedtextColor = colorScheme === 'dark' ? '#444444' : '#413c58';
-  const sectionBackgroundColor = colorScheme === 'dark' ? '#444444' : '#EE2D60';  
+  const predictedsectionHeadingtextColor = colorScheme === 'dark' ? '#f0f0f0' : '#413c58';
   const selectedSymptomBackgroundColor = colorScheme === 'dark' ? '#413c58' : '#ffdde2';
   const symptomButtonBorderColor = colorScheme === 'dark' ? '#f0f0f0' : '#413c58';
 
@@ -202,7 +202,7 @@ export default function HomeScreen() {
 
       {/* Predictions */}
       <ThemedView style={[styles.section, { backgroundColor: predictionBackgroundColor }]}>
-          <ThemedText type="subtitle" style={{ color: sectionBackgroundColor, marginBottom: 10 }}>Predicted Periods</ThemedText>
+          <ThemedText type="subtitle" style={{ color: predictedsectionHeadingtextColor, marginBottom: 10 }}>Predicted Periods</ThemedText>
           {predictedPeriods.map((date, index) => (
             <ThemedView key={index} style={styles.predictionItem}>
               <ThemedText style={{ color: predictedtextColor }}>{date.toLocaleDateString()}</ThemedText>
