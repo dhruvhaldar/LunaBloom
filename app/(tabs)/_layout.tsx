@@ -1,6 +1,6 @@
 import { Tabs } from 'expo-router';
 import React from 'react';
-import { Platform, StyleSheet, ViewStyle } from 'react-native';
+import { Platform, StyleSheet, TouchableOpacity, ViewStyle, Animated } from 'react-native';
 
 import { HapticTab } from '@/components/HapticTab';
 import { IconSymbol } from '@/components/ui/IconSymbol';
@@ -36,12 +36,24 @@ export default function TabLayout() {
     paddingHorizontal: 0,
   };
 
+  // Custom tab button component to increase touchable area
+  const CustomTabButton = ({ children, onPress, accessibilityLabel }) => (
+    <TouchableOpacity 
+      style={styles.tabButtonContainer}
+      onPress={onPress}
+      accessibilityLabel={accessibilityLabel}
+      hitSlop={{ top: 0, bottom: 0, left: 40, right: 40 }} // Increase touch area
+    >
+      {children}
+    </TouchableOpacity>
+  );
+
   return (
     <Tabs
       screenOptions={{
         tabBarActiveTintColor: Colors[colorScheme ?? 'light'].tint,
         headerShown: false,
-        tabBarButton: HapticTab,
+        tabBarButton: (props) => <CustomTabButton {...props} />,
         tabBarBackground: TabBarBackground,
         tabBarStyle: tabBarStyle,
         tabBarHideOnKeyboard: true,
@@ -89,6 +101,13 @@ export default function TabLayout() {
 }
 
 const styles = StyleSheet.create({
+  tabButtonContainer: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    paddingVertical: 10, // Increase vertical padding
+    paddingHorizontal: 20, // Increase horizontal padding
+  },
   tabItemContainer: {
     flexDirection: 'column',
     justifyContent: 'center',
