@@ -21,9 +21,17 @@ export default function TabLayout() {
         tabBarStyle: Platform.select({
           ios: {
             position: 'absolute',
+            backgroundColor: 'transparent',
+            borderTopWidth: 0,
+            elevation: 0,
           },
-          default: {},
+          android: {
+            backgroundColor: 'transparent',
+            borderTopWidth: 2,
+            elevation: 0,
+          },
         }),
+        tabBarHideOnKeyboard: true,
       }}>
       <Tabs.Screen
         name="index"
