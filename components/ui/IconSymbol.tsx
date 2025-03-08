@@ -1,5 +1,5 @@
 // This file is a fallback for using MaterialIcons on Android and web.
-//Edit/Add icons here
+// Edit or Add icons here
 
 import MaterialIcons from '@expo/vector-icons/MaterialIcons'; // https://icons.expo.fyi/Index
 import { SymbolWeight } from 'expo-symbols';
@@ -15,6 +15,7 @@ const MAPPING = {
   'chevron.left.forwardslash.chevron.right': 'code',
   'chevron.right': 'chevron-right',
   'history.fill': 'history',
+  'delete.fill': 'delete',
 } as Partial<
   Record<
     import('expo-symbols').SymbolViewProps['name'],

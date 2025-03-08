@@ -1,16 +1,19 @@
 import React, { useState, useEffect, useCallback } from 'react';
-import { StyleSheet, View, Text, ScrollView, Alert, Button, useColorScheme, Platform, UIManager, Vibration, LayoutAnimation } from 'react-native';
+import { StyleSheet, View, Text, ScrollView, Alert, Button, useColorScheme, Platform, UIManager, Vibration, LayoutAnimation, TouchableOpacity } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { ThemedText } from '@/components/ThemedText';
 import { ThemedView } from '@/components/ThemedView';
 import ParallaxScrollView from '@/components/ParallaxScrollView';
 import { useFocusEffect } from '@react-navigation/native';
 import { Image } from 'react-native';
+import { IconSymbol } from '@/components/ui/IconSymbol';
 
 export default function TabTwoScreen() {
   const [entries, setEntries] = useState([]);
   const colorScheme = useColorScheme();
   const sectionHeadingtextColor = colorScheme === 'dark' ? '#ee2d60' : '#ee2d60';
+  const textColor = colorScheme === 'dark' ? '#FFFFFF' : '#000000';
+  const deleteIconColor = colorScheme === 'dark' ? '#ee2d60' : '#ee2d60';
 
 
   useFocusEffect(
@@ -78,14 +81,14 @@ const deleteEntry = async (index: number) => {
     ]
   );
 };
-  const textColor = colorScheme === 'dark' ? '#FFFFFF' : '#000000';
+ 
 
   return (
     <ParallaxScrollView
       headerBackgroundColor={{ light: '#ffdde2', dark: '#151718' }}
       headerImage={
         <Image 
-          source={require('@/assets/images/history.png')} 
+          source={require('@/assets/images/history2.png')} 
           style={styles.reactLogo}
           resizeMode="contain"
         />
@@ -102,12 +105,27 @@ const deleteEntry = async (index: number) => {
           </ThemedText>
           {entries.map((item, index) => (
             <View key={index} style={styles.entry}>
-              <Text style={{ color: textColor }}>Date: {new Date(item.date).toLocaleDateString()}</Text>
-              <Text style={{ color: textColor }}>Last Period: {new Date(item.lastPeriod).toLocaleDateString()}</Text>
-              <Text style={{ color: textColor }}>Cycle Length: {item.cycleLength} days</Text>
-              <Text style={{ color: textColor }}>Symptoms: {item.selectedSymptoms.join(', ')}</Text>
-              <Text style={{ color: textColor }}>Notes: {item.notes}</Text>
-              <Button title="Delete" color="red" onPress={() => deleteEntry(index)} />
+              <View style={styles.entryContent}>
+                <View style={styles.entryTextContainer}>
+                  <Text style={{ color: textColor }}>Date: {new Date(item.date).toLocaleDateString()}</Text>
+                  <Text style={{ color: textColor }}>Last Period: {new Date(item.lastPeriod).toLocaleDateString()}</Text>
+                  <Text style={{ color: textColor }}>Cycle Length: {item.cycleLength} days</Text>
+                  <Text style={{ color: textColor }}>Symptoms: {item.selectedSymptoms.join(', ')}</Text>
+                  <Text style={{ color: textColor }}>Notes: {item.notes}</Text>
+                </View>
+                
+                <TouchableOpacity 
+                  style={styles.deleteIconContainer}
+                  onPress={() => deleteEntry(index)}
+                >
+                  <IconSymbol 
+                    name="delete.fill" 
+                    size={24} 
+                    color={deleteIconColor} 
+                  />
+                </TouchableOpacity>
+              
+              </View>
             </View>
           ))}
         </View>
@@ -121,7 +139,7 @@ const styles = StyleSheet.create({
     padding: 0,
   },
   header: {
-    marginTop: -16,
+    marginTop: -30,
     marginBottom: 10,
     textAlign: 'center',
   },
@@ -138,15 +156,27 @@ const styles = StyleSheet.create({
   },
   entry: {
     padding: 12,
-    borderBottomWidth: 1,
+    borderBottomWidth: 2,
     borderBottomColor: '#ccc',
   },
+  entryContent: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+  },
+  entryTextContainer: {
+    flex: 1,
+    marginRight: 10,
+  },
+  deleteIconContainer: {
+    padding: 10,
+  },
   reactLogo: {
-    height: 400,
+    height: 380,
     width: 500,
     alignSelf: 'center',
     marginBottom: -50,
     marginTop: -50,
-    marginLeft: -30,
+    marginLeft: 6,
   }
 });
