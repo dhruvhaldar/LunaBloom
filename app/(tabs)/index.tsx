@@ -120,11 +120,12 @@ export default function HomeScreen() {
       };
   
       let entries = [];
+      
       try {
         const existingEntries = await AsyncStorage.getItem('periodEntries');
         entries = existingEntries ? JSON.parse(existingEntries) : [];
       } catch (parseError) {
-        console.error('Error parsing period entries:', parseError);
+        console.error('🚨 Error parsing period entries:', parseError);
         entries = [];
       }
   
@@ -134,20 +135,34 @@ export default function HomeScreen() {
         await AsyncStorage.setItem('periodEntries', JSON.stringify(entries));
         setSelectedSymptoms([]);
         setNotes('');
-        Alert.alert('Success', 'Your period start has been logged.');
+        
+        Alert.alert(
+          "✅ Entry Logged!",
+          "Your period start has been successfully recorded. 🩸💖",
+          [{ text: "Great! 🎉" }]
+        );
       } catch (saveError) {
-        console.error('Error saving period entry:', saveError);
-        Alert.alert('Error', 'Failed to save period entry. Please try again.');
+        console.error('❌ Error saving period entry:', saveError);
+        Alert.alert(
+          "⚠️ Save Failed",
+          "We couldn't save your entry. Please try again. 🔄",
+          [{ text: "Okay, I'll retry 🔁" }]
+        );
       }
     } catch (error) {
-      console.error('Unexpected error in logPeriod:', error);
-      Alert.alert('Error', 'Something went wrong. Please try again.');
+      console.error('🚨 Unexpected error in logPeriod:', error);
+      Alert.alert(
+        "❌ Oops! Something went wrong",
+        "An unexpected error occurred. Please try again later. 🛠️",
+        [{ text: "Got it! 🆗" }]
+      );
     }
-  };    
+  };
+     
 
   return (
     <ParallaxScrollView
-      headerBackgroundColor={{ light: '#ffdde2', dark: '#ffdde2' }}
+      headerBackgroundColor={{ light: '#ffdde2', dark: '#151718' }}
       headerImage={
         <Image source={require('@/assets/images/LunaBloom_adaptive.png')} style={styles.reactLogo}/>
       }>
