@@ -93,11 +93,12 @@ const deleteEntry = async (index: number) => {
     >
       <ThemedView style={styles.container}>
         <View style={styles.entriesContainer}>
+          <ThemedText type="title" style={[styles.header, { color: textColor }]}>History</ThemedText>
           <ThemedText
-            type="title"
-            style={[styles.header, { color: sectionHeadingtextColor }]}
+            type="subtitle"
+            style={{ color: sectionHeadingtextColor , marginBottom: 10}}
           >
-            Logged Period Entries
+            Logged Entries
           </ThemedText>
           {entries.map((item, index) => (
             <View key={index} style={styles.entry}>
