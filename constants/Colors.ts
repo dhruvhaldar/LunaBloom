@@ -6,10 +6,12 @@
 const tintColorLight = '#413c58';
 const tintColorDark = '#fff';
 
+// Set Background color of app here
+// Set tint color of tabs here
 export const Colors = {
   light: {
     text: '#11181C',
-    background: '#ffdde2',
+    background: '#f0f0f0',
     tint: tintColorLight,
     icon: '#ee2d60',
     tabIconDefault: '#ee2d60',

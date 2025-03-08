@@ -5,10 +5,13 @@ import { ThemedText } from '@/components/ThemedText';
 import { ThemedView } from '@/components/ThemedView';
 import ParallaxScrollView from '@/components/ParallaxScrollView';
 import { useFocusEffect } from '@react-navigation/native';
+import { Image } from 'react-native';
 
 export default function TabTwoScreen() {
   const [entries, setEntries] = useState([]);
   const colorScheme = useColorScheme();
+  const sectionHeadingtextColor = colorScheme === 'dark' ? '#ee2d60' : '#ee2d60';
+
 
   useFocusEffect(
     useCallback(() => {
@@ -44,7 +47,6 @@ export default function TabTwoScreen() {
   };
   
 
-  // Enable LayoutAnimation on Android
 if (Platform.OS === 'android' && UIManager.setLayoutAnimationEnabledExperimental) {
   UIManager.setLayoutAnimationEnabledExperimental(true);
 }
@@ -77,17 +79,23 @@ const deleteEntry = async (index: number) => {
   );
 };
   const textColor = colorScheme === 'dark' ? '#FFFFFF' : '#000000';
-  const sectionHeaderBackgroundColor = colorScheme === 'dark' ? '#444444' : '#f0f0f0';
 
   return (
     <ParallaxScrollView
-      headerBackgroundColor={{ light: '#D0D0D0', dark: '#353636' }}
+      headerBackgroundColor={{ light: '#ffdde2', dark: '#151718' }}
+      headerImage={
+        <Image 
+          source={require('@/assets/images/history.png')} 
+          style={styles.reactLogo}
+          resizeMode="contain"
+        />
+      }
     >
-      <ScrollView contentContainerStyle={styles.contentContainer}>
+      <ThemedView style={styles.container}>
         <View style={styles.entriesContainer}>
           <ThemedText
-            type="subtitle"
-            style={[styles.sectionHeader, { color: textColor, backgroundColor: sectionHeaderBackgroundColor }]}
+            type="title"
+            style={[styles.header, { color: sectionHeadingtextColor }]}
           >
             Logged Period Entries
           </ThemedText>
@@ -102,14 +110,24 @@ const deleteEntry = async (index: number) => {
             </View>
           ))}
         </View>
-      </ScrollView>
+      </ThemedView>
     </ParallaxScrollView>
   );
 }
 
 const styles = StyleSheet.create({
-  contentContainer: {
-    padding: 16,
+  container: {
+    padding: 0,
+  },
+  header: {
+    marginTop: -16,
+    marginBottom: 10,
+    textAlign: 'center',
+  },
+  section: {
+    borderRadius: 8,
+    padding: 5,
+    marginBottom: 12,
   },
   sectionHeader: {
     padding: 16,
@@ -122,4 +140,12 @@ const styles = StyleSheet.create({
     borderBottomWidth: 1,
     borderBottomColor: '#ccc',
   },
+  reactLogo: {
+    height: 400,
+    width: 500,
+    alignSelf: 'center',
+    marginBottom: -50,
+    marginTop: -50,
+    marginLeft: -30,
+  }
 });
