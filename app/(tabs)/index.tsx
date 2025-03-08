@@ -1,15 +1,12 @@
 import React, { useState, useEffect } from 'react';
 import { StyleSheet, TouchableOpacity, TextInput, Alert, useColorScheme, View, Button } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import DatePicker from 'react-datepicker';
-import DateTimePicker from '@react-native-community/datetimepicker'; // Native DateTimePicker
+import DateTimePicker from '@react-native-community/datetimepicker';
 import { ThemedText } from '@/components/ThemedText';
 import { ThemedView } from '@/components/ThemedView';
 import ParallaxScrollView from '@/components/ParallaxScrollView';
 import { Image } from 'react-native';
 
-import "react-datepicker/dist/react-datepicker.css";
-import { SafeAreaView } from 'react-native-safe-area-context';
 
 export default function HomeScreen() {
   const [lastPeriod, setLastPeriod] = useState(new Date());
@@ -17,18 +14,17 @@ export default function HomeScreen() {
   const [predictedPeriods, setPredictedPeriods] = useState<Date[]>([]);
   const [selectedSymptoms, setSelectedSymptoms] = useState<string[]>([]);
   const [notes, setNotes] = useState('');
-  const [open, setOpen] = useState(false);
 
   const colorScheme = useColorScheme();
   const textColor = colorScheme === 'dark' ? '#f0f0f0' : '#413c58';
   const sectionHeadingtextColor = colorScheme === 'dark' ? '#ee2d60' : '#ee2d60';
   const symptomtextColor = colorScheme === 'dark' ? '#f0f0f0' : '#ee2d60';  
   const predictedsectionHeadingtextColor = colorScheme === 'dark' ? '#f0f0f0' : '#413c58';
-  const selectedSymptomBackgroundColor = colorScheme === 'dark' ? '#413c58' : '#ffdde2';
+  const selectedSymptomBackgroundColor = colorScheme === 'dark' ? '#413c58' : '#413c58';
   const symptomButtonBorderColor = colorScheme === 'dark' ? '#f0f0f0' : '#413c58';
 
   const [date, setDate] = useState(new Date());
-  const [mode, setMode] = useState('date');
+  const [, setMode] = useState('date');
   const [show, setShow] = useState(false);
 
   const onChange = (event: any, selectedDate: any) => {
@@ -48,9 +44,6 @@ export default function HomeScreen() {
     showMode('date');
   };
 
-  const showTimepicker = () => {
-    showMode('time');
-  };
 
 
 
@@ -164,7 +157,10 @@ export default function HomeScreen() {
     <ParallaxScrollView
       headerBackgroundColor={{ light: '#ffdde2', dark: '#151718' }}
       headerImage={
-        <Image source={require('@/assets/images/LunaBloom_adaptive.png')} style={styles.reactLogo}/>
+        <Image source={require('@/assets/images/LunaBloom_adaptive.png')} 
+        style={styles.reactLogo}
+        resizeMode="contain"
+        />
       }>
       <ThemedView style={styles.container}>
         <ThemedText type="title" style={[styles.header, { color: textColor }]}>Period Tracker</ThemedText>
@@ -322,7 +318,6 @@ const styles = StyleSheet.create({
     padding: 12,
     borderRadius: 8,
     marginBottom: 8,
-    // backgroundColor: '#f0f4f8',
   },
   notesInput: {
     borderWidth: 1,
@@ -343,10 +338,10 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
   },
   reactLogo: {
-    height: 200,
-    width: 830,
-    bottom: -50,
-    left: -220,
-    position: 'relative',
-  },
+    height: 400,
+    width: 760,
+    alignSelf: 'center',
+    marginBottom: -50,
+    marginTop: -50,
+  }
 });
