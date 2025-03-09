@@ -139,6 +139,7 @@ const deleteEntry = async (index: number) => {
 const styles = StyleSheet.create({
   container: {
     padding: 0,
+    paddingBottom: 90, // Add enough padding to prevent overlap with the tab bar
   },
   header: {
     marginTop: -30,
