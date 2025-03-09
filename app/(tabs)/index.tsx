@@ -261,6 +261,9 @@ export default function HomeScreen() {
             </ThemedView>
           ))}
         </ThemedView>
+
+        <View style={styles.tabBarSpacer} />
+
     </ParallaxScrollView>
   );
 }
@@ -346,5 +349,9 @@ const styles = StyleSheet.create({
     alignSelf: 'center',
     marginBottom: -50,
     marginTop: -50,
-  }
+  },
+  tabBarSpacer: {
+    height: 50, // Adjust this to match your tab bar height
+    width: '100%',
+  },
 });
