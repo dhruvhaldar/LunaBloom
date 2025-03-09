@@ -17,7 +17,7 @@ const MAPPING = {
   'chevron.right': 'chevron-right',
   'history.fill': 'history',
   'delete.fill': 'delete',
-  'barschart.fill': 'barschart',
+  'bar-chart.fill': 'bar-chart',
 } as Partial<
   Record<
     import('expo-symbols').SymbolViewProps['name'],

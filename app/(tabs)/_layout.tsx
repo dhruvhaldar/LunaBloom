@@ -149,7 +149,7 @@ export default function TabLayout() {
             <View style={styles.tabItemContainer}>
               <IconSymbol 
                 size={28} 
-                name="barschart.fill" 
+                name="bar-chart.fill" 
                 color={color}
                 style={{ 
                   opacity: focused ? 1 : 0.6 
