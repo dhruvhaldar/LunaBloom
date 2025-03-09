@@ -1,5 +1,5 @@
 import { Tabs } from 'expo-router';
-import React from 'react';
+import React, { useRef } from 'react';
 import { Platform, StyleSheet, TouchableOpacity, ViewStyle, Animated } from 'react-native';
 
 import { HapticTab } from '@/components/HapticTab';
@@ -36,24 +36,54 @@ export default function TabLayout() {
     paddingHorizontal: 0,
   };
 
-  // Custom tab button component to increase touchable area
-  const CustomTabButton = ({ children, onPress, accessibilityLabel }) => (
-    <TouchableOpacity 
-      style={styles.tabButtonContainer}
-      onPress={onPress}
-      accessibilityLabel={accessibilityLabel}
-      hitSlop={{ top: 0, bottom: 0, left: 40, right: 40 }} // Increase touch area
-    >
-      {children}
-    </TouchableOpacity>
-  );
+  // Custom tab button component with animation
+  const AnimatedTabButton = ({ children, onPress, accessibilityLabel }) => {
+    const scaleAnim = useRef(new Animated.Value(1)).current;
+
+    const handlePressIn = () => {
+      Animated.spring(scaleAnim, {
+        toValue: 0.5, // Slightly smaller
+        useNativeDriver: true,
+        bounciness: 30, // Add some bounce effect
+        speed: 0.4,
+      }).start();
+    };
+
+    const handlePressOut = () => {
+      Animated.spring(scaleAnim, {
+        toValue: 1, // Back to original size
+        useNativeDriver: true,
+        bounciness: 10,
+        speed: 0.4,
+      }).start();
+    };
+
+    return (
+      <TouchableOpacity 
+        style={styles.tabButtonContainer}
+        onPress={onPress}
+        onPressIn={handlePressIn}
+        onPressOut={handlePressOut}
+        accessibilityLabel={accessibilityLabel}
+        hitSlop={{ top: 20, bottom: 20, left: 20, right: 20 }}
+      >
+        <Animated.View style={{ 
+          transform: [{ scale: scaleAnim }],
+          alignItems: 'center',
+          justifyContent: 'center',
+        }}>
+          {children}
+        </Animated.View>
+      </TouchableOpacity>
+    );
+  };
 
   return (
     <Tabs
       screenOptions={{
         tabBarActiveTintColor: Colors[colorScheme ?? 'light'].tint,
         headerShown: false,
-        tabBarButton: (props) => <CustomTabButton {...props} />,
+        tabBarButton: (props) => <AnimatedTabButton {...props} />,
         tabBarBackground: TabBarBackground,
         tabBarStyle: tabBarStyle,
         tabBarHideOnKeyboard: true,
@@ -97,6 +127,7 @@ export default function TabLayout() {
         }}
       />
     </Tabs>
+    
   );
 }
 
