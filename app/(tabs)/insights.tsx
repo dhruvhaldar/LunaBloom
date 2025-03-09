@@ -51,19 +51,16 @@ export default function InsightsScreen() {
       return;
     }
 
-    // Calculate cycle lengths using the cycleLength from each entry
-    const cycleLengths = entriesData.map((entry, index) => {
-      if (index > 0) {
-        return { x: index, y: Number(entry.cycleLength) };
-      }
-      return null;
-    }).filter(Boolean);
+    // Extract cycle lengths from each entry
+    const cycleLengths = entriesData.map(entry => Number(entry.cycleLength)).filter(Boolean);
 
     // Calculate average cycle length
-    const avgCycle = cycleLengths.reduce((sum, entry) => sum + entry.y, 0) / cycleLengths.length;
+    const avgCycle = cycleLengths.reduce((sum, length) => sum + length, 0) / cycleLengths.length;
     setAverageCycleLength(Math.round(avgCycle));
 
-    setCycleData(cycleLengths);
+    // Prepare data for the chart
+    const chartData = cycleLengths.map((length, index) => ({ x: index + 1, y: length }));
+    setCycleData(chartData);
   };
 
   const predictNextPeriod = () => {
