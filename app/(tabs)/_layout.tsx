@@ -1,12 +1,12 @@
 import { Tabs } from 'expo-router';
 import React, { useRef } from 'react';
-import { Platform, StyleSheet, TouchableOpacity, ViewStyle, Animated } from 'react-native';
+import { Platform, StyleSheet, TouchableOpacity, ViewStyle, Animated, View } from 'react-native';
 
-import { HapticTab } from '@/components/HapticTab';
 import { IconSymbol } from '@/components/ui/IconSymbol';
 import TabBarBackground from '@/components/ui/TabBarBackground';
 import { Colors } from '@/constants/Colors';
 import { useColorScheme } from '@/hooks/useColorScheme';
+import { ThemedText } from '@/components/ThemedText';
 
 export default function TabLayout() {
   const colorScheme = useColorScheme();
@@ -14,9 +14,9 @@ export default function TabLayout() {
 
   const tabBarStyle: ViewStyle = {
     position: 'absolute',
-    bottom: 10, // control vertical positioning
+    bottom: 10,
     borderRadius: 48,
-    height: 60,
+    height: 70,
     alignContent:'center',
     backgroundColor: colorScheme === 'dark' 
       ? 'rgba(30, 30, 30, 0.8)' 
@@ -42,16 +42,16 @@ export default function TabLayout() {
 
     const handlePressIn = () => {
       Animated.spring(scaleAnim, {
-        toValue: 0.5, // Slightly smaller
+        toValue: 0.5,
         useNativeDriver: true,
-        bounciness: 30, // Add some bounce effect
+        bounciness: 30,
         speed: 0.4,
       }).start();
     };
 
     const handlePressOut = () => {
       Animated.spring(scaleAnim, {
-        toValue: 1, // Back to original size
+        toValue: 1,
         useNativeDriver: true,
         bounciness: 10,
         speed: 0.4,
@@ -87,7 +87,7 @@ export default function TabLayout() {
         tabBarBackground: TabBarBackground,
         tabBarStyle: tabBarStyle,
         tabBarHideOnKeyboard: true,
-        tabBarShowLabel: true,
+        tabBarShowLabel: false,
         tabBarItemStyle: {
           flex: 1,
           justifyContent: 'center',
@@ -99,14 +99,21 @@ export default function TabLayout() {
         options={{
           title: 'Home',
           tabBarIcon: ({ color, focused }) => (
-            <IconSymbol 
-              size={28} 
-              name="house.fill" 
-              color={color}
-              style={{ 
-                opacity: focused ? 1 : 0.6 
-              }} 
-            />
+            <View style={styles.tabItemContainer}>
+              <IconSymbol 
+                size={28} 
+                name="house.fill" 
+                color={color}
+                style={{ 
+                  opacity: focused ? 1 : 0.6 
+                }} 
+              />
+              {focused && (
+                <ThemedText style={[styles.tabLabel, { color }]}>
+                  Home
+                </ThemedText>
+              )}
+            </View>
           ),
         }}
       />
@@ -115,19 +122,49 @@ export default function TabLayout() {
         options={{
           title: 'History',
           tabBarIcon: ({ color, focused }) => (
-            <IconSymbol 
-              size={28} 
-              name="history.fill" 
-              color={color}
-              style={{ 
-                opacity: focused ? 1 : 0.6 
-              }} 
-            />
+            <View style={styles.tabItemContainer}>
+              <IconSymbol 
+                size={28} 
+                name="history.fill" 
+                color={color}
+                style={{ 
+                  opacity: focused ? 1 : 0.6 
+                }} 
+              />
+              {focused && (
+                <ThemedText style={[styles.tabLabel, { color }]}>
+                  History
+                </ThemedText>
+              )}
+            </View>
+          ),
+        }}
+      />
+      {/* New Insights Tab */}
+      <Tabs.Screen
+        name="insights"
+        options={{
+          title: 'Insights',
+          tabBarIcon: ({ color, focused }) => (
+            <View style={styles.tabItemContainer}>
+              <IconSymbol 
+                size={28} 
+                name="barschart.fill" 
+                color={color}
+                style={{ 
+                  opacity: focused ? 1 : 0.6 
+                }} 
+              />
+              {focused && (
+                <ThemedText style={[styles.tabLabel, { color }]}>
+                  Insights
+                </ThemedText>
+              )}
+            </View>
           ),
         }}
       />
     </Tabs>
-    
   );
 }
 
@@ -136,8 +173,6 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
-    paddingVertical: 10, // Increase vertical padding
-    paddingHorizontal: 20, // Increase horizontal padding
   },
   tabItemContainer: {
     flexDirection: 'column',
@@ -146,7 +181,7 @@ const styles = StyleSheet.create({
     gap: 4,
   },
   tabLabel: {
-    fontSize: 10,
-    marginTop: 4,
+    fontSize: 8,
+    marginTop: 0,
   },
 });
