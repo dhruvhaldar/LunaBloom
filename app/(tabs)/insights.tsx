@@ -26,6 +26,7 @@ export default function InsightsScreen() {
   const sectionHeadingtextColor = colorScheme === 'dark' ? '#ee2d60' : '#ee2d60';
   const axisColor = colorScheme === 'dark' ? '#f0f0f0' : '#000000';
   const strokeColor = colorScheme === 'dark' ? '#ee2d60' : '#413c58';
+  const gridColor = colorScheme === 'dark' ? '#f0f0f0' : '#413c58';
 
   useFocusEffect(
     useCallback(() => {
@@ -148,7 +149,11 @@ export default function InsightsScreen() {
                 style={{ 
                   axisLabel: { padding: 30, 
                     fill: axisColor  },
-                  tickLabels: { fontSize: 12,  fill: axisColor } 
+                  tickLabels: { fontSize: 12,  fill: axisColor },
+                  grid: {
+                    stroke: gridColor,
+                    strokeWidth: 0.5,
+                  } 
                 }} 
               />
               <VictoryAxis 
@@ -157,7 +162,11 @@ export default function InsightsScreen() {
                 style={{ 
                   axisLabel: { padding: 30, 
                     fill: axisColor  },
-                  tickLabels: { fontSize: 12,  fill: axisColor } 
+                  tickLabels: { fontSize: 12,  fill: axisColor },
+                  grid: {
+                    stroke: gridColor,
+                    strokeWidth: 0.5,
+                  }  
                 }} 
               />
               <VictoryLine
