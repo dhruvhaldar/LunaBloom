@@ -51,15 +51,13 @@ export default function InsightsScreen() {
       return;
     }
 
-    // Calculate cycle lengths
-    const cycleLengths = entriesData.slice(1).map((entry, index) => {
-      const prevEntry = entriesData[index];
-      const cycleLength = Math.round(
-        (new Date(entry.date).getTime() - new Date(prevEntry.date).getTime()) / 
-        (1000 * 3600 * 24)
-      );
-      return { x: index + 1, y: cycleLength };
-    });
+    // Calculate cycle lengths using the cycleLength from each entry
+    const cycleLengths = entriesData.map((entry, index) => {
+      if (index > 0) {
+        return { x: index, y: Number(entry.cycleLength) };
+      }
+      return null;
+    }).filter(Boolean);
 
     // Calculate average cycle length
     const avgCycle = cycleLengths.reduce((sum, entry) => sum + entry.y, 0) / cycleLengths.length;
@@ -69,7 +67,7 @@ export default function InsightsScreen() {
   };
 
   const predictNextPeriod = () => {
-    if (entries.length === 0) return 'N/A';
+    if (entries.length === 0) return 'Not enough data';
     
     const lastEntry = entries[0]; // Use the most recent entry
     
@@ -115,6 +113,26 @@ export default function InsightsScreen() {
       <ThemedView style={styles.container}>
         <ThemedText type="title" style={styles.title}>Cycle Insights 📊</ThemedText>
 
+        {/* Key Metrics */}
+        <ThemedView style={styles.sectionContainer}>
+          <ThemedText type="subtitle" style={{ color: sectionHeadingtextColor, marginBottom: 10 }}>
+            Key Metrics
+          </ThemedText>
+          
+          <View style={styles.metricsContainer}>
+            <View style={styles.metricItem}>
+              <ThemedText>Avg. Cycle Length</ThemedText>
+              <ThemedText type="subtitle">
+                {isNaN(averageCycleLength) ? 'N/A' : `${averageCycleLength} days`}
+              </ThemedText>
+            </View>
+            <View style={styles.metricItem}>
+              <ThemedText>Next Period Prediction</ThemedText>
+              <ThemedText type="subtitle">{predictNextPeriod()}</ThemedText>
+            </View>
+          </View>
+        </ThemedView>
+
         {/* Cycle Length Trends */}
         <ThemedView style={styles.section}>
           <ThemedText type="subtitle" style={{ color: sectionHeadingtextColor, marginBottom: 10 }}>
@@ -155,26 +173,7 @@ export default function InsightsScreen() {
             </ThemedText>
           )}
         </ThemedView>
-
-        {/* Key Metrics */}
-        <ThemedView style={styles.sectionContainer}>
-          <ThemedText type="subtitle" style={{ color: sectionHeadingtextColor, marginBottom: 10 }}>
-            Key Metrics
-          </ThemedText>
-          
-          <View style={styles.metricsContainer}>
-            <View style={styles.metricItem}>
-              <ThemedText>Avg. Cycle Length</ThemedText>
-              <ThemedText type="subtitle">
-                {isNaN(averageCycleLength) ? 'N/A' : `${averageCycleLength} days`}
-              </ThemedText>
-            </View>
-            <View style={styles.metricItem}>
-              <ThemedText>Next Period Prediction</ThemedText>
-              <ThemedText type="subtitle">{predictNextPeriod()}</ThemedText>
-            </View>
-          </View>
-        </ThemedView>
+        
       </ThemedView>
     </ParallaxScrollView>
   );
