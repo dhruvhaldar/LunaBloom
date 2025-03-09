@@ -180,6 +180,7 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     padding: 16,
+    paddingBottom: 90, // Add enough padding to prevent overlap with the tab bar
   },
   title: {
     textAlign: 'center',
