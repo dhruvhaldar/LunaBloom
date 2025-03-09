@@ -1,9 +1,8 @@
-import React, { useState, useEffect, useCallback } from 'react';
+import React, { useState, useCallback } from 'react';
 import { 
   StyleSheet, 
   View, 
-  ScrollView,
-  Image,
+  Image, 
   useColorScheme, 
   Dimensions 
 } from 'react-native';
@@ -46,18 +45,21 @@ export default function InsightsScreen() {
   };
 
   const analyzeCycleData = (entriesData) => {
+    if (entriesData.length < 2) {
+      setAverageCycleLength(0);
+      setCycleData([]);
+      return;
+    }
+
     // Calculate cycle lengths
-    const cycleLengths = entriesData.map((entry, index) => {
-      if (index > 0) {
-        const prevEntry = entriesData[index - 1];
-        const cycleLength = Math.round(
-          (new Date(entry.date).getTime() - new Date(prevEntry.date).getTime()) / 
-          (1000 * 3600 * 24)
-        );
-        return { x: index, y: cycleLength };
-      }
-      return null;
-    }).filter(Boolean);
+    const cycleLengths = entriesData.slice(1).map((entry, index) => {
+      const prevEntry = entriesData[index];
+      const cycleLength = Math.round(
+        (new Date(entry.date).getTime() - new Date(prevEntry.date).getTime()) / 
+        (1000 * 3600 * 24)
+      );
+      return { x: index + 1, y: cycleLength };
+    });
 
     // Calculate average cycle length
     const avgCycle = cycleLengths.reduce((sum, entry) => sum + entry.y, 0) / cycleLengths.length;
@@ -67,29 +69,57 @@ export default function InsightsScreen() {
   };
 
   const predictNextPeriod = () => {
-    if (entries.length === 0) return 'Not enough data';
+    if (entries.length === 0) return 'N/A';
     
-    const lastEntry = entries[entries.length - 1];
+    const lastEntry = entries[0]; // Use the most recent entry
+    
+    // Use the stored predicted next period if available
+    if (lastEntry.predictedNextPeriod) {
+      const predictedDate = new Date(lastEntry.predictedNextPeriod);
+      return predictedDate.toLocaleDateString('en-GB', { 
+        day: 'numeric', 
+        month: 'long', 
+        year: 'numeric' 
+      });
+    }
+    
+    // Fallback calculation if no predicted period is stored
     const lastPeriodDate = new Date(lastEntry.date);
     const predictedDate = new Date(lastPeriodDate);
-    predictedDate.setDate(lastPeriodDate.getDate() + Number(lastEntry.cycleLength));
+    
+    // Use average cycle length for prediction if available
+    const cycleLength = averageCycleLength > 0 
+      ? averageCycleLength 
+      : (Number(lastEntry.cycleLength) || 28); // Fallback to 28 if no data
+    
+    predictedDate.setDate(lastPeriodDate.getDate() + cycleLength);
 
-    return predictedDate.toLocaleDateString('en-GB', { day: 'numeric', month: 'long' });
+    return predictedDate.toLocaleDateString('en-GB', { 
+      day: 'numeric', 
+      month: 'long', 
+      year: 'numeric' 
+    });
   };
 
   return (
     <ParallaxScrollView
-          headerBackgroundColor={{ light: '#ffdde2', dark: '#151718' }} headerImage={<Image 
-                    source={require('@/assets/images/history2.png')} 
-                    style={styles.reactLogo}
-                    resizeMode="contain"
-                  />}    >
+      headerBackgroundColor={{ light: '#ffdde2', dark: '#151718' }}
+      headerImage={
+        <Image 
+          source={require('@/assets/images/history2.png')} 
+          style={styles.reactLogo}
+          resizeMode="contain"
+        />
+      }
+    >
       <ThemedView style={styles.container}>
         <ThemedText type="title" style={styles.title}>Cycle Insights 📊</ThemedText>
 
         {/* Cycle Length Trends */}
         <ThemedView style={styles.section}>
-          <ThemedText type="subtitle" style={{ color: sectionHeadingtextColor , marginBottom: 10}}>Cycle Length Trends</ThemedText>
+          <ThemedText type="subtitle" style={{ color: sectionHeadingtextColor, marginBottom: 10 }}>
+            Cycle Length Trends
+          </ThemedText>
           {cycleData.length > 0 ? (
             <VictoryChart 
               width={Dimensions.get('window').width - 50}
@@ -100,7 +130,7 @@ export default function InsightsScreen() {
                 label="Cycle Number" 
                 style={{ 
                   axisLabel: { padding: 30 },
-                  tickLabels: { fontSize: 10 } 
+                  tickLabels: { fontSize: 12 } 
                 }} 
               />
               <VictoryAxis 
@@ -108,14 +138,14 @@ export default function InsightsScreen() {
                 label="Days" 
                 style={{ 
                   axisLabel: { padding: 30 },
-                  tickLabels: { fontSize: 10 } 
+                  tickLabels: { fontSize: 12 } 
                 }} 
               />
               <VictoryLine
                 data={cycleData}
-                style={
+                style={{
                   data: { stroke: "#EE2D60" },
-                  parent: { border: "1px solid #ccc"}
+                  parent: { border: "2px solid #EE2D60"}
                 }}
               />
             </VictoryChart>
@@ -128,8 +158,9 @@ export default function InsightsScreen() {
 
         {/* Key Metrics */}
         <ThemedView style={styles.sectionContainer}>
-          
-          <ThemedText type="subtitle" style={{ color: sectionHeadingtextColor , marginBottom: 10}} >Key Metrics</ThemedText>
+          <ThemedText type="subtitle" style={{ color: sectionHeadingtextColor, marginBottom: 10 }}>
+            Key Metrics
+          </ThemedText>
           
           <View style={styles.metricsContainer}>
             <View style={styles.metricItem}>

@@ -110,6 +110,9 @@ export default function HomeScreen() {
         cycleLength,
         selectedSymptoms,
         notes,
+        predictedNextPeriod: predictedPeriods.length > 0 
+          ? predictedPeriods[0].toISOString() 
+          : null, // Store the first predicted period
       };
   
       let entries = [];
