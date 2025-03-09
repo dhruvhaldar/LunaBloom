@@ -10,21 +10,17 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import { ThemedText } from '@/components/ThemedText';
 import { ThemedView } from '@/components/ThemedView';
 import ParallaxScrollView from '@/components/ParallaxScrollView';
-import { 
-  VictoryChart, 
-  VictoryLine, 
-  VictoryTheme, 
-  VictoryAxis 
-} from 'victory-native';
+import { VictoryBar, VictoryLabel } from 'victory-native';
 import { useFocusEffect } from '@react-navigation/native';
+
+const screenWidth = Dimensions.get('window').width;
 
 export default function InsightsScreen() {
   const colorScheme = useColorScheme();
   const [entries, setEntries] = useState([]);
   const [cycleData, setCycleData] = useState([]);
   const [averageCycleLength, setAverageCycleLength] = useState(0);
-  const [averagePeriodDuration, setAveragePeriodDuration] = useState(0);
-  const sectionHeadingtextColor = colorScheme === 'dark' ? '#ee2d60' : '#ee2d60';
+  const sectionHeadingtextColor = '#ee2d60';
 
   useFocusEffect(
     useCallback(() => {
@@ -48,72 +44,27 @@ export default function InsightsScreen() {
   const analyzeCycleData = (entriesData) => {
     if (entriesData.length < 2) {
       setAverageCycleLength(0);
-      setAveragePeriodDuration(0);
       setCycleData([]);
       return;
     }
 
-    // Extract cycle lengths from each entry
-    const cycleLengths = entriesData.map(entry => Number(entry.cycleLength)).filter(Boolean);
+    const formattedData = entriesData.map((entry, index) => ({
+      x: index + 1,
+      y: Number(entry.cycleLength) || 28,
+      dateRange: `${entry.startDate} - ${entry.endDate}`
+    }));
 
-    // Calculate average cycle length
-    const avgCycle = cycleLengths.reduce((sum, length) => sum + length, 0) / cycleLengths.length;
+    setCycleData(formattedData);
+    const avgCycle = formattedData.reduce((sum, entry) => sum + entry.y, 0) / formattedData.length;
     setAverageCycleLength(Math.round(avgCycle));
-
-    // Calculate average period duration (you might want to add this to your entry logging)
-    // This is a placeholder - you may need to modify your entry logging to include period duration
-    const periodDurations = entriesData.map(entry => entry.periodDuration || 5); // Default to 5 if not specified
-    const avgPeriodDuration = periodDurations.reduce((sum, duration) => sum + duration, 0) / periodDurations.length;
-    setAveragePeriodDuration(Math.round(avgPeriodDuration));
-
-    // Prepare data for the chart
-    const chartData = cycleLengths.map((length, index) => ({ x: index + 1, y: length }));
-    setCycleData(chartData);
   };
-
-  const predictNextPeriod = () => {
-    if (entries.length === 0) return 'Not enough data';
-    
-    const lastEntry = entries[0]; // Use the most recent entry
-    
-    // Use the stored predicted next period if available
-    if (lastEntry.predictedNextPeriod) {
-      const predictedDate = new Date(lastEntry.predictedNextPeriod);
-      return predictedDate.toLocaleDateString('en-GB', { 
-        day: 'numeric', 
-        month: 'long', 
-        year: 'numeric' 
-      });
-    }
-    
-    // Fallback calculation if no predicted period is stored
-    const lastPeriodDate = new Date(lastEntry.date);
-    const predictedDate = new Date(lastPeriodDate);
-    
-    // Use average cycle length for prediction if available
-    const cycleLength = averageCycleLength > 0 
-      ? averageCycleLength 
-      : (Number(lastEntry.cycleLength) || 28); // Fallback to 28 if no data
-    
-    predictedDate.setDate(lastPeriodDate.getDate() + cycleLength);
-
-    return predictedDate.toLocaleDateString('en-GB', { 
-      day: 'numeric', 
-      month: 'long', 
-      year: 'numeric' 
-    });
-  };
-
-  // Determine colors based on color scheme
-  const axisColor = colorScheme === 'dark' ? '#f0f0f0' : '#000000';
-  const gridColor = colorScheme === 'dark' ? 'rgba(240, 240, 240, 0.2)' : 'rgba(0, 0, 0, 0.1)';
 
   return (
     <ParallaxScrollView
       headerBackgroundColor={{ light: '#ffdde2', dark: '#151718' }}
       headerImage={
         <Image 
-          source={require('@/assets/images/history2.png')} 
+          source={require('@/assets/images/history2.png')}
           style={styles.reactLogo}
           resizeMode="contain"
         />
@@ -122,113 +73,18 @@ export default function InsightsScreen() {
       <ThemedView style={styles.container}>
         <ThemedText type="title" style={styles.title}>Cycle Insights 📊</ThemedText>
 
-        {/* Key Metrics */}
         <ThemedView style={styles.sectionContainer}>
           <ThemedText type="subtitle" style={{ color: sectionHeadingtextColor, marginBottom: 10 }}>
-            Key Metrics
-          </ThemedText>
-          
-          <View style={styles.metricsContainer}>
-            <View style={styles.metricItem}>
-              <ThemedText>Periods Tracked</ThemedText>
-              <ThemedText type="subtitle">
-                {entries.length}
-              </ThemedText>
-            </View>
-            <View style={styles.metricItem}>
-              <ThemedText>Avg. Cycle Length</ThemedText>
-              <ThemedText type="subtitle">
-                {isNaN(averageCycleLength) ? 'N/A' : `${averageCycleLength} days`}
-              </ThemedText>
-            </View>
-            <View style={styles.metricItem}>
-              <ThemedText>Avg. Period Duration</ThemedText>
-              <ThemedText type="subtitle">
-                {isNaN(averagePeriodDuration) ? 'N/A' : `${averagePeriodDuration} days`}
-              </ThemedText>
-            </View>
-          </View>
-          
-          <View style={styles.metricsContainer}>
-            <View style={styles.metricItem}>
-              <ThemedText>Next Period Prediction</ThemedText>
-              <ThemedText type="subtitle">{predictNextPeriod()}</ThemedText>
-            </View>
-          </View>
-        </ThemedView>
-
-        {/* Cycle Length Trends */}
-        <ThemedView style={styles.section}>
-          <ThemedText type="subtitle" style={{ color: sectionHeadingtextColor, marginBottom: 10 }}>
-            Cycle Length Trends
+            Previous Cycles
           </ThemedText>
           {cycleData.length > 0 ? (
-            <VictoryChart 
-              width={Dimensions.get('window').width - 50}
-              height={Dimensions.get('window').width - 50}
-              theme={VictoryTheme.material}
-            >
-              <VictoryAxis 
-                label="Cycle Number" 
-                style={{ 
-                  axisLabel: { 
-                    padding: 30, 
-                    fill: axisColor 
-                  },
-                  tickLabels: { 
-                    fontSize: 12,
-                    fill: axisColor
-                  },
-                  axis: { 
-                    stroke: axisColor 
-                  },
-                  grid: {
-                    stroke: gridColor,
-                    strokeWidth: 0.5,
-                  }
-                }} 
-              />
-              <VictoryAxis 
-                dependentAxis 
-                label="Days" 
-                style={{ 
-                  axisLabel: { 
-                    padding: 30, 
-                    fill: axisColor 
-                  },
-                  tickLabels: { 
-                    fontSize: 12,
-                    fill: axisColor
-                  },
-                  axis: { 
-                    stroke: axisColor 
-                  },
-                  grid: {
-                    stroke: gridColor,
-                    strokeWidth: 0.5,
-                  }
-                }} 
-              />
-              <VictoryLine
-                data={cycleData}
-                style={{
-                  data: { 
-                    stroke: "#EE2D60",
-                    strokeWidth: 2
-                  },
-                  parent: { 
-                    border: `2px solid #EE2D60`
-                  }
-                }}
-              />
-            </VictoryChart>
-          ) : (
-            <ThemedText style={styles.noDataText}>
-              Not enough data to generate chart
-            </ThemedText>
+            <VictoryBar data={cycleData} horizontal barRatio={0.2}
+              labels={({ datum }) => `${datum.y} days`}
+              style={{ data: { fill: "#413c58" }, labels: { fill: "black" }}}
+              width={screenWidth - 140}
+            />) : ( <ThemedText style={styles.noDataText}>Not enough data</ThemedText>
           )}
         </ThemedView>
-        
       </ThemedView>
     </ParallaxScrollView>
   );
@@ -244,24 +100,9 @@ const styles = StyleSheet.create({
     textAlign: 'center',
     marginBottom: 20,
   },
-  section: {
-    borderRadius: 8,
-    padding: 5,
-    marginBottom: 12,
-  },
   sectionContainer: {
     marginBottom: 20,
     borderRadius: 10,
-    padding: 10,
-  },
-  metricsContainer: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    marginBottom: 10,
-  },
-  metricItem: {
-    flex: 1,
-    alignItems: 'center',
     padding: 10,
   },
   noDataText: {
