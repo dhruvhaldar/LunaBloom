@@ -23,10 +23,8 @@ export default function InsightsScreen() {
   const [entries, setEntries] = useState([]);
   const [cycleData, setCycleData] = useState([]);
   const [averageCycleLength, setAverageCycleLength] = useState(0);
+  const [averagePeriodDuration, setAveragePeriodDuration] = useState(0);
   const sectionHeadingtextColor = colorScheme === 'dark' ? '#ee2d60' : '#ee2d60';
-  const axisColor = colorScheme === 'dark' ? '#f0f0f0' : '#000000';
-  const strokeColor = colorScheme === 'dark' ? '#ee2d60' : '#413c58';
-  const gridColor = colorScheme === 'dark' ? '#f0f0f0' : '#413c58';
 
   useFocusEffect(
     useCallback(() => {
@@ -50,6 +48,7 @@ export default function InsightsScreen() {
   const analyzeCycleData = (entriesData) => {
     if (entriesData.length < 2) {
       setAverageCycleLength(0);
+      setAveragePeriodDuration(0);
       setCycleData([]);
       return;
     }
@@ -60,6 +59,12 @@ export default function InsightsScreen() {
     // Calculate average cycle length
     const avgCycle = cycleLengths.reduce((sum, length) => sum + length, 0) / cycleLengths.length;
     setAverageCycleLength(Math.round(avgCycle));
+
+    // Calculate average period duration (you might want to add this to your entry logging)
+    // This is a placeholder - you may need to modify your entry logging to include period duration
+    const periodDurations = entriesData.map(entry => entry.periodDuration || 5); // Default to 5 if not specified
+    const avgPeriodDuration = periodDurations.reduce((sum, duration) => sum + duration, 0) / periodDurations.length;
+    setAveragePeriodDuration(Math.round(avgPeriodDuration));
 
     // Prepare data for the chart
     const chartData = cycleLengths.map((length, index) => ({ x: index + 1, y: length }));
@@ -99,6 +104,10 @@ export default function InsightsScreen() {
     });
   };
 
+  // Determine colors based on color scheme
+  const axisColor = colorScheme === 'dark' ? '#f0f0f0' : '#000000';
+  const gridColor = colorScheme === 'dark' ? 'rgba(240, 240, 240, 0.2)' : 'rgba(0, 0, 0, 0.1)';
+
   return (
     <ParallaxScrollView
       headerBackgroundColor={{ light: '#ffdde2', dark: '#151718' }}
@@ -121,11 +130,26 @@ export default function InsightsScreen() {
           
           <View style={styles.metricsContainer}>
             <View style={styles.metricItem}>
+              <ThemedText>Periods Tracked</ThemedText>
+              <ThemedText type="subtitle">
+                {entries.length}
+              </ThemedText>
+            </View>
+            <View style={styles.metricItem}>
               <ThemedText>Avg. Cycle Length</ThemedText>
               <ThemedText type="subtitle">
                 {isNaN(averageCycleLength) ? 'N/A' : `${averageCycleLength} days`}
               </ThemedText>
             </View>
+            <View style={styles.metricItem}>
+              <ThemedText>Avg. Period Duration</ThemedText>
+              <ThemedText type="subtitle">
+                {isNaN(averagePeriodDuration) ? 'N/A' : `${averagePeriodDuration} days`}
+              </ThemedText>
+            </View>
+          </View>
+          
+          <View style={styles.metricsContainer}>
             <View style={styles.metricItem}>
               <ThemedText>Next Period Prediction</ThemedText>
               <ThemedText type="subtitle">{predictNextPeriod()}</ThemedText>
@@ -147,33 +171,54 @@ export default function InsightsScreen() {
               <VictoryAxis 
                 label="Cycle Number" 
                 style={{ 
-                  axisLabel: { padding: 30, 
-                    fill: axisColor  },
-                  tickLabels: { fontSize: 12,  fill: axisColor },
+                  axisLabel: { 
+                    padding: 30, 
+                    fill: axisColor 
+                  },
+                  tickLabels: { 
+                    fontSize: 12,
+                    fill: axisColor
+                  },
+                  axis: { 
+                    stroke: axisColor 
+                  },
                   grid: {
                     stroke: gridColor,
                     strokeWidth: 0.5,
-                  } 
+                  }
                 }} 
               />
               <VictoryAxis 
                 dependentAxis 
                 label="Days" 
                 style={{ 
-                  axisLabel: { padding: 30, 
-                    fill: axisColor  },
-                  tickLabels: { fontSize: 12,  fill: axisColor },
+                  axisLabel: { 
+                    padding: 30, 
+                    fill: axisColor 
+                  },
+                  tickLabels: { 
+                    fontSize: 12,
+                    fill: axisColor
+                  },
+                  axis: { 
+                    stroke: axisColor 
+                  },
                   grid: {
                     stroke: gridColor,
                     strokeWidth: 0.5,
-                  }  
+                  }
                 }} 
               />
               <VictoryLine
                 data={cycleData}
                 style={{
-                  data: { stroke: strokeColor },
-                  parent: { border: "2px solid #EE2D60"}
+                  data: { 
+                    stroke: "#EE2D60",
+                    strokeWidth: 2
+                  },
+                  parent: { 
+                    border: `2px solid #EE2D60`
+                  }
                 }}
               />
             </VictoryChart>
@@ -193,7 +238,7 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     padding: 16,
-    paddingBottom: 90, // Add enough padding to prevent overlap with the tab bar
+    paddingBottom: 90,
   },
   title: {
     textAlign: 'center',
@@ -212,6 +257,7 @@ const styles = StyleSheet.create({
   metricsContainer: {
     flexDirection: 'row',
     justifyContent: 'space-between',
+    marginBottom: 10,
   },
   metricItem: {
     flex: 1,
