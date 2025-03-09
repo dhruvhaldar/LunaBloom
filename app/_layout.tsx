@@ -10,6 +10,7 @@ import { useColorScheme } from '@/hooks/useColorScheme';
 
 SplashScreen.preventAutoHideAsync();
 
+// Change font here
 export default function RootLayout() {
   const colorScheme = useColorScheme();
   const [loaded] = useFonts({
