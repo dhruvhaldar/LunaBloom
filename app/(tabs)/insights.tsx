@@ -24,6 +24,8 @@ export default function InsightsScreen() {
   const [cycleData, setCycleData] = useState([]);
   const [averageCycleLength, setAverageCycleLength] = useState(0);
   const sectionHeadingtextColor = colorScheme === 'dark' ? '#ee2d60' : '#ee2d60';
+  const axisColor = colorScheme === 'dark' ? '#f0f0f0' : '#000000';
+  const strokeColor = colorScheme === 'dark' ? '#ee2d60' : '#413c58';
 
   useFocusEffect(
     useCallback(() => {
@@ -144,22 +146,24 @@ export default function InsightsScreen() {
               <VictoryAxis 
                 label="Cycle Number" 
                 style={{ 
-                  axisLabel: { padding: 30 },
-                  tickLabels: { fontSize: 12 } 
+                  axisLabel: { padding: 30, 
+                    fill: axisColor  },
+                  tickLabels: { fontSize: 12,  fill: axisColor } 
                 }} 
               />
               <VictoryAxis 
                 dependentAxis 
                 label="Days" 
                 style={{ 
-                  axisLabel: { padding: 30 },
-                  tickLabels: { fontSize: 12 } 
+                  axisLabel: { padding: 30, 
+                    fill: axisColor  },
+                  tickLabels: { fontSize: 12,  fill: axisColor } 
                 }} 
               />
               <VictoryLine
                 data={cycleData}
                 style={{
-                  data: { stroke: "#EE2D60" },
+                  data: { stroke: strokeColor },
                   parent: { border: "2px solid #EE2D60"}
                 }}
               />
