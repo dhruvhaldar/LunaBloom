@@ -24,6 +24,8 @@ export default function InsightsScreen() {
 
   const sectionHeadingtextColor = '#ee2d60';
   const textColor = colorScheme === 'dark' ? '#f0f0f0' : '#413c58';
+  const barColor = colorScheme === 'dark' ? '#f0f0f0' : '#413c58';
+
 
   useFocusEffect(
     useCallback(() => {
@@ -118,34 +120,19 @@ export default function InsightsScreen() {
 
         {/* Previous Cycles Section */}
         <ThemedView style={styles.sectionContainer}>
-          <ThemedText type="subtitle" style={{ color: sectionHeadingtextColor, marginBottom: 10 }}>
-            Previous Cycles
-          </ThemedText>
-          {cycleData.length > 0 ? (
-            
+          <ThemedText type="subtitle" style={{ color: sectionHeadingtextColor, marginBottom: 10 }}> Previous Cycles </ThemedText>
+          
+          {cycleData.length > 0 ? (  
             <VictoryBar 
-              data={cycleData} 
-              horizontal 
-              barRatio={0.4} // Adjusted to make bars shorter
+              data={cycleData} horizontal 
+              barRatio={0.1} // Adjusted to make bars shorter
               labels={({ datum }) => `${datum.y} days`}
-              labelComponent={
-                <VictoryLabel 
-                  dy={0} 
-                  textAnchor="middle"
-                  style={[{ fontSize: 10, fill: textColor }]}
-                />
-              }
-              style={{ 
-                data: { fill: "#413c58" },
-                labels: { fill: "white" }
-              }}
-              width={screenWidth - 140}
-              padding={{ left: 50, right: 10, top: 10, bottom: 10 }} // Added padding to prevent overlap
+              labelComponent={<VictoryLabel dy={0} dx={10} textAnchor="start" style={[{ fontSize: 13, fill: textColor }]}/>}
+              style={{ data: { fill: barColor },labels: { fill: "white" }}}
+              width={screenWidth - 130} // Width of bar - 120 pixels
+              padding={{ top : 20, left: 4, right: 70, bottom : 20 }} // Added padding to prevent overlap
             />
-            
-          ) : (
-            <ThemedText style={styles.noDataText}>Not enough data</ThemedText>
-          )}
+          ) : ( <ThemedText style={styles.noDataText}>Not enough data</ThemedText>)}
         </ThemedView>
 
         
@@ -163,16 +150,16 @@ export default function InsightsScreen() {
               </ThemedText>
             </View>
           </View>
-          <View style={styles.metricItem}>
-              <ThemedText>Periods Tracked</ThemedText>
-              <ThemedText type="subtitle">
-                {entries.length}
-              </ThemedText>
-            </View>
             <View style={styles.metricItem}>
               <ThemedText>Avg. Period Duration</ThemedText>
               <ThemedText type="subtitle">
                 {isNaN(averagePeriodDuration) ? 'N/A' : `${averagePeriodDuration} days`}
+              </ThemedText>
+            </View>
+            <View style={styles.metricItem}>
+              <ThemedText>Periods Tracked</ThemedText>
+              <ThemedText type="subtitle">
+                {entries.length}
               </ThemedText>
             </View>
             <View style={styles.metricItem}>

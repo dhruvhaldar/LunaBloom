@@ -102,6 +102,7 @@ export default function HomeScreen() {
     calculatePredictions();
   }, [lastPeriod, cycleLength]);
 
+  // Save data
   const logPeriod = async () => {
     try {
       const entry = {
