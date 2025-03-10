@@ -47,7 +47,7 @@ export default function HomeScreen() {
 
 
 
-  const handleCycleLengthChange = (text) => {
+  const handleCycleLengthChange = (text: string) => {
     const filteredText = text.replace(/[^0-9]/g, '');
     let number = parseInt(filteredText, 10);
 
@@ -225,7 +225,7 @@ export default function HomeScreen() {
                   );
                 }}
               >
-                <ThemedText style={[{ color: symptomtextColor }, selectedSymptoms.includes(symptom) && styles.symptomText]}>
+                <ThemedText style={[{ color: symptomtextColor }, selectedSymptoms.includes(symptom)]}>
                   {symptom}
                 </ThemedText>
               </TouchableOpacity>
