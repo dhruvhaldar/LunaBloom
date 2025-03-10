@@ -206,12 +206,12 @@ export default function InsightsScreen() {
                 {isNaN(averagePeriodDuration) ? 'N/A' : `${averagePeriodDuration} days`}
               </ThemedText>
             </View>
-            <View style={styles.metricItem}>
+            {/* <View style={styles.metricItem}>
               <ThemedText>Avg. Ovulation Duration</ThemedText>
               <ThemedText type="subtitle">
                 {isNaN(averageOvulationDay) ? 'N/A' : `${averageOvulationDay} days`}
               </ThemedText>
-            </View>
+            </View> */}
             
             <View style={styles.metricItem}>
               <ThemedText>Next Period Prediction</ThemedText>
