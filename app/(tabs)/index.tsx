@@ -321,14 +321,14 @@ export default function HomeScreen() {
         {/* Log Period Button */}
         <TouchableOpacity style={styles.logButton} onPress={logPeriod}>
           <ThemedText style={styles.logButtonText}>
-            Log Period Start
+            Log Period Entry
           </ThemedText>
         </TouchableOpacity>
 
         {/* Predicted Periods */}
         {/* Predicted Periods */}
 <ThemedView style={styles.section}>
-  <ThemedText type="subtitle" style={{ color: predictedsectionHeadingtextColor, marginBottom: 10 }}>
+  <ThemedText type="subtitle" style={{ color: predictedsectionHeadingtextColor, marginBottom: 10, marginTop: 15 }}>
     Predicted Periods
   </ThemedText>
   {predictedPeriods.map((date, index) => {
@@ -497,7 +497,7 @@ const styles = StyleSheet.create({
     backgroundColor: '#413c58',
     borderRadius: 40,
     padding: 16,
-    marginTop: 20,
+    marginTop: 8,
     alignItems: 'center',
   },
   logButtonText: {
