@@ -9,6 +9,7 @@ import { Image } from 'react-native';
 import { IconSymbol } from '@/components/ui/IconSymbol';
 
 export default function TabTwoScreen() {
+  console.log('TabTwoScreen rendering...');
   const [entries, setEntries] = useState([]);
   const colorScheme = useColorScheme();
   const sectionHeadingtextColor = colorScheme === 'dark' ? '#ee2d60' : '#ee2d60';
@@ -109,11 +110,11 @@ const deleteEntry = async (index: number) => {
             <View key={index} style={styles.entry}>
               <View style={styles.entryContent}>
                 <View style={styles.entryTextContainer}>
-                  <Text style={{ color: textColor }}>Last Period: {new Date(item.lastPeriod).toLocaleDateString('en-GB', { day: 'numeric', month: 'long', year:'numeric'})}</Text>
+                  <Text style={{ color: textColor }}>Last Period: {new Date(item.lastPeriod).toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year:'numeric'})}</Text>
                   <Text style={{ color: textColor }}>Cycle Length: {item.cycleLength} days</Text>
                   <Text style={{ color: textColor }}>Symptoms: {item.selectedSymptoms.join(', ')}</Text>
                   <Text style={{ color: textColor }}>Notes: {item.notes}</Text>
-                  <Text style={{ color: textColor }}>Log Date: {new Date(item.date).toLocaleDateString('en-GB', { day: 'numeric', month: 'long', year:'numeric'})}</Text>
+                  <Text style={{ color: textColor }}>Log Date: {new Date(item.date).toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year:'numeric'})}</Text>
                 </View>
                 
                 <TouchableOpacity style={styles.deleteIconContainer} onPress={() => deleteEntry(index)}>
@@ -168,7 +169,7 @@ const styles = StyleSheet.create({
     padding: 10,
   },
   reactLogo: {
-    height: 380,
+    height: 280,
     width: 500,
     alignSelf: 'center',
     marginBottom: -50,
