@@ -193,7 +193,7 @@ export default function HomeScreen() {
               style={[styles.dateButton, { borderColor: textColor }]} // Dynamically set borderColor
             >
               <ThemedText style={[styles.dateText, { color: textColor }]}>
-              {lastPeriod.toLocaleDateString()}
+              {lastPeriod.toLocaleDateString('en-GB', { day: 'numeric', month: 'long', year:'numeric'})}
               </ThemedText>
             </TouchableOpacity>
             {show && (
