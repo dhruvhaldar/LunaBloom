@@ -80,13 +80,10 @@ export default function InsightsScreen() {
         : 14
     }));
   
-    // Sort formatted data for display purposes
+    // Sort formatted data for display purposes (most recent last period at the top)
     formattedData = formattedData
       .sort((a, b) => b.date.getTime() - a.date.getTime())
-      .map((item, sortedIndex) => ({ ...item, x: sortedIndex + 1 }));
-  
-    // Reverse the array to display the most recent cycle at the top
-    formattedData.reverse();
+      .map((item, sortedIndex) => ({ ...item, x: formattedData.length - sortedIndex }));
   
     setCycleData(formattedData);
   
