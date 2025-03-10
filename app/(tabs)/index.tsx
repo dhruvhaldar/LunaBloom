@@ -229,7 +229,7 @@ export default function HomeScreen() {
               <ThemedText style={[styles.dateText, { color: textColor }]}>
                 {lastPeriod.toLocaleDateString('en-GB', { 
                   day: 'numeric', 
-                  month: 'long', 
+                  month: 'short', 
                   year: 'numeric'
                 })}
               </ThemedText>
@@ -350,7 +350,7 @@ export default function HomeScreen() {
         <ThemedText style={{ color: textColor }}>
           {date.toLocaleDateString('en-GB', { 
             day: 'numeric', 
-            month: 'long' 
+            month: 'short' 
           })}
         </ThemedText>
         <ThemedText 
@@ -400,7 +400,7 @@ export default function HomeScreen() {
         <ThemedText style={{ color: textColor }}>
           Ovulation: {date.toLocaleDateString('en-GB', { 
             day: 'numeric', 
-            month: 'long' 
+            month: 'short' 
           })}
         </ThemedText>
         <ThemedText 
@@ -412,10 +412,10 @@ export default function HomeScreen() {
         >
           Fertile Window: {fertileWindowStart.toLocaleDateString('en-GB', { 
             day: 'numeric', 
-            month: 'long' 
+            month: 'short' 
           })} - {fertileWindowEnd.toLocaleDateString('en-GB', { 
             day: 'numeric', 
-            month: 'long' 
+            month: 'short' 
           })}
         </ThemedText>
       </ThemedView>

@@ -109,11 +109,11 @@ const deleteEntry = async (index: number) => {
             <View key={index} style={styles.entry}>
               <View style={styles.entryContent}>
                 <View style={styles.entryTextContainer}>
-                  <Text style={{ color: textColor }}>Last Period: {new Date(item.lastPeriod).toLocaleDateString('en-GB', { day: 'numeric', month: 'long', year:'numeric'})}</Text>
+                  <Text style={{ color: textColor }}>Last Period: {new Date(item.lastPeriod).toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year:'numeric'})}</Text>
                   <Text style={{ color: textColor }}>Cycle Length: {item.cycleLength} days</Text>
                   <Text style={{ color: textColor }}>Symptoms: {item.selectedSymptoms.join(', ')}</Text>
                   <Text style={{ color: textColor }}>Notes: {item.notes}</Text>
-                  <Text style={{ color: textColor }}>Log Date: {new Date(item.date).toLocaleDateString('en-GB', { day: 'numeric', month: 'long', year:'numeric'})}</Text>
+                  <Text style={{ color: textColor }}>Log Date: {new Date(item.date).toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year:'numeric'})}</Text>
                 </View>
                 
                 <TouchableOpacity style={styles.deleteIconContainer} onPress={() => deleteEntry(index)}>

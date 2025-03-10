@@ -68,7 +68,7 @@ export default function InsightsScreen() {
     let formattedData = entriesData.map((entry, index) => ({
       x: index + 1,
       y: Number(entry.cycleLength) || 28,
-      dateRange: `${new Date(entry.date).toLocaleDateString('en-GB', { day: 'numeric', month: 'long' })} - ${entry.predictedNextPeriod ? new Date(entry.predictedNextPeriod).toLocaleDateString('en-GB', { day: 'numeric', month: 'long' }) : 'N/A'}`,
+      dateRange: `${new Date(entry.date).toLocaleDateString('en-GB', { day: 'numeric', month: 'short' })} - ${entry.predictedNextPeriod ? new Date(entry.predictedNextPeriod).toLocaleDateString('en-GB', { day: 'numeric', month: 'short' }) : 'N/A'}`,
       date: new Date(entry.date),
       ovulationDay: entry.predictedNextOvulation 
         ? Math.floor((new Date(entry.predictedNextOvulation).getTime() - new Date(entry.date).getTime()) / (1000 * 60 * 60 * 24)) 
@@ -103,7 +103,7 @@ export default function InsightsScreen() {
       const predictedDate = new Date(lastEntry.predictedNextPeriod);
       return predictedDate.toLocaleDateString('en-GB', { 
         day: 'numeric', 
-        month: 'long', 
+        month: 'short', 
         year: 'numeric' 
       });
     }
@@ -120,7 +120,7 @@ export default function InsightsScreen() {
     predictedDate.setDate(lastPeriodDate.getDate() + cycleLength);
 
     return predictedDate.toLocaleDateString('en-GB', { 
-      day: 'numeric', month: 'long', year: 'numeric' 
+      day: 'numeric', month: 'short', year: 'numeric' 
     });
   };
 
@@ -133,7 +133,7 @@ export default function InsightsScreen() {
     if (lastEntry.predictedNextOvulation) {
       const predictedDate = new Date(lastEntry.predictedNextOvulation);
       return predictedDate.toLocaleDateString('en-GB', { 
-        day: 'numeric', month: 'long', year: 'numeric' 
+        day: 'numeric', month: 'short', year: 'numeric' 
       });
     }
     
@@ -149,7 +149,7 @@ export default function InsightsScreen() {
 
     return predictedDate.toLocaleDateString('en-GB', { 
       day: 'numeric', 
-      month: 'long', 
+      month: 'short', 
       year: 'numeric' 
     });
   };
