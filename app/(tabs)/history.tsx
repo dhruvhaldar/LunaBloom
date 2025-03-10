@@ -13,7 +13,7 @@ export default function TabTwoScreen() {
   const colorScheme = useColorScheme();
   const sectionHeadingtextColor = colorScheme === 'dark' ? '#ee2d60' : '#ee2d60';
   const textColor = colorScheme === 'dark' ? '#FFFFFF' : '#000000';
-  const deleteIconColor = colorScheme === 'dark' ? '#ee2d60' : '#ee2d60';
+  const deleteIconColor = colorScheme === 'dark' ? '#f0f0f0' : '#413c58';
 
 
   useFocusEffect(
@@ -109,22 +109,15 @@ const deleteEntry = async (index: number) => {
             <View key={index} style={styles.entry}>
               <View style={styles.entryContent}>
                 <View style={styles.entryTextContainer}>
-                  <Text style={{ color: textColor }}>Date: {new Date(item.date).toLocaleDateString()}</Text>
-                  <Text style={{ color: textColor }}>Last Period: {new Date(item.lastPeriod).toLocaleDateString()}</Text>
+                  <Text style={{ color: textColor }}>Last Period: {new Date(item.lastPeriod).toLocaleDateString('en-GB', { day: 'numeric', month: 'long', year:'numeric'})}</Text>
                   <Text style={{ color: textColor }}>Cycle Length: {item.cycleLength} days</Text>
                   <Text style={{ color: textColor }}>Symptoms: {item.selectedSymptoms.join(', ')}</Text>
                   <Text style={{ color: textColor }}>Notes: {item.notes}</Text>
+                  <Text style={{ color: textColor }}>Log Date: {new Date(item.date).toLocaleDateString('en-GB', { day: 'numeric', month: 'long', year:'numeric'})}</Text>
                 </View>
                 
-                <TouchableOpacity 
-                  style={styles.deleteIconContainer}
-                  onPress={() => deleteEntry(index)}
-                >
-                  <IconSymbol 
-                    name="delete.fill" 
-                    size={24} 
-                    color={deleteIconColor} 
-                  />
+                <TouchableOpacity style={styles.deleteIconContainer} onPress={() => deleteEntry(index)}>
+                  <IconSymbol name="delete.fill" size={24} color={deleteIconColor} />
                 </TouchableOpacity>
               
               </View>
