@@ -1,0 +1,20 @@
+Logging entry: {"cycleLength": "28", "date": "2025-03-10T21:53:43.551Z", "lastPeriod": 2025-02-28T21:52:00.000Z, "notes": "", "periodDuration": "5", "predictedNextOvulation": "2025-03-13T21:52:00.000Z", "predictedNextPeriod": "2025-03-28T21:52:00.000Z", "selectedSymptoms": []}
+
+
+Logging entry: {"cycleLength": "22", "date": "2025-03-10T21:54:05.042Z", "lastPeriod": 2025-02-02T21:52:00.000Z, "notes": "", "periodDuration": "8", "predictedNextOvulation": "2025-02-12T21:52:00.000Z", "predictedNextPeriod": "2025-02-24T21:52:00.000Z", "selectedSymptoms": ["Bloating"]}
+
+
+Logging entry: {"cycleLength": "2", "date": "2025-03-10T21:54:21.250Z", "lastPeriod": 2025-01-09T21:52:00.000Z, "notes": "", "periodDuration": "7", "predictedNextOvulation": "2025-01-09T21:52:00.000Z", "predictedNextPeriod": "2025-01-11T21:52:00.000Z", "selectedSymptoms": ["Tender Breasts"]}
+
+
+
+
+
+
+
+Fetching entries...
+ (NOBRIDGE) LOG  Parsed entries: [{"cycleLength": "28", "date": "2025-03-10T21:53:43.551Z", "lastPeriod": "2025-02-28T21:52:00.000Z", "notes": "", "periodDuration": "5", "predictedNextOvulation": "2025-03-13T21:52:00.000Z", "predictedNextPeriod": "2025-03-28T21:52:00.000Z", "selectedSymptoms": []}, {"cycleLength": "22", "date": "2025-03-10T21:54:05.042Z", "lastPeriod": "2025-02-02T21:52:00.000Z", "notes": "", "periodDuration": "8", "predictedNextOvulation": "2025-02-12T21:52:00.000Z", "predictedNextPeriod": "2025-02-24T21:52:00.000Z", "selectedSymptoms": ["Bloating"]}, {"cycleLength": "2", "date": "2025-03-10T21:54:21.250Z", "lastPeriod": "2025-01-09T21:52:00.000Z", "notes": "", "periodDuration": "7", "predictedNextOvulation": "2025-01-09T21:52:00.000Z", "predictedNextPeriod": "2025-01-11T21:52:00.000Z", "selectedSymptoms": ["Tender Breasts"]}]
+ (NOBRIDGE) LOG  InsightsScreen rendering...
+ (NOBRIDGE) LOG  TabTwoScreen rendering...
+ (NOBRIDGE) LOG  Fetching entries...
+ (NOBRIDGE) LOG  Parsed entries: [{"cycleLength": "28", "date": "2025-03-10T21:53:43.551Z", "lastPeriod": "2025-02-28T21:52:00.000Z", "notes": "", "periodDuration": "5", "predictedNextOvulation": "2025-03-13T21:52:00.000Z", "predictedNextPeriod": "2025-03-28T21:52:00.000Z", "selectedSymptoms": []}, {"cycleLength": "22", "date": "2025-03-10T21:54:05.042Z", "lastPeriod": "2025-02-02T21:52:00.000Z", "notes": "", "periodDuration": "8", "predictedNextOvulation": "2025-02-12T21:52:00.000Z", "predictedNextPeriod": "2025-02-24T21:52:00.000Z", "selectedSymptoms": ["Bloating"]}, {"cycleLength": "2", "date": "2025-03-10T21:54:21.250Z", "lastPeriod": "2025-01-09T21:52:00.000Z", "notes": "", "periodDuration": "7", "predictedNextOvulation": "2025-01-09T21:52:00.000Z", "predictedNextPeriod": "2025-01-11T21:52:00.000Z", "selectedSymptoms": ["Tender Breasts"]}]
