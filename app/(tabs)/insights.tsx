@@ -16,6 +16,7 @@ import { useFocusEffect } from '@react-navigation/native';
 const screenWidth = Dimensions.get('window').width;
 
 export default function InsightsScreen() {
+  console.log('InsightsScreen rendering...');
   const colorScheme = useColorScheme();
   const [entries, setEntries] = useState([]);
   const [cycleData, setCycleData] = useState([]);
@@ -34,15 +35,19 @@ export default function InsightsScreen() {
   );
 
   const fetchEntries = async () => {
+    console.log('Fetching entries...');
     try {
       const storedEntries = await AsyncStorage.getItem('periodEntries');
       if (storedEntries) {
         const parsedEntries = JSON.parse(storedEntries);
+        console.log('Parsed entries:', parsedEntries);
         setEntries(parsedEntries);
         analyzeCycleData(parsedEntries);
+      } else {
+        console.log('No stored entries found');
       }
     } catch (error) {
-      console.error('Error fetching entries', error);
+      console.error('Error fetching entries:', error);
     }
   };
 
@@ -56,7 +61,7 @@ export default function InsightsScreen() {
     }
   
     // Calculate averages based on the original entry order
-    const periodDurations = entriesData.map((entry) => entry.periodDuration || 5);
+    const periodDurations = entriesData.map((entry) => Number(entry.periodDuration) || 5);
     const avgPeriodDuration = periodDurations.reduce((sum, duration) => sum + duration, 0) / periodDurations.length;
     setAveragePeriodDuration(Math.round(avgPeriodDuration));
   
@@ -68,24 +73,24 @@ export default function InsightsScreen() {
     let formattedData = entriesData.map((entry, index) => ({
       x: index + 1,
       y: Number(entry.cycleLength) || 28,
-      dateRange: `${new Date(entry.date).toLocaleDateString('en-GB', { day: 'numeric', month: 'long' })} - ${entry.predictedNextPeriod ? new Date(entry.predictedNextPeriod).toLocaleDateString('en-GB', { day: 'numeric', month: 'long' }) : 'N/A'}`,
-      date: new Date(entry.date),
+      dateRange: `${new Date(entry.lastPeriod).toLocaleDateString('en-GB', { day: 'numeric', month: 'short' })} - ${entry.predictedNextPeriod ? new Date(entry.predictedNextPeriod).toLocaleDateString('en-GB', { day: 'numeric', month: 'short' }) : 'N/A'}`,
+      date: new Date(entry.lastPeriod),
       ovulationDay: entry.predictedNextOvulation 
-        ? Math.floor((new Date(entry.predictedNextOvulation).getTime() - new Date(entry.date).getTime()) / (1000 * 60 * 60 * 24)) 
+        ? Math.floor((new Date(entry.predictedNextOvulation).getTime() - new Date(entry.lastPeriod).getTime()) / (1000 * 60 * 60 * 24)) 
         : 14
     }));
   
-    // Sort formatted data for display purposes
+    // Sort formatted data for display purposes (most recent last period at the top)
     formattedData = formattedData
       .sort((a, b) => b.date.getTime() - a.date.getTime())
-      .map((item, sortedIndex) => ({ ...item, x: sortedIndex + 1 }));
+      .map((item, sortedIndex) => ({ ...item, x: formattedData.length - sortedIndex }));
   
     setCycleData(formattedData);
   
     // Calculate average ovulation day based on original entry order
     const ovulationDays = entriesData.map((entry) => 
       entry.predictedNextOvulation 
-        ? Math.floor((new Date(entry.predictedNextOvulation).getTime() - new Date(entry.date).getTime()) / (1000 * 60 * 60 * 24)) 
+        ? Math.floor((new Date(entry.predictedNextOvulation).getTime() - new Date(entry.lastPeriod).getTime()) / (1000 * 60 * 60 * 24)) 
         : 14
     );
     const avgOvulationDay = ovulationDays.reduce((sum, day) => sum + day, 0) / ovulationDays.length;
@@ -103,13 +108,13 @@ export default function InsightsScreen() {
       const predictedDate = new Date(lastEntry.predictedNextPeriod);
       return predictedDate.toLocaleDateString('en-GB', { 
         day: 'numeric', 
-        month: 'long', 
+        month: 'short', 
         year: 'numeric' 
       });
     }
     
     // Fallback calculation if no predicted period is stored
-    const lastPeriodDate = new Date(lastEntry.date);
+    const lastPeriodDate = new Date(lastEntry.lastPeriod);
     const predictedDate = new Date(lastPeriodDate);
     
     // Use average cycle length for prediction if available
@@ -118,9 +123,9 @@ export default function InsightsScreen() {
       : (Number(lastEntry.cycleLength) || 28); // Fallback to 28 if no data
     
     predictedDate.setDate(lastPeriodDate.getDate() + cycleLength);
-
+  
     return predictedDate.toLocaleDateString('en-GB', { 
-      day: 'numeric', month: 'long', year: 'numeric' 
+      day: 'numeric', month: 'short', year: 'numeric' 
     });
   };
 
@@ -133,12 +138,12 @@ export default function InsightsScreen() {
     if (lastEntry.predictedNextOvulation) {
       const predictedDate = new Date(lastEntry.predictedNextOvulation);
       return predictedDate.toLocaleDateString('en-GB', { 
-        day: 'numeric', month: 'long', year: 'numeric' 
+        day: 'numeric', month: 'short', year: 'numeric' 
       });
     }
     
     // Fallback calculation if no predicted ovulation is stored
-    const lastPeriodDate = new Date(lastEntry.date);
+    const lastPeriodDate = new Date(lastEntry.lastPeriod);
     const predictedDate = new Date(lastPeriodDate);
     
     // Use average cycle length and average ovulation day for prediction if available
@@ -146,10 +151,10 @@ export default function InsightsScreen() {
     const ovulationDay = averageOvulationDay > 0 ? averageOvulationDay : 14;
     
     predictedDate.setDate(lastPeriodDate.getDate() + cycleLength - ovulationDay);
-
+  
     return predictedDate.toLocaleDateString('en-GB', { 
       day: 'numeric', 
-      month: 'long', 
+      month: 'short', 
       year: 'numeric' 
     });
   };
@@ -174,14 +179,22 @@ export default function InsightsScreen() {
           
           {cycleData.length > 0 ? (  
             <VictoryBar 
-              data={cycleData} horizontal 
-              barRatio={0.1} // Adjusted to make bars shorter
-              labels={({ datum }) => `${datum.y} days`}
-              labelComponent={<VictoryLabel dy={0} dx={10} textAnchor="start" style={[{ fontSize: 13, fill: textColor }]}/>}
-              style={{ data: { fill: barColor },labels: { fill: "white" }}}
-              width={screenWidth - 130} // Width of bar - 120 pixels
-              padding={{ top : 20, left: 4, right: 70, bottom : 20 }} // Added padding to prevent overlap
-            />
+            data={cycleData} horizontal 
+            barRatio={0.2} // Adjusted to make bars shorter
+            labels={({ datum }) => `${datum.y} days`}
+            labelComponent={
+              <VictoryLabel 
+                dy={0} 
+                dx={10} 
+                textAnchor="start" 
+                style={[{ fontSize: 13, fill: textColor }]}
+                text={({ datum }) => `${datum.dateRange.split(' - ')[0]} (${datum.y} days)`}
+              />
+            }
+            style={{ data: { fill: barColor }, labels: { fill: "white" }}}
+            width={screenWidth - 150} // Width of bar - 150 pixels
+            padding={{ top: 20, left: 5, right: 110, bottom: 20 }}
+          />
           ) : ( <ThemedText style={styles.noDataText}>Not enough data</ThemedText>)}
         </ThemedView>
 
