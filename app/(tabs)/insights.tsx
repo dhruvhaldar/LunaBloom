@@ -85,6 +85,9 @@ export default function InsightsScreen() {
       .sort((a, b) => b.date.getTime() - a.date.getTime())
       .map((item, sortedIndex) => ({ ...item, x: sortedIndex + 1 }));
   
+    // Reverse the array to display the most recent cycle at the top
+    formattedData.reverse();
+  
     setCycleData(formattedData);
   
     // Calculate average ovulation day based on original entry order
@@ -114,7 +117,7 @@ export default function InsightsScreen() {
     }
     
     // Fallback calculation if no predicted period is stored
-    const lastPeriodDate = new Date(lastEntry.date);
+    const lastPeriodDate = new Date(lastEntry.lastPeriod);
     const predictedDate = new Date(lastPeriodDate);
     
     // Use average cycle length for prediction if available
@@ -123,7 +126,7 @@ export default function InsightsScreen() {
       : (Number(lastEntry.cycleLength) || 28); // Fallback to 28 if no data
     
     predictedDate.setDate(lastPeriodDate.getDate() + cycleLength);
-
+  
     return predictedDate.toLocaleDateString('en-GB', { 
       day: 'numeric', month: 'short', year: 'numeric' 
     });
@@ -143,7 +146,7 @@ export default function InsightsScreen() {
     }
     
     // Fallback calculation if no predicted ovulation is stored
-    const lastPeriodDate = new Date(lastEntry.lastPeriod); // Use lastPeriod instead of date
+    const lastPeriodDate = new Date(lastEntry.lastPeriod);
     const predictedDate = new Date(lastPeriodDate);
     
     // Use average cycle length and average ovulation day for prediction if available
