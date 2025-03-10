@@ -16,6 +16,7 @@ import { useFocusEffect } from '@react-navigation/native';
 const screenWidth = Dimensions.get('window').width;
 
 export default function InsightsScreen() {
+  console.log('InsightsScreen rendering...');
   const colorScheme = useColorScheme();
   const [entries, setEntries] = useState([]);
   const [cycleData, setCycleData] = useState([]);
@@ -34,15 +35,19 @@ export default function InsightsScreen() {
   );
 
   const fetchEntries = async () => {
+    console.log('Fetching entries...');
     try {
       const storedEntries = await AsyncStorage.getItem('periodEntries');
       if (storedEntries) {
         const parsedEntries = JSON.parse(storedEntries);
+        console.log('Parsed entries:', parsedEntries);
         setEntries(parsedEntries);
         analyzeCycleData(parsedEntries);
+      } else {
+        console.log('No stored entries found');
       }
     } catch (error) {
-      console.error('Error fetching entries', error);
+      console.error('Error fetching entries:', error);
     }
   };
 
@@ -56,7 +61,7 @@ export default function InsightsScreen() {
     }
   
     // Calculate averages based on the original entry order
-    const periodDurations = entriesData.map((entry) => entry.periodDuration || 5);
+    const periodDurations = entriesData.map((entry) => Number(entry.periodDuration) || 5);
     const avgPeriodDuration = periodDurations.reduce((sum, duration) => sum + duration, 0) / periodDurations.length;
     setAveragePeriodDuration(Math.round(avgPeriodDuration));
   
@@ -68,10 +73,10 @@ export default function InsightsScreen() {
     let formattedData = entriesData.map((entry, index) => ({
       x: index + 1,
       y: Number(entry.cycleLength) || 28,
-      dateRange: `${new Date(entry.date).toLocaleDateString('en-GB', { day: 'numeric', month: 'short' })} - ${entry.predictedNextPeriod ? new Date(entry.predictedNextPeriod).toLocaleDateString('en-GB', { day: 'numeric', month: 'short' }) : 'N/A'}`,
-      date: new Date(entry.date),
+      dateRange: `${new Date(entry.lastPeriod).toLocaleDateString('en-GB', { day: 'numeric', month: 'short' })} - ${entry.predictedNextPeriod ? new Date(entry.predictedNextPeriod).toLocaleDateString('en-GB', { day: 'numeric', month: 'short' }) : 'N/A'}`,
+      date: new Date(entry.lastPeriod),
       ovulationDay: entry.predictedNextOvulation 
-        ? Math.floor((new Date(entry.predictedNextOvulation).getTime() - new Date(entry.date).getTime()) / (1000 * 60 * 60 * 24)) 
+        ? Math.floor((new Date(entry.predictedNextOvulation).getTime() - new Date(entry.lastPeriod).getTime()) / (1000 * 60 * 60 * 24)) 
         : 14
     }));
   
@@ -85,7 +90,7 @@ export default function InsightsScreen() {
     // Calculate average ovulation day based on original entry order
     const ovulationDays = entriesData.map((entry) => 
       entry.predictedNextOvulation 
-        ? Math.floor((new Date(entry.predictedNextOvulation).getTime() - new Date(entry.date).getTime()) / (1000 * 60 * 60 * 24)) 
+        ? Math.floor((new Date(entry.predictedNextOvulation).getTime() - new Date(entry.lastPeriod).getTime()) / (1000 * 60 * 60 * 24)) 
         : 14
     );
     const avgOvulationDay = ovulationDays.reduce((sum, day) => sum + day, 0) / ovulationDays.length;
@@ -138,7 +143,7 @@ export default function InsightsScreen() {
     }
     
     // Fallback calculation if no predicted ovulation is stored
-    const lastPeriodDate = new Date(lastEntry.date);
+    const lastPeriodDate = new Date(lastEntry.lastPeriod); // Use lastPeriod instead of date
     const predictedDate = new Date(lastPeriodDate);
     
     // Use average cycle length and average ovulation day for prediction if available
@@ -146,7 +151,7 @@ export default function InsightsScreen() {
     const ovulationDay = averageOvulationDay > 0 ? averageOvulationDay : 14;
     
     predictedDate.setDate(lastPeriodDate.getDate() + cycleLength - ovulationDay);
-
+  
     return predictedDate.toLocaleDateString('en-GB', { 
       day: 'numeric', 
       month: 'short', 
@@ -206,12 +211,12 @@ export default function InsightsScreen() {
                 {isNaN(averagePeriodDuration) ? 'N/A' : `${averagePeriodDuration} days`}
               </ThemedText>
             </View>
-            {/* <View style={styles.metricItem}>
+            <View style={styles.metricItem}>
               <ThemedText>Avg. Ovulation Duration</ThemedText>
               <ThemedText type="subtitle">
                 {isNaN(averageOvulationDay) ? 'N/A' : `${averageOvulationDay} days`}
               </ThemedText>
-            </View> */}
+            </View>
             
             <View style={styles.metricItem}>
               <ThemedText>Next Period Prediction</ThemedText>
