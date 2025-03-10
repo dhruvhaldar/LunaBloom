@@ -93,6 +93,8 @@ export default function TabLayout() {
           alignItems: 'center',
         },
       }}>
+
+      {/* Home Tab */}
       <Tabs.Screen
         name="index"
         options={{
@@ -116,6 +118,8 @@ export default function TabLayout() {
           ),
         }}
       />
+
+       {/* History Tab */}
       <Tabs.Screen
         name="history"
         options={{
@@ -139,7 +143,8 @@ export default function TabLayout() {
           ),
         }}
       />
-      {/* New Insights Tab */}
+      
+      {/* Cycle Insights Tab */}
       <Tabs.Screen
         name="insights"
         options={{
