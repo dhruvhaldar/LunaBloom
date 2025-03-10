@@ -46,30 +46,33 @@ export default function InsightsScreen() {
     }
   };
 
-  const analyzeCycleData = (entriesData: any[]) => {
+  const analyzeCycleData = (entriesData) => {
     if (entriesData.length < 2) {
       setAverageCycleLength(0);
       setAveragePeriodDuration(0);
       setCycleData([]);
       return;
     }
-
-    // Calculate average period duration (you might want to add this to your entry logging)
-    // This is a placeholder - you may need to modify your entry logging to include period duration
-    const periodDurations = entriesData.map(entry => entry.periodDuration || 5); // Default to 5 if not specified
-    const avgPeriodDuration = periodDurations.reduce((sum, duration) => sum + duration, 0) / periodDurations.length;
+  
+    const periodDurations = entriesData.map((entry: { periodDuration: any; }) => entry.periodDuration || 5);
+    const avgPeriodDuration = periodDurations.reduce((sum: any, duration: any) => sum + duration, 0) / periodDurations.length;
     setAveragePeriodDuration(Math.round(avgPeriodDuration));
-
-    const formattedData = entriesData.map((entry, index) => ({
+  
+    let formattedData = entriesData.map((entry: { cycleLength: any; startDate: string | number | Date; endDate: any; }, index: number) => ({
       x: index + 1,
       y: Number(entry.cycleLength) || 28,
-      dateRange: `${entry.startDate} - ${entry.endDate}`
+      dateRange: `${entry.startDate} - ${entry.endDate}`,
+      date: new Date(entry.startDate) // Convert startDate to Date object for sorting
     }));
-
+  
+    // Sort data by date in descending order (newest entries first)
+    formattedData = formattedData.sort((a: { date: number; }, b: { date: number; }) => b.date - a.date);
+  
     setCycleData(formattedData);
-    const avgCycle = formattedData.reduce((sum, entry) => sum + entry.y, 0) / formattedData.length;
+    const avgCycle = formattedData.reduce((sum: any, entry: { y: any; }) => sum + entry.y, 0) / formattedData.length;
     setAverageCycleLength(Math.round(avgCycle));
   };
+  
 
   const predictNextPeriod = () => {
     if (entries.length === 0) return 'N/A';
