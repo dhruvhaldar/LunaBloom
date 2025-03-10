@@ -20,6 +20,8 @@ export default function InsightsScreen() {
   const [entries, setEntries] = useState([]);
   const [cycleData, setCycleData] = useState([]);
   const [averageCycleLength, setAverageCycleLength] = useState(0);
+  const [averagePeriodDuration, setAveragePeriodDuration] = useState(0);
+
   const sectionHeadingtextColor = '#ee2d60';
   const textColor = colorScheme === 'dark' ? '#f0f0f0' : '#413c58';
 
@@ -45,9 +47,16 @@ export default function InsightsScreen() {
   const analyzeCycleData = (entriesData: any[]) => {
     if (entriesData.length < 2) {
       setAverageCycleLength(0);
+      setAveragePeriodDuration(0);
       setCycleData([]);
       return;
     }
+
+    // Calculate average period duration (you might want to add this to your entry logging)
+    // This is a placeholder - you may need to modify your entry logging to include period duration
+    const periodDurations = entriesData.map(entry => entry.periodDuration || 5); // Default to 5 if not specified
+    const avgPeriodDuration = periodDurations.reduce((sum, duration) => sum + duration, 0) / periodDurations.length;
+    setAveragePeriodDuration(Math.round(avgPeriodDuration));
 
     const formattedData = entriesData.map((entry, index) => ({
       x: index + 1,
@@ -107,6 +116,7 @@ export default function InsightsScreen() {
       <ThemedView style={styles.container}>
         <ThemedText type="title" style={styles.title}>Cycle Insights 📊</ThemedText>
 
+        {/* Previous Cycles Section */}
         <ThemedView style={styles.sectionContainer}>
           <ThemedText type="subtitle" style={{ color: sectionHeadingtextColor, marginBottom: 10 }}>
             Previous Cycles
@@ -140,12 +150,11 @@ export default function InsightsScreen() {
 
         
         
-        {/* Key Metrics */}
+        {/* Key Metrics Section */}
         <ThemedView style={styles.sectionContainer}>
           <ThemedText type="subtitle" style={{ color: sectionHeadingtextColor, marginBottom: 10 }}>
             Key Metrics
           </ThemedText>
-          
           <View style={styles.metricsContainer}>
             <View style={styles.metricItem}>
               <ThemedText>Avg. Cycle Length</ThemedText>
@@ -153,11 +162,23 @@ export default function InsightsScreen() {
                 {isNaN(averageCycleLength) ? 'N/A' : `${averageCycleLength} days`}
               </ThemedText>
             </View>
+          </View>
+          <View style={styles.metricItem}>
+              <ThemedText>Periods Tracked</ThemedText>
+              <ThemedText type="subtitle">
+                {entries.length}
+              </ThemedText>
+            </View>
+            <View style={styles.metricItem}>
+              <ThemedText>Avg. Period Duration</ThemedText>
+              <ThemedText type="subtitle">
+                {isNaN(averagePeriodDuration) ? 'N/A' : `${averagePeriodDuration} days`}
+              </ThemedText>
+            </View>
             <View style={styles.metricItem}>
               <ThemedText>Next Period Prediction</ThemedText>
               <ThemedText type="subtitle">{predictNextPeriod()}</ThemedText>
             </View>
-          </View>
         </ThemedView>
 
       </ThemedView>
@@ -169,7 +190,7 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     padding: 16,
-    paddingBottom: 90,
+    paddingBottom: 90, // Add enough padding to prevent overlap with the tab bar
   },
   title: {
     textAlign: 'center',
