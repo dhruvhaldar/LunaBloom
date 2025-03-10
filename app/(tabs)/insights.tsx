@@ -21,11 +21,11 @@ export default function InsightsScreen() {
   const [cycleData, setCycleData] = useState([]);
   const [averageCycleLength, setAverageCycleLength] = useState(0);
   const [averagePeriodDuration, setAveragePeriodDuration] = useState(0);
+  const [averageOvulationDay, setAverageOvulationDay] = useState(0);
 
   const sectionHeadingtextColor = '#ee2d60';
   const textColor = colorScheme === 'dark' ? '#f0f0f0' : '#413c58';
   const barColor = colorScheme === 'dark' ? '#f0f0f0' : '#413c58';
-
 
   useFocusEffect(
     useCallback(() => {
@@ -50,6 +50,7 @@ export default function InsightsScreen() {
     if (entriesData.length < 2) {
       setAverageCycleLength(0);
       setAveragePeriodDuration(0);
+      setAverageOvulationDay(0);
       setCycleData([]);
       return;
     }
@@ -71,6 +72,10 @@ export default function InsightsScreen() {
     setCycleData(formattedData);
     const avgCycle = formattedData.reduce((sum: any, entry: { y: any; }) => sum + entry.y, 0) / formattedData.length;
     setAverageCycleLength(Math.round(avgCycle));
+
+    const ovulationDays = formattedData.map((entry: { ovulationDay: any; }) => entry.ovulationDay);
+    const avgOvulationDay = ovulationDays.reduce((sum: any, day: any) => sum + day, 0) / ovulationDays.length;
+    setAverageOvulationDay(Math.round(avgOvulationDay));
   };
   
 
@@ -99,6 +104,38 @@ export default function InsightsScreen() {
       : (Number(lastEntry.cycleLength) || 28); // Fallback to 28 if no data
     
     predictedDate.setDate(lastPeriodDate.getDate() + cycleLength);
+
+    return predictedDate.toLocaleDateString('en-GB', { 
+      day: 'numeric', 
+      month: 'long', 
+      year: 'numeric' 
+    });
+  };
+
+  const predictNextOvulation = () => {
+    if (entries.length === 0) return 'N/A';
+    
+    const lastEntry = entries[0]; // Use the most recent entry
+    
+    // Use the stored predicted next ovulation if available
+    if (lastEntry.predictedNextOvulation) {
+      const predictedDate = new Date(lastEntry.predictedNextOvulation);
+      return predictedDate.toLocaleDateString('en-GB', { 
+        day: 'numeric', 
+        month: 'long', 
+        year: 'numeric' 
+      });
+    }
+    
+    // Fallback calculation if no predicted ovulation is stored
+    const lastPeriodDate = new Date(lastEntry.date);
+    const predictedDate = new Date(lastPeriodDate);
+    
+    // Use average cycle length and average ovulation day for prediction if available
+    const cycleLength = averageCycleLength > 0 ? averageCycleLength : (Number(lastEntry.cycleLength) || 28);
+    const ovulationDay = averageOvulationDay > 0 ? averageOvulationDay : 14;
+    
+    predictedDate.setDate(lastPeriodDate.getDate() + cycleLength - ovulationDay);
 
     return predictedDate.toLocaleDateString('en-GB', { 
       day: 'numeric', 
@@ -168,6 +205,10 @@ export default function InsightsScreen() {
             <View style={styles.metricItem}>
               <ThemedText>Next Period Prediction</ThemedText>
               <ThemedText type="subtitle">{predictNextPeriod()}</ThemedText>
+            </View>
+            <View style={styles.metricItem}>
+              <ThemedText>Next Ovulation Prediction</ThemedText>
+              <ThemedText type="subtitle">{predictNextOvulation()}</ThemedText>
             </View>
         </ThemedView>
 
