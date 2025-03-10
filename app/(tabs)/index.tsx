@@ -14,6 +14,7 @@ export default function HomeScreen() {
   const [predictedPeriods, setPredictedPeriods] = useState<Date[]>([]);
   const [selectedSymptoms, setSelectedSymptoms] = useState<string[]>([]);
   const [notes, setNotes] = useState('');
+  const [predictedOvulations, setPredictedOvulations] = useState<Date[]>([]);
 
   const colorScheme = useColorScheme();
   const textColor = colorScheme === 'dark' ? '#f0f0f0' : '#413c58';
@@ -47,7 +48,7 @@ export default function HomeScreen() {
 
 
 
-  const handleCycleLengthChange = (text) => {
+  const handleCycleLengthChange = (text: string) => {
     const filteredText = text.replace(/[^0-9]/g, '');
     let number = parseInt(filteredText, 10);
 
@@ -86,22 +87,32 @@ export default function HomeScreen() {
 
   const calculatePredictions = () => {
     const predictions = [];
+    const ovulations = [];
     const predictionStart = new Date(lastPeriod);
     
     for (let i = 0; i < 3; i++) {
+      // Calculate period
       const nextDate = new Date(predictionStart);
       nextDate.setDate(predictionStart.getDate() + Number(cycleLength));
       predictions.push(nextDate);
+
+      // Calculate ovulation date (assuming ovulation occurs 14 days before the next period)
+      const ovulationDate = new Date(nextDate);
+      ovulationDate.setDate(ovulationDate.getDate() - 14);
+      ovulations.push(ovulationDate);
+
       predictionStart.setDate(predictionStart.getDate() + Number(cycleLength));
     }
     
     setPredictedPeriods(predictions);
+    setPredictedOvulations(ovulations);
   };
 
   useEffect(() => {
     calculatePredictions();
   }, [lastPeriod, cycleLength]);
 
+  // Save data
   const logPeriod = async () => {
     try {
       const entry = {
@@ -113,6 +124,9 @@ export default function HomeScreen() {
         predictedNextPeriod: predictedPeriods.length > 0 
           ? predictedPeriods[0].toISOString() 
           : null, // Store the first predicted period
+        predictedNextOvulation: predictedOvulations.length > 0 
+          ? predictedOvulations[0].toISOString() 
+          : null, // Store the first predicted ovulation
       };
   
       let entries = [];
@@ -179,7 +193,7 @@ export default function HomeScreen() {
               style={[styles.dateButton, { borderColor: textColor }]} // Dynamically set borderColor
             >
               <ThemedText style={[styles.dateText, { color: textColor }]}>
-              {lastPeriod.toLocaleDateString()}
+              {lastPeriod.toLocaleDateString('en-GB', { day: 'numeric', month: 'long', year:'numeric'})}
               </ThemedText>
             </TouchableOpacity>
             {show && (
@@ -225,7 +239,7 @@ export default function HomeScreen() {
                   );
                 }}
               >
-                <ThemedText style={[{ color: symptomtextColor }, selectedSymptoms.includes(symptom) && styles.symptomText]}>
+                <ThemedText style={[{ color: symptomtextColor }, selectedSymptoms.includes(symptom)]}>
                   {symptom}
                 </ThemedText>
               </TouchableOpacity>
@@ -257,6 +271,18 @@ export default function HomeScreen() {
           {predictedPeriods.map((date, index) => (
             <ThemedView key={index} style={[styles.predictionItem, { borderColor: textColor, borderWidth: 1 }]}>
               <ThemedText style={{ color: textColor  }}>{date.toLocaleDateString('en-GB', { day: 'numeric', month: 'long' })}
+              </ThemedText>
+            </ThemedView>
+          ))}
+        </ThemedView>
+
+        {/* Add new section for Ovulation Tracking */}
+        <ThemedView style={[styles.section]}>
+          <ThemedText type="subtitle" style={{ color: predictedsectionHeadingtextColor, marginBottom: 10 }}>Predicted Ovulations</ThemedText>
+          {predictedOvulations.map((date, index) => (
+            <ThemedView key={index} style={[styles.predictionItem, { borderColor: textColor, borderWidth: 1 }]}>
+              <ThemedText style={{ color: textColor }}>
+                {date.toLocaleDateString('en-GB', { day: 'numeric', month: 'long' })}
               </ThemedText>
             </ThemedView>
           ))}
