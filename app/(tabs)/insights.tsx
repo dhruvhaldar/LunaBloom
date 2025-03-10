@@ -55,26 +55,40 @@ export default function InsightsScreen() {
       return;
     }
   
-    const periodDurations = entriesData.map((entry: { periodDuration: any; }) => entry.periodDuration || 5);
-    const avgPeriodDuration = periodDurations.reduce((sum: any, duration: any) => sum + duration, 0) / periodDurations.length;
+    // Calculate averages based on the original entry order
+    const periodDurations = entriesData.map((entry) => entry.periodDuration || 5);
+    const avgPeriodDuration = periodDurations.reduce((sum, duration) => sum + duration, 0) / periodDurations.length;
     setAveragePeriodDuration(Math.round(avgPeriodDuration));
   
-    let formattedData = entriesData.map((entry: { cycleLength: any; startDate: string | number | Date; endDate: any; }, index: number) => ({
+    const cycleLengths = entriesData.map((entry) => Number(entry.cycleLength) || 28);
+    const avgCycleLength = cycleLengths.reduce((sum, length) => sum + length, 0) / cycleLengths.length;
+    setAverageCycleLength(Math.round(avgCycleLength));
+  
+    // Prepare formatted data for display
+    let formattedData = entriesData.map((entry, index) => ({
       x: index + 1,
       y: Number(entry.cycleLength) || 28,
-      dateRange: `${entry.startDate} - ${entry.endDate}`,
-      date: new Date(entry.startDate) // Convert startDate to Date object for sorting
+      dateRange: `${new Date(entry.date).toLocaleDateString('en-GB', { day: 'numeric', month: 'long' })} - ${entry.predictedNextPeriod ? new Date(entry.predictedNextPeriod).toLocaleDateString('en-GB', { day: 'numeric', month: 'long' }) : 'N/A'}`,
+      date: new Date(entry.date),
+      ovulationDay: entry.predictedNextOvulation 
+        ? Math.floor((new Date(entry.predictedNextOvulation).getTime() - new Date(entry.date).getTime()) / (1000 * 60 * 60 * 24)) 
+        : 14
     }));
   
-    // Sort data by date in descending order (newest entries first)
-    formattedData = formattedData.sort((a: { date: number; }, b: { date: number; }) => b.date - a.date);
+    // Sort formatted data for display purposes
+    formattedData = formattedData
+      .sort((a, b) => b.date.getTime() - a.date.getTime())
+      .map((item, sortedIndex) => ({ ...item, x: sortedIndex + 1 }));
   
     setCycleData(formattedData);
-    const avgCycle = formattedData.reduce((sum: any, entry: { y: any; }) => sum + entry.y, 0) / formattedData.length;
-    setAverageCycleLength(Math.round(avgCycle));
-
-    const ovulationDays = formattedData.map((entry: { ovulationDay: any; }) => entry.ovulationDay);
-    const avgOvulationDay = ovulationDays.reduce((sum: any, day: any) => sum + day, 0) / ovulationDays.length;
+  
+    // Calculate average ovulation day based on original entry order
+    const ovulationDays = entriesData.map((entry) => 
+      entry.predictedNextOvulation 
+        ? Math.floor((new Date(entry.predictedNextOvulation).getTime() - new Date(entry.date).getTime()) / (1000 * 60 * 60 * 24)) 
+        : 14
+    );
+    const avgOvulationDay = ovulationDays.reduce((sum, day) => sum + day, 0) / ovulationDays.length;
     setAverageOvulationDay(Math.round(avgOvulationDay));
   };
   
@@ -106,9 +120,7 @@ export default function InsightsScreen() {
     predictedDate.setDate(lastPeriodDate.getDate() + cycleLength);
 
     return predictedDate.toLocaleDateString('en-GB', { 
-      day: 'numeric', 
-      month: 'long', 
-      year: 'numeric' 
+      day: 'numeric', month: 'long', year: 'numeric' 
     });
   };
 
@@ -121,9 +133,7 @@ export default function InsightsScreen() {
     if (lastEntry.predictedNextOvulation) {
       const predictedDate = new Date(lastEntry.predictedNextOvulation);
       return predictedDate.toLocaleDateString('en-GB', { 
-        day: 'numeric', 
-        month: 'long', 
-        year: 'numeric' 
+        day: 'numeric', month: 'long', year: 'numeric' 
       });
     }
     
@@ -197,11 +207,12 @@ export default function InsightsScreen() {
               </ThemedText>
             </View>
             <View style={styles.metricItem}>
-              <ThemedText>Periods Tracked</ThemedText>
+              <ThemedText>Avg. Ovulation Duration</ThemedText>
               <ThemedText type="subtitle">
-                {entries.length}
+                {isNaN(averageOvulationDay) ? 'N/A' : `${averageOvulationDay} days`}
               </ThemedText>
             </View>
+            
             <View style={styles.metricItem}>
               <ThemedText>Next Period Prediction</ThemedText>
               <ThemedText type="subtitle">{predictNextPeriod()}</ThemedText>
@@ -210,6 +221,14 @@ export default function InsightsScreen() {
               <ThemedText>Next Ovulation Prediction</ThemedText>
               <ThemedText type="subtitle">{predictNextOvulation()}</ThemedText>
             </View>
+
+            <View style={styles.metricItem}>
+              <ThemedText>Periods Tracked</ThemedText>
+              <ThemedText type="subtitle">
+                {entries.length}
+              </ThemedText>
+            </View>
+            
         </ThemedView>
 
       </ThemedView>
