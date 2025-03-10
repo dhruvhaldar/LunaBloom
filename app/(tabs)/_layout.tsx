@@ -17,7 +17,7 @@ export default function TabLayout() {
     bottom: 10,
     borderRadius: 48,
     height: 70,
-    alignContent:'center',
+    alignContent: 'center',
     backgroundColor: colorScheme === 'dark' 
       ? 'rgba(30, 30, 30, 0.8)' 
       : 'rgba(255, 255, 255, 0.8)',
@@ -25,13 +25,12 @@ export default function TabLayout() {
     borderTopWidth: 1,
     borderColor: borderColor,
     elevation: 2, 
-    shadowColor: '#000',
-    shadowOffset: { 
-      width: 0, 
-      height: 2 
-    },
-    shadowOpacity: 0.25,
-    shadowRadius: 3.84,
+    boxShadow: Platform.OS === 'ios' ? {
+      color: '#000',
+      offset: { width: 0, height: 2 },
+      opacity: 0.25,
+      radius: 3.84,
+    } : undefined,
     overflow: 'hidden',
     paddingHorizontal: 0,
   };
@@ -94,6 +93,8 @@ export default function TabLayout() {
           alignItems: 'center',
         },
       }}>
+
+      {/* Home Tab */}
       <Tabs.Screen
         name="index"
         options={{
@@ -117,6 +118,8 @@ export default function TabLayout() {
           ),
         }}
       />
+
+       {/* History Tab */}
       <Tabs.Screen
         name="history"
         options={{
@@ -140,7 +143,8 @@ export default function TabLayout() {
           ),
         }}
       />
-      {/* New Insights Tab */}
+      
+      {/* Cycle Insights Tab */}
       <Tabs.Screen
         name="insights"
         options={{
