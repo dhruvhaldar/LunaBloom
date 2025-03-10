@@ -508,7 +508,7 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
   },
   reactLogo: {
-    height: 400,
+    height: 290,
     width: 760,
     alignSelf: 'center',
     marginBottom: -50,
