@@ -9,6 +9,7 @@ import { Image } from 'react-native';
 import { IconSymbol } from '@/components/ui/IconSymbol';
 
 export default function TabTwoScreen() {
+  console.log('TabTwoScreen rendering...');
   const [entries, setEntries] = useState([]);
   const colorScheme = useColorScheme();
   const sectionHeadingtextColor = colorScheme === 'dark' ? '#ee2d60' : '#ee2d60';
