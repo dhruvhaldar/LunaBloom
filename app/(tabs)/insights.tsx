@@ -179,14 +179,22 @@ export default function InsightsScreen() {
           
           {cycleData.length > 0 ? (  
             <VictoryBar 
-              data={cycleData} horizontal 
-              barRatio={0.1} // Adjusted to make bars shorter
-              labels={({ datum }) => `${datum.y} days`}
-              labelComponent={<VictoryLabel dy={0} dx={10} textAnchor="start" style={[{ fontSize: 13, fill: textColor }]}/>}
-              style={{ data: { fill: barColor },labels: { fill: "white" }}}
-              width={screenWidth - 130} // Width of bar - 120 pixels
-              padding={{ top : 20, left: 4, right: 70, bottom : 20 }} // Added padding to prevent overlap
-            />
+            data={cycleData} horizontal 
+            barRatio={0.2} // Adjusted to make bars shorter
+            labels={({ datum }) => `${datum.y} days`}
+            labelComponent={
+              <VictoryLabel 
+                dy={0} 
+                dx={10} 
+                textAnchor="start" 
+                style={[{ fontSize: 13, fill: textColor }]}
+                text={({ datum }) => `${datum.dateRange.split(' - ')[0]} (${datum.y} days)`}
+              />
+            }
+            style={{ data: { fill: barColor }, labels: { fill: "white" }}}
+            width={screenWidth - 150} // Width of bar - 150 pixels
+            padding={{ top: 20, left: 5, right: 110, bottom: 20 }}
+          />
           ) : ( <ThemedText style={styles.noDataText}>Not enough data</ThemedText>)}
         </ThemedView>
 
