@@ -11,6 +11,7 @@ import { ThemedText } from '@/components/ThemedText';
 export default function TabLayout() {
   const colorScheme = useColorScheme();
   const borderColor = colorScheme === 'dark' ? '#ee2d60' : '#ee2d60';
+  const tabBarButtonSize = 29;
 
   const tabBarStyle: ViewStyle = {
     position: 'absolute',
@@ -19,8 +20,8 @@ export default function TabLayout() {
     height: 70,
     alignContent: 'center',
     backgroundColor: colorScheme === 'dark' 
-      ? 'rgba(30, 30, 30, 0.8)' 
-      : 'rgba(255, 255, 255, 0.8)',
+      ? 'rgba(30, 30, 30, 0.99)' 
+      : 'rgba(255, 255, 255, 0.95)',
     borderWidth: 1,
     borderTopWidth: 1,
     borderColor: borderColor,
@@ -36,7 +37,7 @@ export default function TabLayout() {
       Animated.spring(scaleAnim, {
         toValue: 0.5,
         useNativeDriver: true,
-        bounciness: 30,
+        bounciness: 80,
         speed: 0.4,
       }).start();
     };
@@ -45,7 +46,7 @@ export default function TabLayout() {
       Animated.spring(scaleAnim, {
         toValue: 1,
         useNativeDriver: true,
-        bounciness: 10,
+        bounciness: 20,
         speed: 0.4,
       }).start();
     };
@@ -95,11 +96,11 @@ export default function TabLayout() {
           tabBarIcon: ({ color, focused }) => (
             <View style={styles.tabItemContainer}>
               <IconSymbol 
-                size={28} 
+                size={tabBarButtonSize} 
                 name="house.fill" 
                 color={color}
                 style={{ 
-                  opacity: focused ? 1 : 0.6 
+                  opacity: focused ? 1 : 0.8 
                 }} 
               />
               {focused}
@@ -116,11 +117,11 @@ export default function TabLayout() {
           tabBarIcon: ({ color, focused }) => (
             <View style={styles.tabItemContainer}>
               <IconSymbol 
-                size={28} 
+                size={tabBarButtonSize} 
                 name="history.fill" 
                 color={color}
                 style={{ 
-                  opacity: focused ? 1 : 0.6 
+                  opacity: focused ? 1 : 0.8 
                 }} 
               />
               {focused}
@@ -137,11 +138,11 @@ export default function TabLayout() {
           tabBarIcon: ({ color, focused }) => (
             <View style={styles.tabItemContainer}>
               <IconSymbol 
-                size={28} 
+                size={tabBarButtonSize} 
                 name="bar-chart.fill" 
                 color={color}
                 style={{ 
-                  opacity: focused ? 1 : 0.6 
+                  opacity: focused ? 1 : 0.8 
                 }} 
               />
               {focused}
@@ -150,19 +151,19 @@ export default function TabLayout() {
         }}
       />
 
-      {/* New ChatBot Tab */}
+      {/* ChatBot Tab */}
       <Tabs.Screen
         name="chatbot"
         options={{
-          title: 'Assistant',
+          title: 'AI Assistant',
           tabBarIcon: ({ color, focused }) => (
             <View style={styles.tabItemContainer}>
               <IconSymbol 
-                size={28} 
+                size={tabBarButtonSize} 
                 name="chat.fill" 
-                color={color}
+                color="#ee2d60"
                 style={{ 
-                  opacity: focused ? 1 : 0.6 
+                  opacity: focused ? 1 : 1 
                 }} 
               />
               {focused}
