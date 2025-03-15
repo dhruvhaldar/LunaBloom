@@ -11,10 +11,14 @@ import { IconSymbol } from '@/components/ui/IconSymbol';
 export default function TabTwoScreen() {
   console.log('TabTwoScreen rendering...');
   const [entries, setEntries] = useState([]);
+  
+  // Color Scheme
   const colorScheme = useColorScheme();
-  const sectionHeadingtextColor = colorScheme === 'dark' ? '#ee2d60' : '#ee2d60';
-  const textColor = colorScheme === 'dark' ? '#FFFFFF' : '#000000';
-  const deleteIconColor = colorScheme === 'dark' ? '#f0f0f0' : '#413c58';
+  const Parallaxheaderlightcolor = '#A8DADC';
+  const Parallaxheaderdarkcolor = '#A8DADC';
+  const sectionHeadingtextColor = colorScheme === 'dark' ? '#E63946' : '#1D3557';
+  const textColor = colorScheme === 'dark' ? '#F1FAEE' : '#1D3557';
+  const deleteIconColor = colorScheme === 'dark' ? '#F1FAEE' : '#E63946';
 
 
   useFocusEffect(
@@ -86,7 +90,7 @@ const deleteEntry = async (index: number) => {
 
   return (
     <ParallaxScrollView
-      headerBackgroundColor={{ light: '#ffdde2', dark: '#151718' }}
+      headerBackgroundColor={{ light: Parallaxheaderlightcolor, dark: Parallaxheaderdarkcolor }}
       headerImage={
         <Image 
           source={require('@/assets/images/history2.png')} 
