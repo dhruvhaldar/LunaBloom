@@ -168,7 +168,37 @@ export default function TabLayout() {
           ),
         }}
       />
+
+      {/* New ChatBot Tab */}
+      <Tabs.Screen
+        name="chatbot"
+        options={{
+          title: 'Assistant',
+          tabBarIcon: ({ color, focused }) => (
+            <View style={styles.tabItemContainer}>
+              <IconSymbol 
+                size={28} 
+                name="message.fill" 
+                color={color}
+                style={{ 
+                  opacity: focused ? 1 : 0.6 
+                }} 
+              />
+              {focused && (
+                <ThemedText style={[styles.tabLabel, { color }]}>
+                  Assistant
+                </ThemedText>
+              )}
+            </View>
+          ),
+        }}
+      />
+      
     </Tabs>
+
+    
+
+    
   );
 }
 
