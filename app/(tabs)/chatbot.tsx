@@ -1,4 +1,4 @@
-import React, { useState, useCallback } from 'react';
+import React, { useState } from 'react';
 import { 
   StyleSheet, 
   View, 
@@ -17,13 +17,13 @@ import axios from 'axios';
 
 const screenWidth = Dimensions.get('window').width;
 
-const baseurl = '';
-const apikey = '';
+const baseurl = ''; // Add your base URL here
+const apikey = '';  // Add your API key here
 
 export default function MenstruationScreen() {
   const colorScheme = useColorScheme();
   const [question, setQuestion] = useState('');
-  const [response, setResponse] = useState('')
+  const [response, setResponse] = useState('');
   const [isLoading, setIsLoading] = useState(false);
 
   const API_URL = baseurl;
@@ -41,7 +41,7 @@ export default function MenstruationScreen() {
       const response = await axios.post(
         `${API_URL}/chat/completions`,
         {
-          model: "gpt-3.5-turbo-ca",
+          model: "gpt-3.5-turbo",
           messages: [{
             role: "user",
             content: `As a women's health expert, answer concisely: ${question}`
@@ -60,25 +60,15 @@ export default function MenstruationScreen() {
       const answer = response.data.choices[0]?.message?.content?.trim();
       setResponse(answer || "Couldn't generate a response");
     } catch (error) {
-      if (axios.isAxiosError(error)) {
-        console.error('API Error:', error.message);
-        if (error.response) {
-          // The request was made and the server responded with a status code
-          console.error('Response data:', error.response.data);
-          console.error('Response status:', error.response.status);
-          console.error('Response headers:', error.response.headers);
-        } else if (error.request) {
-          // The request was made but no response was received
-          console.error('Request data:', error.request);
-        }
-      } else {
-        console.error('Unexpected Error:', error);
-      }
+      console.error('API Error:', error);
       setResponse('Error connecting to the assistant');
     } finally {
       setIsLoading(false);
     }
   };
+
+  // Set background color based on the color scheme
+  const responseBackgroundColor = colorScheme === 'dark' ? '#2c2c2c' : '#ffffff'; // Dark mode: dark gray; Light mode: white
 
   return (
     <ParallaxScrollView
@@ -92,9 +82,17 @@ export default function MenstruationScreen() {
       }
     >
       <ThemedView style={styles.container}>
-        <ThemedText type="title" style={styles.title}>Menstrual Health Assistant 🩸</ThemedText>
+        <ThemedText type="title" style={styles.title}>AI Menstrual Health Assistant 🩸</ThemedText>
 
-        <ThemedView style={styles.chatContainer}>
+        <ScrollView style={[styles.responseContainer, { backgroundColor: responseBackgroundColor }]}>
+          {response ? (
+            <ThemedText style={styles.response}>{response}</ThemedText>
+          ) : (
+            <ThemedText style={styles.placeholder}>Your assistant will respond here...</ThemedText>
+          )}
+        </ScrollView>
+        
+        <View style={styles.inputContainer}>
           <TextInput 
             style={[styles.input, { color: textColor }]}
             placeholder="Ask a menstrual health question..."
@@ -111,13 +109,7 @@ export default function MenstruationScreen() {
           >
             {isLoading ? <ActivityIndicator color="#fff" /> : <ThemedText style={styles.buttonText}>Ask</ThemedText>}
           </TouchableOpacity>
-
-          {response ? (
-            <ScrollView style={styles.responseContainer}>
-              <ThemedText style={styles.response}>{response}</ThemedText>
-            </ScrollView>
-          ) : null}
-        </ThemedView>
+        </View>
       </ThemedView>
     </ParallaxScrollView>
   );
@@ -126,6 +118,7 @@ export default function MenstruationScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
+    padding: 16,
   },
   title: {
     textAlign: 'center',
@@ -139,10 +132,17 @@ const styles = StyleSheet.create({
     marginTop: -50,
     marginLeft: 6,
   },
-  chatContainer: {
-    marginTop: 20,
-    padding: 16,
+  responseContainer: {
+    flex: 1,
+    maxHeight: 400, // Set a max height for the response area
+    padding: 10,
     borderRadius: 10,
+    marginBottom: 16,
+  },
+  inputContainer: {
+    marginTop: 10,
+    marginBottom: 20,
+    paddingBottom: 16,
   },
   input: {
     height: 60,
@@ -158,21 +158,20 @@ const styles = StyleSheet.create({
     padding: 12,
     borderRadius: 25,
     alignItems: 'center',
-    marginBottom: 15,
   },
   buttonText: {
     color: 'white',
     fontWeight: 'bold',
     fontSize: 16,
   },
-  responseContainer: {
-    maxHeight: 800,
-    padding: 10,
-    borderRadius: 10,
-    paddingBottom: 16,
-  },
   response: {
     fontSize: 16,
     lineHeight: 24,
+  },
+  placeholder: {
+    fontSize: 16,
+    lineHeight: 24,
+    color: '#888', // Placeholder color
+    textAlign: 'center', // Center the placeholder text
   },
 });
