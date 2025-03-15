@@ -154,7 +154,7 @@ export default function TabLayout() {
       <Tabs.Screen
         name="chatbot"
         options={{
-          title: 'AI Assistant',
+          title: 'MenstruAI',
           tabBarIcon: ({ color, focused }) => (
             <View style={styles.tabItemContainer}>
               <IconSymbol 
