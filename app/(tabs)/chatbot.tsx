@@ -28,7 +28,7 @@ export default function MenstruationScreen() {
 
   // Color Scheme
   const colorScheme = useColorScheme();
-  const responseBackgroundColor = colorScheme === 'dark' ? '#457B9D' : '#F1FAEE';
+  const responseBackgroundColor = colorScheme === 'dark' ? '#457B9D' : '#A8DADC';
   const textColor = colorScheme === 'dark' ? '#F1FAEE' : '#1D3557';
   const placeholderTextColor = colorScheme === 'dark' ? '#F1FAEE' : '#1D3557';
 
@@ -79,13 +79,13 @@ export default function MenstruationScreen() {
       }
     >
       <ThemedView style={styles.container}>
-        <ThemedText type="title" style={styles.title}>AI Menstrual Health Assistant 🩸</ThemedText>
+        <ThemedText type="title" style={styles.title}>MenstruAI 🩸</ThemedText>
 
         <ScrollView style={[styles.responseContainer, { backgroundColor: responseBackgroundColor }]}>
           {response ? (
             <ThemedText style={styles.response}>{response}</ThemedText>
           ) : (
-            <ThemedText style={styles.placeholder}>Your assistant will respond here...</ThemedText>
+            <ThemedText style={styles.placeholder}>AI assistant will respond here...</ThemedText>
           )}
         </ScrollView>
         
@@ -93,7 +93,7 @@ export default function MenstruationScreen() {
           <TextInput 
             style={[styles.input, { color: textColor }]}
             placeholder="Ask a menstrual health question..."
-            placeholderTextColor={placeholderTextColor}
+            placeholderTextColor={placeholderTextColor + '90'}
             value={question}
             onChangeText={setQuestion}
             editable={!isLoading}
@@ -133,25 +133,23 @@ const styles = StyleSheet.create({
     flex: 1,
     maxHeight: 400, // Set a max height for the response area
     padding: 10,
-    borderRadius: 10,
+    borderRadius: 8,
     marginBottom: 16,
   },
   inputContainer: {
     marginTop: 10,
-    marginBottom: 20,
-    paddingBottom: 16,
   },
   input: {
     height: 60,
-    borderColor: '#ee2d60',
+    borderColor: '#E63946',
     borderWidth: 1,
     paddingHorizontal: 15,
-    borderRadius: 25,
+    borderRadius: 8,
     marginBottom: 15,
     fontSize: 16,
   },
   button: {
-    backgroundColor: '#ee2d60',
+    backgroundColor: '#E63946',
     padding: 12,
     borderRadius: 25,
     alignItems: 'center',
@@ -168,7 +166,6 @@ const styles = StyleSheet.create({
   placeholder: {
     fontSize: 16,
     lineHeight: 24,
-    color: '#1D3557', // Placeholder color
-    textAlign: 'center', // Center the placeholder text
+    textAlign: 'center',
   },
 });

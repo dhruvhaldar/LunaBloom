@@ -494,9 +494,10 @@ const styles = StyleSheet.create({
   notesInput: {
     borderWidth: 1,
     borderRadius: 8,
-    padding: 12,
+    paddingHorizontal: 15,
     height: 100,
     textAlignVertical: 'top',
+    fontSize: 16,
   },
   logButton: {
     backgroundColor: '#457B9D',
@@ -508,6 +509,7 @@ const styles = StyleSheet.create({
   logButtonText: {
     color: 'white',
     fontWeight: 'bold',
+    fontSize: 16,
   },
   reactLogo: {
     height: 290,
