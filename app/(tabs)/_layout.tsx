@@ -178,7 +178,7 @@ export default function TabLayout() {
             <View style={styles.tabItemContainer}>
               <IconSymbol 
                 size={28} 
-                name="message.fill" 
+                name="chat.fill" 
                 color={color}
                 style={{ 
                   opacity: focused ? 1 : 0.6 
