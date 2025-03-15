@@ -150,7 +150,7 @@ export default function TabLayout() {
         }}
       />
 
-      {/* ChatBot Tab */}
+      {/* MenstruAI Tab */}
       <Tabs.Screen
         name="chatbot"
         options={{
