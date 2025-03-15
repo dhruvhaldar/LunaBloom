@@ -24,13 +24,6 @@ export default function TabLayout() {
     borderWidth: 1,
     borderTopWidth: 1,
     borderColor: borderColor,
-    elevation: 2, 
-    boxShadow: Platform.OS === 'ios' ? {
-      color: '#000',
-      offset: { width: 0, height: 2 },
-      opacity: 0.25,
-      radius: 3.84,
-    } : undefined,
     overflow: 'hidden',
     paddingHorizontal: 0,
   };
@@ -86,7 +79,7 @@ export default function TabLayout() {
         tabBarBackground: TabBarBackground,
         tabBarStyle: tabBarStyle,
         tabBarHideOnKeyboard: true,
-        tabBarShowLabel: false,
+        tabBarShowLabel: true,
         tabBarItemStyle: {
           flex: 1,
           justifyContent: 'center',
@@ -109,11 +102,7 @@ export default function TabLayout() {
                   opacity: focused ? 1 : 0.6 
                 }} 
               />
-              {focused && (
-                <ThemedText style={[styles.tabLabel, { color }]}>
-                  Home
-                </ThemedText>
-              )}
+              {focused}
             </View>
           ),
         }}
@@ -134,11 +123,7 @@ export default function TabLayout() {
                   opacity: focused ? 1 : 0.6 
                 }} 
               />
-              {focused && (
-                <ThemedText style={[styles.tabLabel, { color }]}>
-                  History
-                </ThemedText>
-              )}
+              {focused}
             </View>
           ),
         }}
@@ -159,11 +144,7 @@ export default function TabLayout() {
                   opacity: focused ? 1 : 0.6 
                 }} 
               />
-              {focused && (
-                <ThemedText style={[styles.tabLabel, { color }]}>
-                  Insights
-                </ThemedText>
-              )}
+              {focused}
             </View>
           ),
         }}
@@ -184,11 +165,7 @@ export default function TabLayout() {
                   opacity: focused ? 1 : 0.6 
                 }} 
               />
-              {focused && (
-                <ThemedText style={[styles.tabLabel, { color }]}>
-                  Assistant
-                </ThemedText>
-              )}
+              {focused}
             </View>
           ),
         }}
