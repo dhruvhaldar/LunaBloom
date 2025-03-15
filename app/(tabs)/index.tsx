@@ -26,12 +26,14 @@ export default function HomeScreen() {
 
   // Color Scheme
   const colorScheme = useColorScheme();
-  const textColor = colorScheme === 'dark' ? '#f0f0f0' : '#413c58';
-  const sectionHeadingtextColor = colorScheme === 'dark' ? '#ee2d60' : '#ee2d60';
-  const symptomtextColor = colorScheme === 'dark' ? '#f0f0f0' : '#ee2d60';  
-  const predictedsectionHeadingtextColor = colorScheme === 'dark' ? '#f0f0f0' : '#413c58';
-  const selectedSymptomBackgroundColor = colorScheme === 'dark' ? '#413c58' : '#413c58';
-  const symptomButtonBorderColor = colorScheme === 'dark' ? '#f0f0f0' : '#413c58';
+  const Parallaxheaderlightcolor = '#A8DADC';
+  const Parallaxheaderdarkcolor = '#A8DADC';
+  const textColor = colorScheme === 'dark' ? '#F1FAEE' : '#1D3557';
+  const sectionHeadingtextColor = colorScheme === 'dark' ? '#E63946' : '#1D3557';
+  const symptomtextColor = colorScheme === 'dark' ? '#F1FAEE' : '#E63946';  
+  const predictedsectionHeadingtextColor = colorScheme === 'dark' ? '#F1FAEE' : '#413c58';
+  const selectedSymptomBackgroundColor = colorScheme === 'dark' ? '#E63946' : '#A8DADC';
+  const symptomButtonBorderColor = colorScheme === 'dark' ? '#F1FAEE' : '#1D3557';
   
   // Date Picker Functions
   const onChange = (event: any, selectedDate: any) => {
@@ -202,7 +204,7 @@ export default function HomeScreen() {
 
   return (
     <ParallaxScrollView
-      headerBackgroundColor={{ light: '#ffdde2', dark: '#151718' }}
+      headerBackgroundColor={{ light: Parallaxheaderlightcolor, dark: Parallaxheaderdarkcolor }}
       headerImage={
         <Image 
           source={require('@/assets/images/LunaBloom_adaptive.png')} 
@@ -437,8 +439,8 @@ const styles = StyleSheet.create({
     padding: 0,
   },
   header: {
-    marginTop: -16,
-    marginBottom: 10,
+    marginTop: -10,
+    marginBottom: 8,
     textAlign: 'center',
   },
   section: {
@@ -497,7 +499,7 @@ const styles = StyleSheet.create({
     textAlignVertical: 'top',
   },
   logButton: {
-    backgroundColor: '#413c58',
+    backgroundColor: '#457B9D',
     borderRadius: 40,
     padding: 16,
     marginTop: 8,

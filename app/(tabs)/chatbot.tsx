@@ -4,7 +4,6 @@ import {
   View, 
   Image, 
   useColorScheme, 
-  Dimensions, 
   TextInput, 
   TouchableOpacity, 
   ScrollView,
@@ -15,13 +14,11 @@ import { ThemedView } from '@/components/ThemedView';
 import ParallaxScrollView from '@/components/ParallaxScrollView';
 import axios from 'axios';
 
-const screenWidth = Dimensions.get('window').width;
-
-const baseurl = ''; // Add your base URL here
-const apikey = '';  // Add your API key here
+const baseurl = '';
+const apikey = '';
 
 export default function MenstruationScreen() {
-  const colorScheme = useColorScheme();
+  
   const [question, setQuestion] = useState('');
   const [response, setResponse] = useState('');
   const [isLoading, setIsLoading] = useState(false);
@@ -29,8 +26,11 @@ export default function MenstruationScreen() {
   const API_URL = baseurl;
   const API_KEY = apikey;
 
-  const sectionHeadingtextColor = '#ee2d60';
-  const textColor = colorScheme === 'dark' ? '#f0f0f0' : '#413c58';
+  // Color Scheme
+  const colorScheme = useColorScheme();
+  const responseBackgroundColor = colorScheme === 'dark' ? '#457B9D' : '#F1FAEE';
+  const textColor = colorScheme === 'dark' ? '#F1FAEE' : '#1D3557';
+  const placeholderTextColor = colorScheme === 'dark' ? '#F1FAEE' : '#1D3557';
 
   const handleChat = async () => {
     if (!question.trim()) return;
@@ -65,10 +65,7 @@ export default function MenstruationScreen() {
     } finally {
       setIsLoading(false);
     }
-  };
-
-  // Set background color based on the color scheme
-  const responseBackgroundColor = colorScheme === 'dark' ? '#2c2c2c' : '#ffffff'; // Dark mode: dark gray; Light mode: white
+  };  
 
   return (
     <ParallaxScrollView
@@ -96,7 +93,7 @@ export default function MenstruationScreen() {
           <TextInput 
             style={[styles.input, { color: textColor }]}
             placeholder="Ask a menstrual health question..."
-            placeholderTextColor={textColor + '88'}
+            placeholderTextColor={placeholderTextColor}
             value={question}
             onChangeText={setQuestion}
             editable={!isLoading}
@@ -107,7 +104,7 @@ export default function MenstruationScreen() {
             onPress={handleChat}
             disabled={isLoading}
           >
-            {isLoading ? <ActivityIndicator color="#fff" /> : <ThemedText style={styles.buttonText}>Ask</ThemedText>}
+            {isLoading ? <ActivityIndicator color="#F1FAEE" /> : <ThemedText style={styles.buttonText}>Ask</ThemedText>}
           </TouchableOpacity>
         </View>
       </ThemedView>
@@ -171,7 +168,7 @@ const styles = StyleSheet.create({
   placeholder: {
     fontSize: 16,
     lineHeight: 24,
-    color: '#888', // Placeholder color
+    color: '#1D3557', // Placeholder color
     textAlign: 'center', // Center the placeholder text
   },
 });

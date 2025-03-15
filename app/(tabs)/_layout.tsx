@@ -1,16 +1,15 @@
 import { Tabs } from 'expo-router';
 import React, { useRef } from 'react';
-import { Platform, StyleSheet, TouchableOpacity, ViewStyle, Animated, View } from 'react-native';
+import { StyleSheet, TouchableOpacity, ViewStyle, Animated, View } from 'react-native';
 
 import { IconSymbol } from '@/components/ui/IconSymbol';
 import TabBarBackground from '@/components/ui/TabBarBackground';
 import { Colors } from '@/constants/Colors';
 import { useColorScheme } from '@/hooks/useColorScheme';
-import { ThemedText } from '@/components/ThemedText';
 
 export default function TabLayout() {
   const colorScheme = useColorScheme();
-  const borderColor = colorScheme === 'dark' ? '#ee2d60' : '#ee2d60';
+  const borderColor = colorScheme === 'dark' ? '#F1FAEE' : '#1D3557';
   const tabBarButtonSize = 29;
 
   const tabBarStyle: ViewStyle = {
@@ -20,8 +19,8 @@ export default function TabLayout() {
     height: 70,
     alignContent: 'center',
     backgroundColor: colorScheme === 'dark' 
-      ? 'rgba(30, 30, 30, 0.99)' 
-      : 'rgba(255, 255, 255, 0.95)',
+      ? '#1D3557' 
+      : '#F1FAEE',
     borderWidth: 1,
     borderTopWidth: 1,
     borderColor: borderColor,
@@ -46,7 +45,7 @@ export default function TabLayout() {
       Animated.spring(scaleAnim, {
         toValue: 1,
         useNativeDriver: true,
-        bounciness: 20,
+        bounciness: 80,
         speed: 0.4,
       }).start();
     };
@@ -161,7 +160,7 @@ export default function TabLayout() {
               <IconSymbol 
                 size={tabBarButtonSize} 
                 name="chat.fill" 
-                color="#ee2d60"
+                color="#E63946"
                 style={{ 
                   opacity: focused ? 1 : 1 
                 }} 
