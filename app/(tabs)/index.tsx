@@ -25,6 +25,7 @@ export default function HomeScreen() {
   const [show, setShow] = useState(false);
 
   // Color Scheme
+  // https://coolors.co/palette/e63946-f1faee-a8dadc-457b9d-1d3557
   const colorScheme = useColorScheme();
   const Parallaxheaderlightcolor = '#A8DADC';
   const Parallaxheaderdarkcolor = '#A8DADC';
