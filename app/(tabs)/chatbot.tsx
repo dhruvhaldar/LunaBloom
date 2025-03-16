@@ -107,7 +107,7 @@ export default function MenstruationScreen() {
             onPress={handleChat}
             disabled={isLoading}
           >
-            {isLoading ? <ActivityIndicator color="#F1FAEE" /> : <ThemedText style={styles.buttonText}>Ask</ThemedText>}
+            {isLoading ? <ActivityIndicator color="#F1FAEE" /> : <ThemedText style={styles.buttonText}>Ask 🔍</ThemedText>}
           </TouchableOpacity>
         </View>
       </ThemedView>

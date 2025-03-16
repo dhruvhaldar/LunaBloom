@@ -7,10 +7,15 @@ import TabBarBackground from '@/components/ui/TabBarBackground';
 import { Colors } from '@/constants/Colors';
 import { useColorScheme } from '@/hooks/useColorScheme';
 
+import { Image } from 'react-native';
+
 export default function TabLayout() {
   const colorScheme = useColorScheme();
   const borderColor = colorScheme === 'dark' ? '#F1FAEE' : '#1D3557';
   const tabBarButtonSize = 29;
+
+  const blurhash =
+  '|rF?hV%2WCj[ayj[a|j[az_NaeWBj@ayfRayfQfQM{M|azj[azf6fQfQfQIpWXofj[ayj[j[fQayWCoeoeaya}j[ayfQa{oLj?j[WVj[ayayj[fQoff7azayj[ayj[j[ayofayayayj[fQj[ayayj[ayfjj[j[ayjuayj[';
 
   const tabBarStyle: ViewStyle = {
     position: 'absolute',
@@ -157,16 +162,16 @@ export default function TabLayout() {
           title: 'MenstruAI',
           tabBarIcon: ({ color, focused }) => (
             <View style={styles.tabItemContainer}>
-              <IconSymbol 
+              {/* <IconSymbol 
                 size={tabBarButtonSize} 
                 name="chat.fill" 
                 color="#E63946"
                 style={{ 
                   opacity: focused ? 1 : 1 
                 }} 
-              />
-              {focused}
-            </View>
+              /> */}
+               <Image source={require('@/assets/images/ai.png')} style={styles.tinyLogo}/>
+    </View>
           ),
         }}
       />
@@ -194,5 +199,9 @@ const styles = StyleSheet.create({
   tabLabel: {
     fontSize: 8,
     marginTop: 0,
+  },
+  tinyLogo: {
+    width: 40,
+    height: 40,
   },
 });
