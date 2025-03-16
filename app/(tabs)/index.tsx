@@ -327,7 +327,7 @@ export default function HomeScreen() {
         {/* Log Period Button */}
         <TouchableOpacity style={styles.logButton} onPress={logPeriod}>
           <ThemedText style={styles.logButtonText}>
-            Log Period Entry
+            Log Period Entry 📖
           </ThemedText>
         </TouchableOpacity>
 
