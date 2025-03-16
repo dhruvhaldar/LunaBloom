@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 500 500" xmlns:bx="https://boxy-svg.com">
+  <defs>
+    <linearGradient id="gradient-1" bx:pinned="true">
+      <stop offset="0" style="stop-color: rgb(230, 57, 70);"/>
+      <stop offset="1" style="stop-color: rgb(29, 53, 87);"/>
+    </linearGradient>
+    <linearGradient id="gradient-2" bx:pinned="true"/>
+    <linearGradient id="gradient-3" bx:pinned="true">
+      <stop offset="0" style="stop-color: rgb(216, 216, 216);"/>
+      <stop offset="1" style="stop-color: rgb(123, 123, 123);"/>
+    </linearGradient>
+    <linearGradient id="gradient-1-0" href="#gradient-1" gradientUnits="userSpaceOnUse" x1="169.562" y1="-541.724" x2="169.562" y2="-368.885" gradientTransform="matrix(-0.55345, 0.337671, -2.960881, -0.537355, -1484.91803, -608.587402)"/>
+    <linearGradient id="gradient-0" x1="248.387" x2="248.387" y1="10.214" y2="338.171" gradientUnits="userSpaceOnUse" spreadMethod="pad" gradientTransform="matrix(0.636887, -0.907347, 1.323002, 0.928646, -138.192099, 250.61242)">
+      <stop offset="0" style="stop-color: rgb(230, 57, 70);"/>
+      <stop offset="1" style="stop-color: rgb(29, 53, 87);"/>
+    </linearGradient>
+    <bx:export>
+      <bx:file format="png"/>
+    </bx:export>
+  </defs>
+  <path d="M -270.402 -421.679 Q -249.998 -439.2 -229.595 -421.679 L -177.66 -377.078 Q -157.257 -359.557 -198.063 -359.557 L -301.934 -359.557 Q -342.74 -359.557 -322.337 -377.078 Z" bx:shape="triangle -342.74 -439.2 185.483 79.643 0.5 0.22 1@e6781c29" style="fill: url(&quot;#gradient-1-0&quot;); paint-order: fill; transform-origin: -249.832px -399.381px;" transform="matrix(-1, 0, 0, -1, 499.664368, 798.762024)"/>
+  <path d="M 89.825 6.117 H 411.092 A 82.534 82.534 0 0 1 493.626 88.651 V 287.142 A 82.534 82.534 0 0 1 411.092 369.676 H 89.825 A 82.534 82.534 0 0 1 7.291 287.142 V 88.651 A 82.534 82.534 0 0 1 89.825 6.117 Z M 250.459 187.897 V 187.897 H 250.459 V 187.897 H 250.459 Z" bx:shape="frame 7.291 6.117 486.335 363.559 243.169 181.78 82.534 82.534 82.534 82.534 1@30899769" style="fill-rule: nonzero; fill: url(&quot;#gradient-0&quot;); paint-order: stroke;"/>
+  <path d="M 231.419 77.576 Q 250 68.696 268.581 77.576 L 324.322 104.215 Q 342.903 113.095 347.492 133.048 L 361.259 192.907 Q 365.848 212.859 352.99 228.86 L 314.415 276.863 Q 301.557 292.864 280.934 292.864 L 219.066 292.864 Q 198.443 292.864 185.585 276.863 L 147.01 228.86 Q 134.152 212.859 138.741 192.907 L 152.508 133.048 Q 157.097 113.095 175.678 104.215 Z" bx:shape="n-gon 250 186.619 118.827 117.923 7 0.2 1@72c50502" style="fill: rgb(241, 250, 238);"/>
+</svg>

@@ -10,19 +10,19 @@ const tintColorDark = '#f0f0f0';
 // Set tint color of tabs here
 export const Colors = {
   light: {
-    text: '#11181C',
-    background: '#f0f0f0',
+    text: '#1D3557',
+    background: '#F1FAEE',
     tint: tintColorLight,
-    icon: '#ee2d60',
-    tabIconDefault: '#ee2d60',
+    icon: '#E63946',
+    tabIconDefault: '#E63946',
     tabIconSelected: tintColorLight,
   },
   dark: {
     text: '#ECEDEE',
-    background: '#151718',
+    background: '#1D3557',
     tint: tintColorDark,
-    icon: '#9BA1A6',
-    tabIconDefault: '#9BA1A6',
+    icon: '#1D3557',
+    tabIconDefault: '#1D3557',
     tabIconSelected: tintColorDark,
   },
 };
