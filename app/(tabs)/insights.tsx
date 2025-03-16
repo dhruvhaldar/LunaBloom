@@ -172,7 +172,7 @@ export default function InsightsScreen() {
       }
     >
       <ThemedView style={styles.container}>
-        <ThemedText type="title" style={styles.title}>Cycle Insights 📊</ThemedText>
+        <ThemedText type="title" style={[styles.title, { color: sectionHeadingtextColor }]}>Cycle Insights</ThemedText>
 
         {/* Previous Cycles Section */}
         <ThemedView style={styles.sectionContainer}>
@@ -204,7 +204,7 @@ export default function InsightsScreen() {
         {/* Key Metrics Section */}
         <ThemedView style={styles.sectionContainer}>
           <ThemedText type="subtitle" style={{ color: sectionHeadingtextColor, marginBottom: 10 }}>
-            Key Metrics
+            Key Metrics 📊
           </ThemedText>
           <View style={styles.metricsContainer}>
             <View style={styles.metricItem}>
@@ -261,9 +261,9 @@ const styles = StyleSheet.create({
     marginBottom: 20,
   },
   sectionContainer: {
-    marginBottom: 20,
-    borderRadius: 10,
-    padding: 10,
+    borderRadius: 8,
+    padding: 5,
+    marginBottom: 12,
   },
   metricsContainer: {
     flexDirection: 'row',

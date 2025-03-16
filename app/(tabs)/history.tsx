@@ -107,7 +107,7 @@ const deleteEntry = async (index: number) => {
             type="subtitle"
             style={{ color: sectionHeadingtextColor , marginBottom: 10}}
           >
-            Logged Entries
+            Logged Entries 📝
           </ThemedText>
           
           {entries.map((item, index) => (
