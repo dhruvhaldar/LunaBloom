@@ -222,12 +222,12 @@ export default function HomeScreen() {
         {/* Cycle Configuration */}
         <ThemedView style={styles.section}>
           <ThemedText type="subtitle" style={{ color: sectionHeadingtextColor, marginBottom: 10 }}>
-            Cycle Settings
+            Cycle Settings ⚙️
           </ThemedText>
           
           {/* Last Period Date */}
           <ThemedView style={styles.inputGroup}>
-            <ThemedText style={{ color: textColor }}>Last Period Start:</ThemedText>
+            <ThemedText style={{ color: textColor }}>Last Period Start</ThemedText>
             <TouchableOpacity 
               onPress={showDatepicker}
               style={[styles.dateButton, { borderColor: textColor }]}
@@ -253,7 +253,7 @@ export default function HomeScreen() {
 
           {/* Cycle Length */}
           <ThemedView style={styles.inputGroup}>
-            <ThemedText style={{ color: textColor }}>Cycle Length (days):</ThemedText>
+            <ThemedText style={{ color: textColor }}>Cycle Length (days)</ThemedText>
             <TextInput
               style={[styles.input, { color: textColor, borderColor: textColor }]}
               keyboardType="numeric"
@@ -264,7 +264,7 @@ export default function HomeScreen() {
 
           {/* Period Duration */}
           <ThemedView style={styles.inputGroup}>
-            <ThemedText style={{ color: textColor }}>Period Duration (days):</ThemedText>
+            <ThemedText style={{ color: textColor }}>Period Duration (days)</ThemedText>
             <TextInput
               style={[styles.input, { color: textColor, borderColor: textColor }]}
               keyboardType="numeric"
@@ -277,7 +277,7 @@ export default function HomeScreen() {
         {/* Symptom Tracker */}
         <ThemedView style={styles.section}>
           <ThemedText type="subtitle" style={{ color: sectionHeadingtextColor, marginBottom: 10 }}>
-            Today's Symptoms
+            Today's Symptoms 😟
           </ThemedText>
           <ThemedView style={styles.symptomsGrid}>
             {symptomsList.map((symptom) => (
@@ -312,7 +312,7 @@ export default function HomeScreen() {
         {/* Notes */}
         <ThemedView style={styles.section}>
           <ThemedText type="subtitle" style={{ color: sectionHeadingtextColor, marginBottom: 10 }}>
-            Notes
+            Notes 🗒️
           </ThemedText>
           <TextInput
             style={[styles.notesInput, { color: textColor, borderColor: textColor }]}
