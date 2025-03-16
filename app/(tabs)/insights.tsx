@@ -17,16 +17,17 @@ const screenWidth = Dimensions.get('window').width;
 
 export default function InsightsScreen() {
   console.log('InsightsScreen rendering...');
-  const colorScheme = useColorScheme();
   const [entries, setEntries] = useState([]);
   const [cycleData, setCycleData] = useState([]);
   const [averageCycleLength, setAverageCycleLength] = useState(0);
   const [averagePeriodDuration, setAveragePeriodDuration] = useState(0);
   const [averageOvulationDay, setAverageOvulationDay] = useState(0);
 
-  const sectionHeadingtextColor = '#ee2d60';
-  const textColor = colorScheme === 'dark' ? '#f0f0f0' : '#413c58';
-  const barColor = colorScheme === 'dark' ? '#f0f0f0' : '#413c58';
+  // Color Scheme
+  const colorScheme = useColorScheme();
+  const sectionHeadingtextColor = colorScheme === 'dark' ? '#E63946' : '#1D3557';
+  const textColor = colorScheme === 'dark' ? '#1D3557' : '#457B9D';
+  const barColor = colorScheme === 'dark' ? '#F1FAEE' : '#457B9D';
 
   useFocusEffect(
     useCallback(() => {
@@ -171,7 +172,7 @@ export default function InsightsScreen() {
       }
     >
       <ThemedView style={styles.container}>
-        <ThemedText type="title" style={styles.title}>Cycle Insights 📊</ThemedText>
+        <ThemedText type="title" style={[styles.title, { color: sectionHeadingtextColor }]}>Cycle Insights</ThemedText>
 
         {/* Previous Cycles Section */}
         <ThemedView style={styles.sectionContainer}>
@@ -187,11 +188,11 @@ export default function InsightsScreen() {
                 dy={0} 
                 dx={10} 
                 textAnchor="start" 
-                style={[{ fontSize: 13, fill: textColor }]}
+                style={[{ fontSize: 13, fill: barColor }]}
                 text={({ datum }) => `${datum.dateRange.split(' - ')[0]} (${datum.y} days)`}
               />
             }
-            style={{ data: { fill: barColor }, labels: { fill: "white" }}}
+            style={{ data: { fill: barColor }, labels: { fill: barColor }}}
             width={screenWidth - 150} // Width of bar - 150 pixels
             padding={{ top: 20, left: 5, right: 110, bottom: 20 }}
           />
@@ -203,7 +204,7 @@ export default function InsightsScreen() {
         {/* Key Metrics Section */}
         <ThemedView style={styles.sectionContainer}>
           <ThemedText type="subtitle" style={{ color: sectionHeadingtextColor, marginBottom: 10 }}>
-            Key Metrics
+            Key Metrics 📊
           </ThemedText>
           <View style={styles.metricsContainer}>
             <View style={styles.metricItem}>
@@ -260,9 +261,9 @@ const styles = StyleSheet.create({
     marginBottom: 20,
   },
   sectionContainer: {
-    marginBottom: 20,
-    borderRadius: 10,
-    padding: 10,
+    borderRadius: 8,
+    padding: 5,
+    marginBottom: 12,
   },
   metricsContainer: {
     flexDirection: 'row',
@@ -275,7 +276,7 @@ const styles = StyleSheet.create({
   },
   noDataText: {
     textAlign: 'center',
-    color: '#888',
+    color: '#E63946',
     padding: 20,
   },
   reactLogo: {
