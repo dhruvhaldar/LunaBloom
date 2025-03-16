@@ -1,16 +1,21 @@
 import { Tabs } from 'expo-router';
 import React, { useRef } from 'react';
-import { Platform, StyleSheet, TouchableOpacity, ViewStyle, Animated, View } from 'react-native';
+import { StyleSheet, TouchableOpacity, ViewStyle, Animated, View } from 'react-native';
 
 import { IconSymbol } from '@/components/ui/IconSymbol';
 import TabBarBackground from '@/components/ui/TabBarBackground';
 import { Colors } from '@/constants/Colors';
 import { useColorScheme } from '@/hooks/useColorScheme';
-import { ThemedText } from '@/components/ThemedText';
+
+import { Image } from 'react-native';
 
 export default function TabLayout() {
   const colorScheme = useColorScheme();
-  const borderColor = colorScheme === 'dark' ? '#ee2d60' : '#ee2d60';
+  const borderColor = colorScheme === 'dark' ? '#F1FAEE' : '#1D3557';
+  const tabBarButtonSize = 29;
+
+  const blurhash =
+  '|rF?hV%2WCj[ayj[a|j[az_NaeWBj@ayfRayfQfQM{M|azj[azf6fQfQfQIpWXofj[ayj[j[fQayWCoeoeaya}j[ayfQa{oLj?j[WVj[ayayj[fQoff7azayj[ayj[j[ayofayayayj[fQj[ayayj[ayfjj[j[ayjuayj[';
 
   const tabBarStyle: ViewStyle = {
     position: 'absolute',
@@ -19,18 +24,11 @@ export default function TabLayout() {
     height: 70,
     alignContent: 'center',
     backgroundColor: colorScheme === 'dark' 
-      ? 'rgba(30, 30, 30, 0.8)' 
-      : 'rgba(255, 255, 255, 0.8)',
+      ? '#1D3557' 
+      : '#F1FAEE',
     borderWidth: 1,
     borderTopWidth: 1,
     borderColor: borderColor,
-    elevation: 2, 
-    boxShadow: Platform.OS === 'ios' ? {
-      color: '#000',
-      offset: { width: 0, height: 2 },
-      opacity: 0.25,
-      radius: 3.84,
-    } : undefined,
     overflow: 'hidden',
     paddingHorizontal: 0,
   };
@@ -43,7 +41,7 @@ export default function TabLayout() {
       Animated.spring(scaleAnim, {
         toValue: 0.5,
         useNativeDriver: true,
-        bounciness: 30,
+        bounciness: 80,
         speed: 0.4,
       }).start();
     };
@@ -52,7 +50,7 @@ export default function TabLayout() {
       Animated.spring(scaleAnim, {
         toValue: 1,
         useNativeDriver: true,
-        bounciness: 10,
+        bounciness: 80,
         speed: 0.4,
       }).start();
     };
@@ -86,7 +84,7 @@ export default function TabLayout() {
         tabBarBackground: TabBarBackground,
         tabBarStyle: tabBarStyle,
         tabBarHideOnKeyboard: true,
-        tabBarShowLabel: false,
+        tabBarShowLabel: true,
         tabBarItemStyle: {
           flex: 1,
           justifyContent: 'center',
@@ -102,18 +100,14 @@ export default function TabLayout() {
           tabBarIcon: ({ color, focused }) => (
             <View style={styles.tabItemContainer}>
               <IconSymbol 
-                size={28} 
+                size={tabBarButtonSize} 
                 name="house.fill" 
                 color={color}
                 style={{ 
-                  opacity: focused ? 1 : 0.6 
+                  opacity: focused ? 1 : 0.8 
                 }} 
               />
-              {focused && (
-                <ThemedText style={[styles.tabLabel, { color }]}>
-                  Home
-                </ThemedText>
-              )}
+              {focused}
             </View>
           ),
         }}
@@ -127,18 +121,14 @@ export default function TabLayout() {
           tabBarIcon: ({ color, focused }) => (
             <View style={styles.tabItemContainer}>
               <IconSymbol 
-                size={28} 
+                size={tabBarButtonSize} 
                 name="history.fill" 
                 color={color}
                 style={{ 
-                  opacity: focused ? 1 : 0.6 
+                  opacity: focused ? 1 : 0.8 
                 }} 
               />
-              {focused && (
-                <ThemedText style={[styles.tabLabel, { color }]}>
-                  History
-                </ThemedText>
-              )}
+              {focused}
             </View>
           ),
         }}
@@ -152,23 +142,45 @@ export default function TabLayout() {
           tabBarIcon: ({ color, focused }) => (
             <View style={styles.tabItemContainer}>
               <IconSymbol 
-                size={28} 
+                size={tabBarButtonSize} 
                 name="bar-chart.fill" 
                 color={color}
                 style={{ 
-                  opacity: focused ? 1 : 0.6 
+                  opacity: focused ? 1 : 0.8 
                 }} 
               />
-              {focused && (
-                <ThemedText style={[styles.tabLabel, { color }]}>
-                  Insights
-                </ThemedText>
-              )}
+              {focused}
             </View>
           ),
         }}
       />
+
+      {/* MenstruAI Tab */}
+      <Tabs.Screen
+        name="chatbot"
+        options={{
+          title: 'MenstruAI',
+          tabBarIcon: ({ color, focused }) => (
+            <View style={styles.tabItemContainer}>
+              {/* <IconSymbol 
+                size={tabBarButtonSize} 
+                name="chat.fill" 
+                color="#E63946"
+                style={{ 
+                  opacity: focused ? 1 : 1 
+                }} 
+              /> */}
+               <Image source={require('@/assets/images/ai.png')} style={styles.tinyLogo}/>
+    </View>
+          ),
+        }}
+      />
+      
     </Tabs>
+
+    
+
+    
   );
 }
 
@@ -187,5 +199,9 @@ const styles = StyleSheet.create({
   tabLabel: {
     fontSize: 8,
     marginTop: 0,
+  },
+  tinyLogo: {
+    width: 40,
+    height: 40,
   },
 });

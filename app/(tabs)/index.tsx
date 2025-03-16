@@ -25,13 +25,16 @@ export default function HomeScreen() {
   const [show, setShow] = useState(false);
 
   // Color Scheme
+  // https://coolors.co/palette/e63946-f1faee-a8dadc-457b9d-1d3557
   const colorScheme = useColorScheme();
-  const textColor = colorScheme === 'dark' ? '#f0f0f0' : '#413c58';
-  const sectionHeadingtextColor = colorScheme === 'dark' ? '#ee2d60' : '#ee2d60';
-  const symptomtextColor = colorScheme === 'dark' ? '#f0f0f0' : '#ee2d60';  
-  const predictedsectionHeadingtextColor = colorScheme === 'dark' ? '#f0f0f0' : '#413c58';
-  const selectedSymptomBackgroundColor = colorScheme === 'dark' ? '#413c58' : '#413c58';
-  const symptomButtonBorderColor = colorScheme === 'dark' ? '#f0f0f0' : '#413c58';
+  const Parallaxheaderlightcolor = '#A8DADC';
+  const Parallaxheaderdarkcolor = '#A8DADC';
+  const textColor = colorScheme === 'dark' ? '#F1FAEE' : '#1D3557';
+  const sectionHeadingtextColor = colorScheme === 'dark' ? '#E63946' : '#1D3557';
+  const symptomtextColor = colorScheme === 'dark' ? '#F1FAEE' : '#E63946';  
+  const predictedsectionHeadingtextColor = colorScheme === 'dark' ? '#F1FAEE' : '#413c58';
+  const selectedSymptomBackgroundColor = colorScheme === 'dark' ? '#E63946' : '#A8DADC';
+  const symptomButtonBorderColor = colorScheme === 'dark' ? '#F1FAEE' : '#1D3557';
   
   // Date Picker Functions
   const onChange = (event: any, selectedDate: any) => {
@@ -202,7 +205,7 @@ export default function HomeScreen() {
 
   return (
     <ParallaxScrollView
-      headerBackgroundColor={{ light: '#ffdde2', dark: '#151718' }}
+      headerBackgroundColor={{ light: Parallaxheaderlightcolor, dark: Parallaxheaderdarkcolor }}
       headerImage={
         <Image 
           source={require('@/assets/images/LunaBloom_adaptive.png')} 
@@ -219,12 +222,12 @@ export default function HomeScreen() {
         {/* Cycle Configuration */}
         <ThemedView style={styles.section}>
           <ThemedText type="subtitle" style={{ color: sectionHeadingtextColor, marginBottom: 10 }}>
-            Cycle Settings
+            Cycle Settings ⚙️
           </ThemedText>
           
           {/* Last Period Date */}
           <ThemedView style={styles.inputGroup}>
-            <ThemedText style={{ color: textColor }}>Last Period Start:</ThemedText>
+            <ThemedText style={{ color: textColor }}>Last Period Start</ThemedText>
             <TouchableOpacity 
               onPress={showDatepicker}
               style={[styles.dateButton, { borderColor: textColor }]}
@@ -250,7 +253,7 @@ export default function HomeScreen() {
 
           {/* Cycle Length */}
           <ThemedView style={styles.inputGroup}>
-            <ThemedText style={{ color: textColor }}>Cycle Length (days):</ThemedText>
+            <ThemedText style={{ color: textColor }}>Cycle Length (days)</ThemedText>
             <TextInput
               style={[styles.input, { color: textColor, borderColor: textColor }]}
               keyboardType="numeric"
@@ -261,7 +264,7 @@ export default function HomeScreen() {
 
           {/* Period Duration */}
           <ThemedView style={styles.inputGroup}>
-            <ThemedText style={{ color: textColor }}>Period Duration (days):</ThemedText>
+            <ThemedText style={{ color: textColor }}>Period Duration (days)</ThemedText>
             <TextInput
               style={[styles.input, { color: textColor, borderColor: textColor }]}
               keyboardType="numeric"
@@ -274,7 +277,7 @@ export default function HomeScreen() {
         {/* Symptom Tracker */}
         <ThemedView style={styles.section}>
           <ThemedText type="subtitle" style={{ color: sectionHeadingtextColor, marginBottom: 10 }}>
-            Today's Symptoms
+            Today's Symptoms 😟
           </ThemedText>
           <ThemedView style={styles.symptomsGrid}>
             {symptomsList.map((symptom) => (
@@ -309,7 +312,7 @@ export default function HomeScreen() {
         {/* Notes */}
         <ThemedView style={styles.section}>
           <ThemedText type="subtitle" style={{ color: sectionHeadingtextColor, marginBottom: 10 }}>
-            Notes
+            Notes 🗒️
           </ThemedText>
           <TextInput
             style={[styles.notesInput, { color: textColor, borderColor: textColor }]}
@@ -324,7 +327,7 @@ export default function HomeScreen() {
         {/* Log Period Button */}
         <TouchableOpacity style={styles.logButton} onPress={logPeriod}>
           <ThemedText style={styles.logButtonText}>
-            Log Period Entry
+            Log Period Entry 📖
           </ThemedText>
         </TouchableOpacity>
 
@@ -437,8 +440,8 @@ const styles = StyleSheet.create({
     padding: 0,
   },
   header: {
-    marginTop: -16,
-    marginBottom: 10,
+    marginTop: -10,
+    marginBottom: 8,
     textAlign: 'center',
   },
   section: {
@@ -492,12 +495,13 @@ const styles = StyleSheet.create({
   notesInput: {
     borderWidth: 1,
     borderRadius: 8,
-    padding: 12,
+    paddingHorizontal: 15,
     height: 100,
     textAlignVertical: 'top',
+    fontSize: 16,
   },
   logButton: {
-    backgroundColor: '#413c58',
+    backgroundColor: '#457B9D',
     borderRadius: 40,
     padding: 16,
     marginTop: 8,
@@ -506,6 +510,7 @@ const styles = StyleSheet.create({
   logButtonText: {
     color: 'white',
     fontWeight: 'bold',
+    fontSize: 16,
   },
   reactLogo: {
     height: 290,
