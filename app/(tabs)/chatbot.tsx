@@ -14,8 +14,11 @@ import { ThemedView } from '@/components/ThemedView';
 import ParallaxScrollView from '@/components/ParallaxScrollView';
 import axios from 'axios';
 
-const baseurl = '';
-const apikey = '';
+const baseurl = process.env.EXPO_PUBLIC_API_URL;
+const apikey = process.env.EXPO_PUBLIC_API_KEY;
+
+console.log('Base URL:',baseurl)
+console.log('API Key:',apikey)
 
 export default function MenstruationScreen() {
   
