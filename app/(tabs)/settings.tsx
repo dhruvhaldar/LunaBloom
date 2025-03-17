@@ -40,8 +40,9 @@ export default function SettingsScreen() {
             const uri = FileSystem.documentDirectory + 'lunabloom_backup.json';
             await FileSystem.writeAsStringAsync(uri, existingEntries);
 
-            console.log('existingEntries :',existingEntries)
-            console.log('uri :',uri)
+            console.log('existingEntries :',existingEntries) // existingEntries : [{"date":"2025-03-17T09:44:41.814Z","lastPeriod":"2025-01-01T09:41:00.000Z","cycleLength":"22","periodDuration":"5","selectedSymptoms":["Tender Breasts","Cramps"],"notes":"","predictedNextPeriod":"2025-01-23T09:41:00.000Z","predictedNextOvulation":"2025-01-11T09:41:00.000Z"},{"date":"2025-03-17T09:39:58.264Z","lastPeriod":"2025-02-04T09:39:00.000Z","cycleLength":"25","periodDuration":"6","selectedSymptoms":[],"notes":"","predictedNextPeriod":"2025-03-01T09:39:00.000Z","predictedNextOvulation":"2025-02-15T09:39:00.000Z"},{"date":"2025-03-17T09:39:27.381Z","lastPeriod":"2025-03-01T09:39:00.000Z","cycleLength":"28","periodDuration":"5","selectedSymptoms":[],"notes":"","predictedNextPeriod":"2025-03-29T09:39:00.000Z","predictedNextOvulation":"2025-03-14T09:39:00.000Z"},{"date":"2025-03-17T13:39:37.139Z","lastPeriod":"2024-12-11T13:33:00.000Z","cycleLength":"28","periodDuration":"7","selectedSymptoms":["Bloating","Mood Swings"],"notes":"","predictedNextPeriod":"2025-01-08T13:33:00.000Z","predictedNextOvulation":"2024-12-24T13:33:00.000Z"}]
+
+            console.log('uri :',uri) // file:///data/user/0/com.anonymous.LunaBloom/files/lunabloom_backup.json
       
           // Share the file using React Native Share
           const result = await Share.share({
