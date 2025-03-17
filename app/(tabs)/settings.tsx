@@ -14,6 +14,7 @@ import * as FileSystem from 'expo-file-system';
 export default function SettingsScreen() {
     const colorScheme = useColorScheme();
     const textColor = colorScheme === 'dark' ? '#f0f0f0' : '#413c58';
+    const sectionHeadingtextColor = colorScheme === 'dark' ? '#E63946' : '#1D3557';
 
     // const backupData = async () => {
     //     try {
@@ -43,22 +44,25 @@ export default function SettingsScreen() {
       };
 
       return (
+        <ParallaxScrollView
+              headerBackgroundColor={{ light: '#ffdde2', dark: '#151718' }}
+              headerImage={
+                <Image 
+                  source={require('@/assets/images/history2.png')}
+                  style={styles.reactLogo}
+                  resizeMode="contain"
+                />
+            }
+      >
         <ThemedView style={styles.container}>
-          <ScrollView> {/* Add ScrollView here */}
-            <ThemedText style={[styles.title, { color: textColor }]}>Settings ⚙️</ThemedText>
-    
-            {/* <TouchableOpacity style={styles.settingOption} onPress={backupData}>
-              <ThemedText style={{ color: textColor }}>Backup Data</ThemedText>
-            </TouchableOpacity> */}
-    
-            <TouchableOpacity style={styles.settingOption} onPress={restoreData}>
-              <ThemedText style={{ color: textColor }}>Restore Data</ThemedText>
-            </TouchableOpacity>
-    
-            {/* Add more settings options here */}
-          </ScrollView> {/* Close ScrollView */}
+                <ThemedText type="title" style={[styles.header, { color: textColor }]}>Settings </ThemedText>
+                 <ThemedText type="subtitle" style={{ color: sectionHeadingtextColor, marginBottom: 10 }}>
+                            Data Management ⚙️
+                          </ThemedText>
         </ThemedView>
-      );
+
+      </ParallaxScrollView>
+);
 }
 
 const styles = StyleSheet.create({
@@ -66,10 +70,18 @@ const styles = StyleSheet.create({
       flex: 1,
       padding: 16,
     },
-    title: {
-      fontSize: 20,
-      fontWeight: 'bold',
-      marginBottom: 20,
+    header: {
+        marginTop: -10,
+        marginBottom: 8,
+        textAlign: 'center',
+      },
+    reactLogo: {
+      height: 380,
+      width: 500,
+      alignSelf: 'center',
+      marginBottom: -50,
+      marginTop: -50,
+      marginLeft: 6,
     },
     settingOption: {
       padding: 15,
