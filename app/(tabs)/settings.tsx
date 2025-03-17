@@ -70,6 +70,11 @@ export default function SettingsScreen() {
         Alert.alert('Restore Data', 'This feature is coming soon!');
       };
 
+    const aboutOption = async () => {
+        // Implement restore logic here (e.g., using a file picker)
+        Alert.alert('About', 'Made with ❤️ in India 🇮🇳');
+      };
+
       return (
         <ParallaxScrollView
               headerBackgroundColor={{ light: '#ffdde2', dark: '#151718' }}
@@ -109,6 +114,11 @@ export default function SettingsScreen() {
                                 </View>
                               </TouchableOpacity>
                             ))}
+                            
+                            <TouchableOpacity style={styles.settingOption} onPress={aboutOption}>
+                              <ThemedText style={{ color: textColor }}>About</ThemedText>
+                            </TouchableOpacity>
+
                           </ScrollView>
         </ThemedView>
 
