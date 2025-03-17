@@ -1,9 +1,5 @@
 # LunaBloom: Menstrual Health Tracking App
 
-[![GitHub license](https://img.shields.io/github/license/dhruv-haldar/LunaBloom)](https://github.com/dhruvhaldar/LunaBloom/blob/main/LICENSE)
-[![GitHub issues](https://img.shields.io/github/issues/dhruv-haldar/LunaBloom)](https://github.com/dhruvhaldar/LunaBloom/issues)
-[![GitHub stars](https://img.shields.io/github/stars/dhruv-haldar/LunaBloom)](https://github.com/dhruvhaldar/LunaBloom/stargazers)
-
 🌟 LunaBloom is your ultimate companion in understanding and managing your menstrual health. Designed with love and care, this app offers a seamless and personalized experience to track, predict, and gain insights into your menstrual cycle.
 
 ## 🌟 Key Features
