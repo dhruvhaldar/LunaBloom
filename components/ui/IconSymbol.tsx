@@ -19,6 +19,7 @@ const MAPPING = {
   'delete.fill': 'delete',
   'bar-chart.fill': 'bar-chart',
   'chat.fill': 'chat',
+  'settings.fill':'settings',
 } as Partial<
   Record<
     import('expo-symbols').SymbolViewProps['name'],
