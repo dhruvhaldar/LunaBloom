@@ -1,56 +1,40 @@
-# Welcome to your Expo app 👋
+# LunaBloom: Menstrual Health Tracking App
 
-This is an [Expo](https://expo.dev) project created with [`create-expo-app`](https://www.npmjs.com/package/create-expo-app).
+[![GitHub license](https://img.shields.io/github/license/dhruv-haldar/LunaBloom)](https://github.com/dhruv-haldar/LunaBloom/blob/main/LICENSE)
+[![GitHub issues](https://img.shields.io/github/issues/dhruv-haldar/LunaBloom)](https://github.com/dhruv-haldar/LunaBloom/issues)
+[![GitHub stars](https://img.shields.io/github/stars/dhruv-haldar/LunaBloom)](https://github.com/dhruv-haldar/LunaBloom/stargazers)
 
-## Get started
+🌟 LunaBloom is your ultimate companion in understanding and managing your menstrual health. Designed with love and care, this app offers a seamless and personalized experience to track, predict, and gain insights into your menstrual cycle.
 
-### Version Requirements
+## 🌟 Key Features
 
-1. Node version v23.9.0
-2. Npx Expo version 0.22.18
-   
-3. Install dependencies
+### 📅 Period Tracking
+- Effortlessly log the first day of your period
+- Track your cycle length
+- Record the duration of your period
 
-   ```bash
-   npm install
-   ```
+### 🩸 Symptom Tracking
+- Select and log daily symptoms
+- Customizable symptom list
+- Add personal notes
 
-4. Start the app
+### 🔮 Predictions
+- Predict your next period
+- Calculate your ovulation date
+- Estimate your fertile window
 
-   ```bash
-    npx expo start
-   ```
+### 📊 Insights Dashboard
+- View your average cycle length
+- See your average period duration
+- Track the number of periods logged
+- Get predictions for your next period and ovulation
 
+### 🩸 MenstruAI
+- AI-powered chat assistant
+- Get answers to your menstrual health questions
+- Receive advice on managing symptoms
+- Learn more about your reproductive health
 
-In the output, you'll find options to open the app in a
+## 🌈 Why LunaBloom?
 
-- [development build](https://docs.expo.dev/develop/development-builds/introduction/)
-- [Android emulator](https://docs.expo.dev/workflow/android-studio-emulator/)
-- [iOS simulator](https://docs.expo.dev/workflow/ios-simulator/)
-- [Expo Go](https://expo.dev/go), a limited sandbox for trying out app development with Expo
-
-You can start developing by editing the files inside the **app** directory. This project uses [file-based routing](https://docs.expo.dev/router/introduction).
-
-## Get a fresh project
-
-When you're ready, run:
-
-```bash
-npm run reset-project
-```
-
-This command will move the starter code to the **app-example** directory and create a blank **app** directory where you can start developing.
-
-## Learn more
-
-To learn more about developing your project with Expo, look at the following resources:
-
-- [Expo documentation](https://docs.expo.dev/): Learn fundamentals, or go into advanced topics with our [guides](https://docs.expo.dev/guides).
-- [Learn Expo tutorial](https://docs.expo.dev/tutorial/introduction/): Follow a step-by-step tutorial where you'll create a project that runs on Android, iOS, and the web.
-
-## Join the community
-
-Join our community of developers creating universal apps.
-
-- [Expo on GitHub](https://github.com/expo/expo): View our open source platform and contribute.
-- [Discord community](https://chat.expo.dev): Chat with Expo users and ask questions.
+LunaBloom is more than just a menstrual tracking app; it's a supportive friend that empowers you to take control of your reproductive health. Our user-friendly interface, personalized features, and AI assistance make managing your menstrual cycle a breeze. Join the LunaBloom community and embark on a journey of self-discovery and well-being.
