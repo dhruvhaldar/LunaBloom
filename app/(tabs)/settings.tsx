@@ -30,45 +30,43 @@ export default function SettingsScreen() {
 
       const backupData = async () => {
         try {
-          const existingEntries = await AsyncStorage.getItem('periodEntries');
-          if (!existingEntries) {
-            Alert.alert('No data to backup', 'Please log at least one entry.');
-            return;
-          }
+            const existingEntries = await AsyncStorage.getItem('periodEntries');
+            if (!existingEntries) {
+              Alert.alert('No data to backup', 'Please log at least one entry.');
+              return;
+            }
       
-          const filename = FileSystem.documentDirectory + 'lunabloom_backup.json';
-          await FileSystem.writeAsStringAsync(filename, existingEntries);
+            // Create a temporary file URI
+            const uri = FileSystem.documentDirectory + 'lunabloom_backup.json';
+            await FileSystem.writeAsStringAsync(uri, existingEntries);
+
+            console.log('existingEntries :',existingEntries)
+            console.log('uri :',uri)
       
           // Share the file using React Native Share
           const result = await Share.share({
-            url: filename, // Use the file URL
-            title: 'LunaBloom Backup', // Optional title
-            message: 'Here is your LunaBloom data backup.', // Optional message
-          });
+            url: uri,
+            title: 'LunaBloom Backup',
+            message: 'Here is your LunaBloom data backup.',
+        });
       
-          if (result.action === Share.sharedAction) {
-            if (result.activityType) {
-              // Shared with activity type of result.activityType
-              Alert.alert('Backup successful!', 'Your data has been backed up and shared.');
-            } else {
-              // Shared
-              Alert.alert('Backup successful!', 'Your data has been backed up and shared.');
-            }
+        if (result.action === Share.sharedAction) {
+            Alert.alert('Backup successful!', 'Your data has been backed up and shared.');
           } else if (result.action === Share.dismissedAction) {
-            // Dismissed
             Alert.alert('Backup dismissed', 'The backup sharing was dismissed.');
           }
         } catch (error) {
-          console.error('Error backing up ', error);
-          Alert.alert('Backup failed', 'An error occurred while backing up your data.');
-        }
-      };
+            console.error('Error backing up ', error);
+            Alert.alert('Backup failed', 'An error occurred while backing up your data.');
+          }
+        };
       
 
     const restoreData = async () => {
         // Implement restore logic here (e.g., using a file picker)
         Alert.alert('Restore Data', 'This feature is coming soon!');
       };
+
 
     const aboutOption = async () => {
         // Implement restore logic here (e.g., using a file picker)
