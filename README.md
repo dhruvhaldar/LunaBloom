@@ -1,4 +1,4 @@
-# LunaBloom: Menstrual Health Tracking App
+# LunaBloom: MenstruAI Health Tracking App
 
 🌟 LunaBloom is your ultimate companion in understanding and managing your menstrual health. Designed with love and care, this app offers a seamless and personalized experience to track, predict, and gain insights into your menstrual cycle.
 
