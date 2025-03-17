@@ -166,13 +166,13 @@ export default function TabLayout() {
       />
       
     {/* Settings Tab */}
-    <Tabs.Screen
+<Tabs.Screen
         name="settings"
         options={{
           title: 'Settings',
           tabBarIcon: ({ color, focused }) => (
             <View style={styles.tabItemContainer}>
-               <IconSymbol 
+              <IconSymbol 
                 size={tabBarButtonSize} 
                 name="settings.fill" 
                 color={color}
@@ -180,7 +180,8 @@ export default function TabLayout() {
                   opacity: focused ? 1 : 0.8 
                 }} 
               />
-    </View>
+              {focused}
+            </View>
           ),
         }}
       />
