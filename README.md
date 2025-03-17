@@ -4,6 +4,12 @@
 
 ## 🌟 Key Features
 
+### 🩸 MenstruAI
+- AI-powered chat assistant
+- Get answers to your menstrual health questions
+- Receive advice on managing symptoms
+- Learn more about your reproductive health
+  
 ### 📅 Period Tracking
 - Effortlessly log the first day of your period
 - Track your cycle length
@@ -24,12 +30,6 @@
 - See your average period duration
 - Track the number of periods logged
 - Get predictions for your next period and ovulation
-
-### 🩸 MenstruAI
-- AI-powered chat assistant
-- Get answers to your menstrual health questions
-- Receive advice on managing symptoms
-- Learn more about your reproductive health
 
 ## 🌈 Why LunaBloom?
 
