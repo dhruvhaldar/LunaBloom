@@ -44,7 +44,7 @@ export default function MenstruationScreen() {
       const response = await axios.post(
         `${API_URL}/chat/completions`,
         {
-          model: "gpt-3.5-turbo",
+          model: "gpt-3.5-turbo", // Select model
           messages: [{
             role: "user",
             content: `As a women's health expert, answer concisely: ${question}`
