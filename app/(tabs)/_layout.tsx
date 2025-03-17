@@ -14,9 +14,6 @@ export default function TabLayout() {
   const borderColor = colorScheme === 'dark' ? '#F1FAEE' : '#1D3557';
   const tabBarButtonSize = 29;
 
-  const blurhash =
-  '|rF?hV%2WCj[ayj[a|j[az_NaeWBj@ayfRayfQfQM{M|azj[azf6fQfQfQIpWXofj[ayj[j[fQayWCoeoeaya}j[ayfQa{oLj?j[WVj[ayayj[fQoff7azayj[ayj[j[ayofayayayj[fQj[ayayj[ayfjj[j[ayjuayj[';
-
   const tabBarStyle: ViewStyle = {
     position: 'absolute',
     bottom: 10,
@@ -39,10 +36,10 @@ export default function TabLayout() {
 
     const handlePressIn = () => {
       Animated.spring(scaleAnim, {
-        toValue: 0.5,
+        toValue: 0.9,
         useNativeDriver: true,
-        bounciness: 80,
-        speed: 0.4,
+        bounciness: 10,
+        speed: 80,
       }).start();
     };
 
@@ -162,20 +159,32 @@ export default function TabLayout() {
           title: 'MenstruAI',
           tabBarIcon: ({ color, focused }) => (
             <View style={styles.tabItemContainer}>
-              {/* <IconSymbol 
-                size={tabBarButtonSize} 
-                name="chat.fill" 
-                color="#E63946"
-                style={{ 
-                  opacity: focused ? 1 : 1 
-                }} 
-              /> */}
-               <Image source={require('@/assets/images/ai.png')} style={styles.tinyLogo}/>
+              <Image source={require('@/assets/images/ai.png')} style={styles.tinyLogo}/>
     </View>
           ),
         }}
       />
       
+    {/* Settings Tab */}
+    <Tabs.Screen
+        name="settings"
+        options={{
+          title: 'Settings',
+          tabBarIcon: ({ color, focused }) => (
+            <View style={styles.tabItemContainer}>
+               <IconSymbol 
+                size={tabBarButtonSize} 
+                name="settings.fill" 
+                color={color}
+                style={{ 
+                  opacity: focused ? 1 : 0.8 
+                }} 
+              />
+    </View>
+          ),
+        }}
+      />
+
     </Tabs>
 
     
