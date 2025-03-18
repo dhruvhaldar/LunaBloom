@@ -47,7 +47,7 @@ export default function MenstruationScreen() {
           model: "gpt-3.5-turbo", // Select model
           messages: [{
             role: "user",
-            content: `As a women's health expert, answer concisely: ${question}`
+            content: `As a women's health expert, answer concisely based on facts, don't make assumptions: ${question}`
           }],
           temperature: 0.7,
           max_tokens: 150
