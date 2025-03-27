@@ -8,7 +8,6 @@ import {
   ScrollView,
   Image,
   Share,
-  Switch
 } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import * as DocumentPicker from 'expo-document-picker';
@@ -17,6 +16,22 @@ import * as Sharing from 'expo-sharing';
 import { ThemedText } from '@/components/ThemedText';
 import { ThemedView } from '@/components/ThemedView';
 import ParallaxScrollView from '@/components/ParallaxScrollView';
+
+interface ToggleSwitchProps {
+    value: boolean;
+    onValueChange: (value: boolean) => void;
+}
+
+const ToggleSwitch: React.FC<ToggleSwitchProps> = ({ value, onValueChange }) => {
+    return (
+        <TouchableOpacity 
+            onPress={() => onValueChange(!value)} 
+            style={[styles.toggleContainer, value ? styles.toggleContainerActive : styles.toggleContainerInactive]}
+        >
+            <View style={[styles.toggleCircle, value ? styles.toggleCircleActive : styles.toggleCircleInactive]} />
+        </TouchableOpacity>
+    );
+};
 
 export default function SettingsScreen() {
     const colorScheme = useColorScheme();
@@ -201,7 +216,7 @@ export default function SettingsScreen() {
             }
         >
             <ThemedView style={styles.container}>
-                <ThemedText type="title" style={[styles.header, { color: textColor }]}>Settings</ThemedText>
+                <ThemedText type="title" style={[styles.title, { color: textColor }]}>Settings</ThemedText>
 
                 {/* Other Settings Section */}
                 <View style={styles.section}>
@@ -209,19 +224,17 @@ export default function SettingsScreen() {
                     
                     <View style={styles.settingRow}>
                         <ThemedText style={[styles.settingText, { color: textColor }]}>Luteal Phase Calculation</ThemedText>
-                        <Switch
+                        <ToggleSwitch
                             value={lutealPhase}
                             onValueChange={setLutealPhase}
-                            trackColor={{ false: '#767577', true: '#81b0ff' }}
                         />
                     </View>
 
                     <View style={styles.settingRow}>
                         <ThemedText style={[styles.settingText, { color: textColor }]}>Prevent Screenshots</ThemedText>
-                        <Switch
+                        <ToggleSwitch
                             value={preventScreenshots}
                             onValueChange={setPreventScreenshots}
-                            trackColor={{ false: '#767577', true: '#81b0ff' }}
                         />
                     </View>
                 </View>
@@ -230,13 +243,14 @@ export default function SettingsScreen() {
                 <View style={styles.section}>
                     <ThemedText style={[styles.sectionTitle, { color: textColor }]}>Backup</ThemedText>
                     <View style={styles.settingRow}>
-                        <ThemedText style={[styles.settingText, { color: textColor }]}>Saved Data</ThemedText>
+                        <ThemedText style={[styles.settingText, { color: textColor }]}>Period Entries</ThemedText>
                         <View style={styles.actionButtons}>
                             <TouchableOpacity onPress={restoreData}>
-                                <ThemedText style={[styles.link, { color: '#81b0ff', marginRight: 10 }]}>Import</ThemedText>
+                                <ThemedText style={styles.actionButtonText}>Import</ThemedText>
                             </TouchableOpacity>
+                            <ThemedText style={styles.separator}>|</ThemedText>
                             <TouchableOpacity onPress={backupData}>
-                                <ThemedText style={[styles.link, { color: '#81b0ff' }]}>Export</ThemedText>
+                                <ThemedText style={styles.actionButtonText}>Export</ThemedText>
                             </TouchableOpacity>
                         </View>
                     </View>
@@ -244,8 +258,8 @@ export default function SettingsScreen() {
 
                 {/* About Section */}
                 <View style={styles.aboutSection}>
-                    <TouchableOpacity onPress={aboutOption} style={styles.aboutButton}>
-                        <ThemedText style={[styles.link, { color: '#81b0ff' }]}>About App</ThemedText>
+                    <TouchableOpacity onPress={aboutOption}>
+                        <ThemedText style={styles.aboutAppText}>About App</ThemedText>
                     </TouchableOpacity>
                     <ThemedText style={[styles.versionText, { color: textColor }]}>
                         App Version: 2.0-beta
@@ -259,20 +273,20 @@ export default function SettingsScreen() {
 const styles = StyleSheet.create({
     container: {
         flex: 1,
-        padding: 16,
+        padding: 20,
     },
-    header: {
-        fontSize: 24,
-        fontWeight: 'bold',
-        marginBottom: 20,
+    title: {
+      textAlign: 'center',
+      marginBottom: 20,
     },
     section: {
-        marginBottom: 24,
+        marginBottom: 30,
     },
     sectionTitle: {
-        fontSize: 20,
-        fontWeight: 'bold',
-        marginBottom: 16,
+        fontSize: 24,
+        fontWeight: '600',
+        marginBottom: 20,
+        color: '#ffffff',
     },
     settingRow: {
         flexDirection: 'row',
@@ -280,28 +294,44 @@ const styles = StyleSheet.create({
         alignItems: 'center',
         paddingVertical: 12,
         borderBottomWidth: 0.5,
-        borderBottomColor: '#2f2f2f',
+        borderBottomColor: '#3f3f3f',
     },
     settingText: {
-        fontSize: 16,
+        fontSize: 17,
+        color: '#ffffff',
+        opacity: 0.9,
     },
-    link: {
-        fontSize: 16,
+    switch: {
+        transform: [{ scaleX: 0.9 }, { scaleY: 0.9 }],
     },
     actionButtons: {
         flexDirection: 'row',
         alignItems: 'center',
     },
+    actionButtonText: {
+        fontSize: 17,
+        color: '#8b71b5',
+        paddingHorizontal: 10,
+    },
+    separator: {
+        fontSize: 17,
+        color: '#8b71b5',
+        opacity: 0.5,
+        marginHorizontal: 5,
+    },
     aboutSection: {
-        marginTop: 32,
+        marginTop: 40,
         alignItems: 'center',
     },
-    aboutButton: {
-        marginBottom: 8,
+    aboutAppText: {
+        fontSize: 17,
+        color: '#8b71b5',
+        marginBottom: 10,
     },
     versionText: {
         fontSize: 14,
-        opacity: 0.7,
+        color: '#ffffff',
+        opacity: 0.5,
     },
     reactLogo: {
         height: 290,
@@ -309,5 +339,32 @@ const styles = StyleSheet.create({
         alignSelf: 'center',
         marginBottom: -50,
         marginTop: -50,
+    },
+    toggleContainer: {
+        width: 50,
+        height: 30,
+        borderRadius: 15,
+        padding: 2,
+        justifyContent: 'center',
+    },
+    toggleContainerActive: {
+        backgroundColor: '#8b71b5',
+    },
+    toggleContainerInactive: {
+        backgroundColor: '#3f3f3f',
+    },
+    toggleCircle: {
+        width: 26,
+        height: 26,
+        borderRadius: 13,
+        position: 'absolute',
+    },
+    toggleCircleActive: {
+        backgroundColor: '#ffffff',
+        right: 2,
+    },
+    toggleCircleInactive: {
+        backgroundColor: '#909090',
+        left: 2,
     },
 });
