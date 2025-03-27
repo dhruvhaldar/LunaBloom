@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { 
   StyleSheet, 
   View, 
@@ -7,7 +7,8 @@ import {
   TouchableOpacity,
   ScrollView,
   Image,
-  Share
+  Share,
+  Switch
 } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import * as DocumentPicker from 'expo-document-picker';
@@ -22,6 +23,9 @@ export default function SettingsScreen() {
     const textColor = colorScheme === 'dark' ? '#f0f0f0' : '#413c58';
     const sectionHeadingtextColor = colorScheme === 'dark' ? '#E63946' : '#1D3557';
     
+    // Add state for the two toggles
+    const [lutealPhase, setLutealPhase] = useState(false);
+    const [preventScreenshots, setPreventScreenshots] = useState(false);
 
     const backupData = async () => {
             console.log('🔄 Starting backup process...');
@@ -60,82 +64,64 @@ export default function SettingsScreen() {
 
               // Show options dialog
               Alert.alert(
-                'Backup Options',
-                'How would you like to backup your data?',
+                'Save Backup',
+                'Would you like to save your data backup?',
                 [
                   {
-                    text: 'Share Directly',
+                    text: 'Save',
                     onPress: async () => {
-                      console.log('📤 Opening share dialog...');
-                      await Share.share({
-                        message: backupJson,
-                        title: 'Period Tracker Backup'
-                      });
-                      console.log('🎉 Share completed successfully!');
-                      Alert.alert(
-                        '✅ Backup Successful',
-                        'Your period data has been shared successfully!'
-                      );
-                    }
-                  },
-                  {
-                    text: 'Save to File',
-                    onPress: async () => {
-                      Alert.alert(
-                        'File Permission Required',
-                        'This option requires permission to save files to your device. Would you like to continue?',
-                        [
-                          {
-                            text: 'Cancel',
-                            style: 'cancel'
-                          },
-                          {
-                            text: 'Continue',
-                            onPress: async () => {
-                              try {
-                                console.log('💾 Preparing file for saving...');
-                                
-                                // Create a temporary file
-                                const fileName = `period_tracker_backup_${new Date().toISOString().split('T')[0]}.json`;
-                                const fileUri = `${FileSystem.cacheDirectory}${fileName}`;
-                                
-                                // Write the backup data to the temporary file
-                                await FileSystem.writeAsStringAsync(fileUri, backupJson);
-                                
-                                // Check if sharing is available
-                                const isAvailable = await Sharing.isAvailableAsync();
-                                if (!isAvailable) {
-                                  throw new Error('Sharing is not available on this device');
-                                }
+                      try {
+                        console.log('💾 Preparing file for saving...');
+                        
+                        // Create a temporary file
+                        const fileName = `period_tracker_backup_${new Date().toISOString().split('T')[0]}.json`;
+                        const fileUri = `${FileSystem.cacheDirectory}${fileName}`;
+                        
+                        // Write the backup data to the temporary file
+                        await FileSystem.writeAsStringAsync(fileUri, backupJson);
+                        
+                        // Check if sharing is available
+                        const isAvailable = await Sharing.isAvailableAsync();
+                        if (!isAvailable) {
+                          throw new Error('Sharing is not available on this device');
+                        }
 
-                                // Share the file (this will open the system's save/share dialog)
-                                await Sharing.shareAsync(fileUri, {
-                                  mimeType: 'application/json',
-                                  dialogTitle: 'Save Period Tracker Backup',
-                                  UTI: 'public.json' // iOS only
-                                });
-                                
-                                console.log('✅ File saved successfully!');
-                                Alert.alert(
-                                  '✅ Backup Successful',
-                                  'Your period data has been saved successfully!'
-                                );
-                              } catch (error) {
-                                console.error('❌ Save failed with error:', error);
-                                Alert.alert(
-                                  '❌ Save Failed',
-                                  'There was an error saving your backup. Please try again.'
-                                );
-                              }
-                            }
-                          }
-                        ]
-                      );
+                        // Share the file (this will open the system's save/share dialog)
+                        await Sharing.shareAsync(fileUri, {
+                          mimeType: 'application/json',
+                          dialogTitle: 'Save Period Tracker Backup',
+                          UTI: 'public.json' // iOS only
+                        }).then(() => {
+                          // The shareAsync completed without throwing an error
+                          // But this doesn't guarantee the user actually saved the file
+                          // We'll skip the success message to avoid false positives
+                          console.log('📤 Share dialog was closed');
+                        }).catch(error => {
+                          console.error('❌ Share failed with error:', error);
+                          Alert.alert(
+                            '❌ Backup Failed',
+                            'There was an error sharing your backup. Please try again.'
+                          );
+                        });
+                      } catch (error) {
+                        console.error('❌ Save failed with error:', error);
+                        Alert.alert(
+                          '❌ Save Failed',
+                          'There was an error saving your backup. Please try again.'
+                        );
+                      }
                     }
                   },
                   {
                     text: 'Cancel',
-                    style: 'cancel'
+                    style: 'cancel',
+                    onPress: () => {
+                      console.log('❌ Save to file canceled by user');
+                      Alert.alert(
+                        '❌ Backup Failed',
+                        'Backup was canceled.'
+                      );
+                    }
                   }
                 ]
               );
@@ -217,6 +203,29 @@ export default function SettingsScreen() {
             <ThemedView style={styles.container}>
                 <ThemedText type="title" style={[styles.header, { color: textColor }]}>Settings</ThemedText>
 
+                {/* Other Settings Section */}
+                <View style={styles.section}>
+                    <ThemedText style={[styles.sectionTitle, { color: textColor }]}>Other Settings</ThemedText>
+                    
+                    <View style={styles.settingRow}>
+                        <ThemedText style={[styles.settingText, { color: textColor }]}>Luteal Phase Calculation</ThemedText>
+                        <Switch
+                            value={lutealPhase}
+                            onValueChange={setLutealPhase}
+                            trackColor={{ false: '#767577', true: '#81b0ff' }}
+                        />
+                    </View>
+
+                    <View style={styles.settingRow}>
+                        <ThemedText style={[styles.settingText, { color: textColor }]}>Prevent Screenshots</ThemedText>
+                        <Switch
+                            value={preventScreenshots}
+                            onValueChange={setPreventScreenshots}
+                            trackColor={{ false: '#767577', true: '#81b0ff' }}
+                        />
+                    </View>
+                </View>
+
                 {/* Backup Section */}
                 <View style={styles.section}>
                     <ThemedText style={[styles.sectionTitle, { color: textColor }]}>Backup</ThemedText>
@@ -239,7 +248,7 @@ export default function SettingsScreen() {
                         <ThemedText style={[styles.link, { color: '#81b0ff' }]}>About App</ThemedText>
                     </TouchableOpacity>
                     <ThemedText style={[styles.versionText, { color: textColor }]}>
-                        App Version: 1.9.3 | DB-version: 8
+                        App Version: 2.0-beta
                     </ThemedText>
                 </View>
             </ThemedView>
