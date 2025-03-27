@@ -136,7 +136,7 @@ The current build configuration includes several optimizations to reduce APK siz
 3. **PNG Crunching**: Enabled with `crunchPngs true`
 4. **ABI Splitting**: Separate APKs for different CPU architectures
 
-To further optimize APK size, you can:
+To further optimize APK size:
 
 1. Review and remove unused dependencies
 2. Use WebP images instead of PNG where possible
