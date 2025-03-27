@@ -16,6 +16,9 @@ expo-env.d.ts
 *.p12
 *.key
 *.mobileprovision
+*.keystore
+android/app/*.keystore
+lunabloom.keystore
 
 # Metro
 .metro-health-check*

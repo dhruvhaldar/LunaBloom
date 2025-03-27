@@ -50,7 +50,12 @@ For production release:
 cd android
 ./gradlew assembleRelease
 ```
-The release APK will be generated at: `android/app/build/outputs/apk/release/app-release.apk`
+
+#### Clean and Release Build
+```bash
+./gradlew clean && ./gradlew assembleRelease
+```
+The release APK will be generated at: `android/app/build/outputs/apk/release/*.apk`
 
 ## Build Configuration
 
@@ -98,7 +103,6 @@ The release build includes several optimizations to reduce APK size:
 - Resource shrinking
 - PNG optimization
 - Hermes JavaScript engine
-- ProGuard rules for React Native modules
 
 ## Security Notes
 
@@ -110,4 +114,32 @@ The release build includes several optimizations to reduce APK size:
 
 - [React Native Android Build Documentation](https://reactnative.dev/docs/signed-apk-android)
 - [Android App Signing](https://developer.android.com/studio/publish/app-signing)
-- [R8 Optimization](https://developer.android.com/studio/build/shrink-code) 
+- [R8 Optimization](https://developer.android.com/studio/build/shrink-code)
+
+## Build Outputs
+
+The build process generates separate APKs for different CPU architectures:
+
+- `app-arm64-v8a-release.apk` (31MB): For modern ARM devices (64-bit)
+- `app-armeabi-v7a-release.apk` (25MB): For older ARM devices (32-bit)
+- `app-x86_64-release.apk` (33MB): For 64-bit x86 devices
+- `app-x86-release.apk` (33MB): For 32-bit x86 devices
+
+These APKs are located in `android/app/build/outputs/apk/release/`.
+
+### APK Size Optimization
+
+The current build configuration includes several optimizations to reduce APK size:
+
+1. **R8 Optimization**: Enabled with `minifyEnabled true`
+2. **Resource Shrinking**: Enabled with `shrinkResources true`
+3. **PNG Crunching**: Enabled with `crunchPngs true`
+4. **ABI Splitting**: Separate APKs for different CPU architectures
+
+To further optimize APK size, you can:
+
+1. Review and remove unused dependencies
+2. Use WebP images instead of PNG where possible
+3. Remove unused assets and resources
+4. Consider using dynamic feature modules for less frequently used features
+5. Add ProGuard rules to remove unused code 
