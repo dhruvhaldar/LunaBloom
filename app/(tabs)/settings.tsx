@@ -20,18 +20,60 @@ export default function SettingsScreen() {
     const textColor = colorScheme === 'dark' ? '#f0f0f0' : '#413c58';
     const sectionHeadingtextColor = colorScheme === 'dark' ? '#E63946' : '#1D3557';
 
-    const settingOptions = [
-        { title: 'Option A', icon: 'a', onPress: () => Alert.alert('Option A', 'Coming Soon') },
-        { title: 'Option B', icon: 'b', onPress: () => Alert.alert('Option B', 'Coming Soon') },
-        { title: 'Option C', icon: 'c', onPress: () => Alert.alert('Option C', 'Coming Soon') },
-        { title: 'Option D', icon: 'd', onPress: () => Alert.alert('Option D', 'Coming Soon') },
-      ];
+    // const settingOptions = [
+    //     { title: 'Option A', icon: 'a', onPress: () => Alert.alert('Option A', 'Coming Soon') },
+    //     { title: 'Option B', icon: 'b', onPress: () => Alert.alert('Option B', 'Coming Soon') },
+    //     { title: 'Option C', icon: 'c', onPress: () => Alert.alert('Option C', 'Coming Soon') },
+    //     { title: 'Option D', icon: 'd', onPress: () => Alert.alert('Option D', 'Coming Soon') },
+    //   ];
 
       const backupData = async () => {
-            const existingEntries = await AsyncStorage.getItem('periodEntries');
-            if (!existingEntries) {
-              Alert.alert('No data to backup', 'Please log at least one entry.');
-              return;}};
+            console.log('🔄 Starting backup process...');
+            try {
+              console.log('📱 Fetching entries from AsyncStorage...');
+              const existingEntries = await AsyncStorage.getItem('periodEntries');
+              if (!existingEntries) {
+                console.log('⚠️ No entries found to backup');
+                Alert.alert('No data to backup', 'Please log at least one entry.');
+                return;
+              }
+
+              console.log('✅ Found existing entries, parsing JSON...');
+              // Parse the entries to ensure valid JSON
+              const entries = JSON.parse(existingEntries);
+              console.log(`📊 Found ${entries.length} entries to backup`);
+              
+              // Create a backup object with metadata
+              const backup = {
+                version: '1.0',
+                timestamp: new Date().toISOString(),
+                entries: entries
+              };
+
+              console.log('📝 Creating backup JSON...');
+              // Convert to JSON string
+              const backupJson = JSON.stringify(backup, null, 2);
+
+              console.log('📤 Opening share dialog...');
+              // Share the backup data
+              await Share.share({
+                message: backupJson,
+                title: 'Period Tracker Backup'
+              });
+
+              console.log('🎉 Backup completed successfully!');
+              Alert.alert(
+                '✅ Backup Successful',
+                'Your period data has been backed up successfully!'
+              );
+            } catch (error) {
+              console.error('❌ Backup failed with error:', error);
+              Alert.alert(
+                '❌ Backup Failed',
+                'There was an error creating your backup. Please try again.'
+              );
+            }
+      };
       
 
     const restoreData = async () => {
@@ -70,20 +112,6 @@ export default function SettingsScreen() {
                             <TouchableOpacity style={styles.settingOption} onPress={restoreData}>
                               <ThemedText style={{ color: textColor }}>Restore Data</ThemedText>
                             </TouchableOpacity>
-
-                            {/* New List Options */}
-                            {settingOptions.map((option, index) => (
-                              <TouchableOpacity 
-                                key={index} 
-                                style={styles.settingOption} 
-                                onPress={option.onPress}
-                              >
-                                <View style={styles.optionContent}>
-                                  {/* <IconSymbol name={option.icon} size={20} color={textColor} /> */}
-                                  <ThemedText style={{ color: textColor }}>{option.title}</ThemedText>
-                                </View>
-                              </TouchableOpacity>
-                            ))}
                             
                             <TouchableOpacity style={styles.settingOption} onPress={aboutOption}>
                               <ThemedText style={{ color: textColor }}>About</ThemedText>
