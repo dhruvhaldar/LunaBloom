@@ -18,6 +18,7 @@ export default function HomeScreen() {
   const [selectedSymptoms, setSelectedSymptoms] = useState<string[]>([]);
   const [notes, setNotes] = useState('');
   const [predictedOvulations, setPredictedOvulations] = useState<Date[]>([]);
+  const [lutealPhaseEnabled, setLutealPhaseEnabled] = useState(false);
 
   // Date Picker States
   const [date, setDate] = useState(new Date());
@@ -105,26 +106,50 @@ export default function HomeScreen() {
     setPeriodDuration(number.toString());
   };
 
-  // Prediction Calculation
+  // Load luteal phase setting
+  useEffect(() => {
+    const loadLutealPhaseSetting = async () => {
+      try {
+        const savedSetting = await AsyncStorage.getItem('lutealPhase');
+        if (savedSetting !== null) {
+          setLutealPhaseEnabled(JSON.parse(savedSetting));
+        }
+      } catch (error) {
+        console.error('Error loading luteal phase setting:', error);
+      }
+    };
+    loadLutealPhaseSetting();
+  }, []);
+
+  // Update calculatePredictions to use luteal phase
   const calculatePredictions = () => {
     const predictions = [];
     const ovulations = [];
     const baseDate = new Date(lastPeriod);
     const cycleLengthNum = Number(cycleLength);
-    // Calculate the ovulation offset once (subtracting 1 to correct the off-by-one error)
-    const ovulationOffset = cycleLengthNum <= 28 
-      ? Math.floor(cycleLengthNum * 0.5) - 1 
-      : Math.floor(cycleLengthNum * 0.55) - 1;
+
+    // Calculate ovulation based on luteal phase
+    const calculateOvulationDay = (cycleLength: number) => {
+      if (lutealPhaseEnabled) {
+        // With luteal phase enabled, count backwards 14 days from the next period
+        return cycleLength - 14;
+      } else {
+        // Without luteal phase, use the previous calculation method
+        return cycleLength <= 28 
+          ? Math.floor(cycleLength * 0.5) - 1
+          : Math.floor(cycleLength * 0.55) - 1;
+      }
+    };
+
+    const ovulationOffset = calculateOvulationDay(cycleLengthNum);
   
     for (let i = 1; i <= 3; i++) {
-      // Predicted period for cycle i (e.g., for i=1, next period = baseDate + cycleLength)
+      // Predicted period
       const periodDate = new Date(baseDate);
       periodDate.setDate(baseDate.getDate() + cycleLengthNum * i);
       predictions.push(periodDate);
   
-      // Predicted ovulation for cycle i: use the previous period’s start as the base
-      // For the first cycle (i=1), ovulation = baseDate + ovulationOffset
-      // For subsequent cycles, add one full cycle length for each additional cycle.
+      // Predicted ovulation
       const ovulationDate = new Date(baseDate);
       ovulationDate.setDate(baseDate.getDate() + cycleLengthNum * (i - 1) + ovulationOffset);
       ovulations.push(ovulationDate);

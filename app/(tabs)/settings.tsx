@@ -34,22 +34,54 @@ export default function SettingsScreen() {
     const [lutealPhase, setLutealPhase] = useState(false);
     const [preventScreenshots, setPreventScreenshots] = useState(false);
 
-    // Load saved screenshot prevention setting
+    // Load saved settings
     useEffect(() => {
-        const loadScreenshotSetting = async () => {
+        const loadSettings = async () => {
             try {
-                const savedSetting = await AsyncStorage.getItem('preventScreenshots');
-                if (savedSetting !== null) {
-                    const isEnabled = JSON.parse(savedSetting);
+                const [savedLutealPhase, savedScreenshotSetting] = await Promise.all([
+                    AsyncStorage.getItem('lutealPhase'),
+                    AsyncStorage.getItem('preventScreenshots')
+                ]);
+
+                if (savedLutealPhase !== null) {
+                    setLutealPhase(JSON.parse(savedLutealPhase));
+                }
+                
+                if (savedScreenshotSetting !== null) {
+                    const isEnabled = JSON.parse(savedScreenshotSetting);
                     setPreventScreenshots(isEnabled);
-                    await ScreenCapture.preventScreenCaptureAsync();
+                    if (isEnabled) {
+                        await ScreenCapture.preventScreenCaptureAsync();
+                    }
                 }
             } catch (error) {
-                console.error('Error loading screenshot setting:', error);
+                console.error('Error loading settings:', error);
             }
         };
-        loadScreenshotSetting();
+        loadSettings();
     }, []);
+
+    // Handle luteal phase toggle
+    const handleLutealPhaseToggle = async (value: boolean) => {
+        try {
+            setLutealPhase(value);
+            await AsyncStorage.setItem('lutealPhase', JSON.stringify(value));
+            
+            // Show information alert when enabling luteal phase
+            if (value) {
+                Alert.alert(
+                    'Luteal Phase Calculation Enabled',
+                    'Your cycle predictions will now include luteal phase calculations. The luteal phase is the time between ovulation and the start of your next period, typically lasting 14 days.',
+                    [{ text: 'Got it!' }]
+                );
+            }
+        } catch (error) {
+            console.error('Error saving luteal phase setting:', error);
+            // Revert the toggle if there's an error
+            setLutealPhase(!value);
+            Alert.alert('Error', 'Failed to update luteal phase setting');
+        }
+    };
 
     // Handle screenshot prevention toggle
     const handleScreenshotToggle = async (value: boolean) => {
@@ -252,7 +284,7 @@ export default function SettingsScreen() {
                         <ThemedText style={[styles.settingText, { color: textColor }]}>Luteal Phase Calculation</ThemedText>
                         <ToggleSwitch
                             value={lutealPhase}
-                            onValueChange={setLutealPhase}
+                            onValueChange={handleLutealPhaseToggle}
                         />
                     </View>
 
