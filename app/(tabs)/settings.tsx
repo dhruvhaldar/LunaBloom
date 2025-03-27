@@ -10,6 +10,7 @@ import {
   Share // Import Share from React Native
 } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import * as DocumentPicker from 'expo-document-picker';
 import { ThemedText } from '@/components/ThemedText';
 import { ThemedView } from '@/components/ThemedView';
 import ParallaxScrollView from '@/components/ParallaxScrollView';
@@ -77,9 +78,52 @@ export default function SettingsScreen() {
       
 
     const restoreData = async () => {
-        // Implement restore logic here (e.g., using a file picker)
-        Alert.alert('Restore Data', 'This feature is coming soon!');
-      };
+        console.log('🔄 Starting restore process...');
+        try {
+            console.log('📂 Opening file picker...');
+            const result = await DocumentPicker.getDocumentAsync({
+                type: 'application/json',
+                copyToCacheDirectory: true
+            });
+
+            if (result.canceled) {
+                console.log('❌ File picking was canceled');
+                return;
+            }
+
+            console.log('📄 Reading selected file...');
+            const file = result.assets[0];
+            const response = await fetch(file.uri);
+            const backupData = await response.json();
+
+            // Validate backup data structure
+            if (!backupData.version || !backupData.entries || !Array.isArray(backupData.entries)) {
+                console.error('❌ Invalid backup file format');
+                Alert.alert(
+                    '❌ Invalid Backup',
+                    'The selected file is not a valid backup file.'
+                );
+                return;
+            }
+
+            console.log(`📊 Found ${backupData.entries.length} entries to restore`);
+            
+            // Store the entries in AsyncStorage
+            await AsyncStorage.setItem('periodEntries', JSON.stringify(backupData.entries));
+            
+            console.log('✅ Data restored successfully!');
+            Alert.alert(
+                '✅ Restore Successful',
+                `Successfully restored ${backupData.entries.length} entries!`
+            );
+        } catch (error) {
+            console.error('❌ Restore failed with error:', error);
+            Alert.alert(
+                '❌ Restore Failed',
+                'There was an error restoring your backup. Please try again.'
+            );
+        }
+    };
 
 
     const aboutOption = async () => {
