@@ -1,14 +1,5 @@
 import React, { useState } from 'react';
-import { 
-  StyleSheet, 
-  View, 
-  Image, 
-  useColorScheme, 
-  TextInput, 
-  TouchableOpacity, 
-  ScrollView,
-  ActivityIndicator
-} from 'react-native';
+import { StyleSheet, View, Image, useColorScheme, TextInput, TouchableOpacity, ScrollView, ActivityIndicator } from 'react-native';
 import { ThemedText } from '@/components/ThemedText';
 import { ThemedView } from '@/components/ThemedView';
 import ParallaxScrollView from '@/components/ParallaxScrollView';
@@ -71,42 +62,19 @@ export default function MenstruationScreen() {
   };  
 
   return (
-    <ParallaxScrollView
-      headerBackgroundColor={{ light: '#ffdde2', dark: '#151718' }}
-      headerImage={
-        <Image 
-          source={require('@/assets/images/history2.png')}
-          style={styles.reactLogo}
-          resizeMode="contain"
-        />
-      }
-    >
+    <ParallaxScrollView headerBackgroundColor={{ light: '#ffdde2', dark: '#151718' }} headerImage={<Image source={require('@/assets/images/history2.png')} style={styles.reactLogo} resizeMode="contain"/>}>
       <ThemedView style={styles.container}>
         <ThemedText type="title" style={styles.title}>MenstruAI 🩸</ThemedText>
 
         <ScrollView style={[styles.responseContainer, { backgroundColor: responseBackgroundColor }]}>
-          {response ? (
-            <ThemedText style={styles.response}>{response}</ThemedText>
-          ) : (
+          {response ? (<ThemedText style={styles.response}>{response}</ThemedText>) : (
             <ThemedText style={styles.placeholder}>AI assistant will respond here...</ThemedText>
           )}
         </ScrollView>
         
         <View style={styles.inputContainer}>
-          <TextInput 
-            style={[styles.input, { color: textColor }]}
-            placeholder="Ask a menstrual health question..."
-            placeholderTextColor={placeholderTextColor + '90'}
-            value={question}
-            onChangeText={setQuestion}
-            editable={!isLoading}
-          />
-          
-          <TouchableOpacity 
-            style={styles.button} 
-            onPress={handleChat}
-            disabled={isLoading}
-          >
+          <TextInput style={[styles.input, { color: textColor }]} placeholder="Ask a menstrual health question..." placeholderTextColor={placeholderTextColor + '90'} value={question} onChangeText={setQuestion} editable={!isLoading}/>
+          <TouchableOpacity style={styles.button} onPress={handleChat} disabled={isLoading}>
             {isLoading ? <ActivityIndicator color="#F1FAEE" /> : <ThemedText style={styles.buttonText}>Ask 🔍</ThemedText>}
           </TouchableOpacity>
         </View>

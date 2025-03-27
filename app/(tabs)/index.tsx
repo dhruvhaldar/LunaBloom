@@ -102,7 +102,6 @@ export default function HomeScreen() {
         [{ text: "Got it! ✅" }]
       );
     }
-
     setPeriodDuration(number.toString());
   };
 
@@ -229,14 +228,9 @@ export default function HomeScreen() {
      
 
   return (
-    <ParallaxScrollView
-      headerBackgroundColor={{ light: Parallaxheaderlightcolor, dark: Parallaxheaderdarkcolor }}
+    <ParallaxScrollView headerBackgroundColor={{ light: Parallaxheaderlightcolor, dark: Parallaxheaderdarkcolor }}
       headerImage={
-        <Image 
-          source={require('@/assets/images/LunaBloom_adaptive.png')} 
-          style={styles.reactLogo}
-          resizeMode="contain"
-        />
+        <Image source={require('@/assets/images/LunaBloom_adaptive.png')} style={styles.reactLogo} resizeMode="contain"/>
       }
     >
       <ThemedView style={styles.container}>
@@ -253,10 +247,7 @@ export default function HomeScreen() {
           {/* Last Period Date */}
           <ThemedView style={styles.inputGroup}>
             <ThemedText style={{ color: textColor }}>Last Period Start</ThemedText>
-            <TouchableOpacity 
-              onPress={showDatepicker}
-              style={[styles.dateButton, { borderColor: textColor }]}
-            >
+            <TouchableOpacity onPress={showDatepicker} style={[styles.dateButton, { borderColor: textColor }]}>
               <ThemedText style={[styles.dateText, { color: textColor }]}>
                 {lastPeriod.toLocaleDateString('en-GB', { 
                   day: 'numeric', 
@@ -279,12 +270,7 @@ export default function HomeScreen() {
           {/* Cycle Length */}
           <ThemedView style={styles.inputGroup}>
             <ThemedText style={{ color: textColor }}>Cycle Length (days)</ThemedText>
-            <TextInput
-              style={[styles.input, { color: textColor, borderColor: textColor }]}
-              keyboardType="numeric"
-              value={cycleLength}
-              onChangeText={handleCycleLengthChange}
-            />
+            <TextInput style={[styles.input, { color: textColor, borderColor: textColor }]} keyboardType="numeric" value={cycleLength} onChangeText={handleCycleLengthChange}/>
           </ThemedView>
 
           {/* Period Duration */}
