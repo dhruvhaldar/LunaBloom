@@ -7,10 +7,12 @@ import {
   TouchableOpacity,
   ScrollView,
   Image,
-  Share // Import Share from React Native
+  Share
 } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import * as DocumentPicker from 'expo-document-picker';
+import * as FileSystem from 'expo-file-system';
+import * as Sharing from 'expo-sharing';
 import { ThemedText } from '@/components/ThemedText';
 import { ThemedView } from '@/components/ThemedView';
 import ParallaxScrollView from '@/components/ParallaxScrollView';
@@ -20,13 +22,6 @@ export default function SettingsScreen() {
     const colorScheme = useColorScheme();
     const textColor = colorScheme === 'dark' ? '#f0f0f0' : '#413c58';
     const sectionHeadingtextColor = colorScheme === 'dark' ? '#E63946' : '#1D3557';
-
-    // const settingOptions = [
-    //     { title: 'Option A', icon: 'a', onPress: () => Alert.alert('Option A', 'Coming Soon') },
-    //     { title: 'Option B', icon: 'b', onPress: () => Alert.alert('Option B', 'Coming Soon') },
-    //     { title: 'Option C', icon: 'c', onPress: () => Alert.alert('Option C', 'Coming Soon') },
-    //     { title: 'Option D', icon: 'd', onPress: () => Alert.alert('Option D', 'Coming Soon') },
-    //   ];
 
       const backupData = async () => {
             console.log('🔄 Starting backup process...');
@@ -40,11 +35,20 @@ export default function SettingsScreen() {
               }
 
               console.log('✅ Found existing entries, parsing JSON...');
-              // Parse the entries to ensure valid JSON
               const entries = JSON.parse(existingEntries);
+              
+              // Check if entries array is empty
+              if (!Array.isArray(entries) || entries.length === 0) {
+                console.log('⚠️ Entries array is empty');
+                Alert.alert(
+                  'No Data to Backup',
+                  'Please log at least one period entry before backing up.'
+                );
+                return;
+              }
+
               console.log(`📊 Found ${entries.length} entries to backup`);
               
-              // Create a backup object with metadata
               const backup = {
                 version: '1.0',
                 timestamp: new Date().toISOString(),
@@ -52,20 +56,88 @@ export default function SettingsScreen() {
               };
 
               console.log('📝 Creating backup JSON...');
-              // Convert to JSON string
               const backupJson = JSON.stringify(backup, null, 2);
 
-              console.log('📤 Opening share dialog...');
-              // Share the backup data
-              await Share.share({
-                message: backupJson,
-                title: 'Period Tracker Backup'
-              });
-
-              console.log('🎉 Backup completed successfully!');
+              // Show options dialog
               Alert.alert(
-                '✅ Backup Successful',
-                'Your period data has been backed up successfully!'
+                'Backup Options',
+                'How would you like to backup your data?',
+                [
+                  {
+                    text: 'Share Directly',
+                    onPress: async () => {
+                      console.log('📤 Opening share dialog...');
+                      await Share.share({
+                        message: backupJson,
+                        title: 'Period Tracker Backup'
+                      });
+                      console.log('🎉 Share completed successfully!');
+                      Alert.alert(
+                        '✅ Backup Successful',
+                        'Your period data has been shared successfully!'
+                      );
+                    }
+                  },
+                  {
+                    text: 'Save to File',
+                    onPress: async () => {
+                      Alert.alert(
+                        'File Permission Required',
+                        'This option requires permission to save files to your device. Would you like to continue?',
+                        [
+                          {
+                            text: 'Cancel',
+                            style: 'cancel'
+                          },
+                          {
+                            text: 'Continue',
+                            onPress: async () => {
+                              try {
+                                console.log('💾 Preparing file for saving...');
+                                
+                                // Create a temporary file
+                                const fileName = `period_tracker_backup_${new Date().toISOString().split('T')[0]}.json`;
+                                const fileUri = `${FileSystem.cacheDirectory}${fileName}`;
+                                
+                                // Write the backup data to the temporary file
+                                await FileSystem.writeAsStringAsync(fileUri, backupJson);
+                                
+                                // Check if sharing is available
+                                const isAvailable = await Sharing.isAvailableAsync();
+                                if (!isAvailable) {
+                                  throw new Error('Sharing is not available on this device');
+                                }
+
+                                // Share the file (this will open the system's save/share dialog)
+                                await Sharing.shareAsync(fileUri, {
+                                  mimeType: 'application/json',
+                                  dialogTitle: 'Save Period Tracker Backup',
+                                  UTI: 'public.json' // iOS only
+                                });
+                                
+                                console.log('✅ File saved successfully!');
+                                Alert.alert(
+                                  '✅ Backup Successful',
+                                  'Your period data has been saved successfully!'
+                                );
+                              } catch (error) {
+                                console.error('❌ Save failed with error:', error);
+                                Alert.alert(
+                                  '❌ Save Failed',
+                                  'There was an error saving your backup. Please try again.'
+                                );
+                              }
+                            }
+                          }
+                        ]
+                      );
+                    }
+                  },
+                  {
+                    text: 'Cancel',
+                    style: 'cancel'
+                  }
+                ]
               );
             } catch (error) {
               console.error('❌ Backup failed with error:', error);
