@@ -54,7 +54,8 @@
     "victory-native": "^37.3.6",
     "expo-document-picker": "~13.0.3",
     "expo-file-system": "~18.0.12",
-    "expo-sharing": "~13.0.1"
+    "expo-sharing": "~13.0.1",
+    "expo-screen-capture": "~7.0.1"
   },
   "devDependencies": {
     "@babel/core": "^7.26.9",
