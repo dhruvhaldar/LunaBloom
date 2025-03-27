@@ -1,4 +1,4 @@
-import React, { useState, useCallback } from 'react';
+import React from 'react';
 import { 
   StyleSheet, 
   View, 
@@ -17,13 +17,13 @@ import { ThemedText } from '@/components/ThemedText';
 import { ThemedView } from '@/components/ThemedView';
 import ParallaxScrollView from '@/components/ParallaxScrollView';
 
-
 export default function SettingsScreen() {
     const colorScheme = useColorScheme();
     const textColor = colorScheme === 'dark' ? '#f0f0f0' : '#413c58';
     const sectionHeadingtextColor = colorScheme === 'dark' ? '#E63946' : '#1D3557';
+    
 
-      const backupData = async () => {
+    const backupData = async () => {
             console.log('🔄 Starting backup process...');
             try {
               console.log('📱 Fetching entries from AsyncStorage...');
@@ -213,61 +213,92 @@ export default function SettingsScreen() {
                   resizeMode="contain"
                 />
             }
-      >
-        <ThemedView style={styles.container}>
-                <ThemedText type="title" style={[styles.header, { color: textColor }]}>Settings </ThemedText>
-                 <ThemedText type="subtitle" style={{ color: sectionHeadingtextColor, marginBottom: 10 }}>
-                            Data Management ⚙️
-                          </ThemedText>
-                          <ScrollView>
-                            {/* Existing Backup/Restore Options */}
-                            <TouchableOpacity style={styles.settingOption} onPress={backupData}>
-                              <ThemedText style={{ color: textColor }}>Backup Data</ThemedText>
-                            </TouchableOpacity>
-                    
-                            <TouchableOpacity style={styles.settingOption} onPress={restoreData}>
-                              <ThemedText style={{ color: textColor }}>Restore Data</ThemedText>
-                            </TouchableOpacity>
-                            
-                            <TouchableOpacity style={styles.settingOption} onPress={aboutOption}>
-                              <ThemedText style={{ color: textColor }}>About</ThemedText>
-                            </TouchableOpacity>
+        >
+            <ThemedView style={styles.container}>
+                <ThemedText type="title" style={[styles.header, { color: textColor }]}>Settings</ThemedText>
 
-                          </ScrollView>
-        </ThemedView>
+                {/* Backup Section */}
+                <View style={styles.section}>
+                    <ThemedText style={[styles.sectionTitle, { color: textColor }]}>Backup</ThemedText>
+                    <View style={styles.settingRow}>
+                        <ThemedText style={[styles.settingText, { color: textColor }]}>Saved Data</ThemedText>
+                        <View style={styles.actionButtons}>
+                            <TouchableOpacity onPress={restoreData}>
+                                <ThemedText style={[styles.link, { color: '#81b0ff', marginRight: 10 }]}>Import</ThemedText>
+                            </TouchableOpacity>
+                            <TouchableOpacity onPress={backupData}>
+                                <ThemedText style={[styles.link, { color: '#81b0ff' }]}>Export</ThemedText>
+                            </TouchableOpacity>
+                        </View>
+                    </View>
+                </View>
 
-      </ParallaxScrollView>
-);
+                {/* About Section */}
+                <View style={styles.aboutSection}>
+                    <TouchableOpacity onPress={aboutOption} style={styles.aboutButton}>
+                        <ThemedText style={[styles.link, { color: '#81b0ff' }]}>About App</ThemedText>
+                    </TouchableOpacity>
+                    <ThemedText style={[styles.versionText, { color: textColor }]}>
+                        App Version: 1.9.3 | DB-version: 8
+                    </ThemedText>
+                </View>
+            </ThemedView>
+        </ParallaxScrollView>
+    );
 }
 
 const styles = StyleSheet.create({
     container: {
-      flex: 1,
-      padding: 16,
+        flex: 1,
+        padding: 16,
     },
     header: {
-        marginTop: -10,
+        fontSize: 24,
+        fontWeight: 'bold',
+        marginBottom: 20,
+    },
+    section: {
+        marginBottom: 24,
+    },
+    sectionTitle: {
+        fontSize: 20,
+        fontWeight: 'bold',
+        marginBottom: 16,
+    },
+    settingRow: {
+        flexDirection: 'row',
+        justifyContent: 'space-between',
+        alignItems: 'center',
+        paddingVertical: 12,
+        borderBottomWidth: 0.5,
+        borderBottomColor: '#2f2f2f',
+    },
+    settingText: {
+        fontSize: 16,
+    },
+    link: {
+        fontSize: 16,
+    },
+    actionButtons: {
+        flexDirection: 'row',
+        alignItems: 'center',
+    },
+    aboutSection: {
+        marginTop: 32,
+        alignItems: 'center',
+    },
+    aboutButton: {
         marginBottom: 8,
-        textAlign: 'center',
-      },
+    },
+    versionText: {
+        fontSize: 14,
+        opacity: 0.7,
+    },
     reactLogo: {
-      height: 380,
-      width: 500,
-      alignSelf: 'center',
-      marginBottom: -50,
-      marginTop: -50,
-      marginLeft: 6,
+        height: 290,
+        width: 760,
+        alignSelf: 'center',
+        marginBottom: -50,
+        marginTop: -50,
     },
-    settingOption: {
-      padding: 15,
-      borderBottomWidth: 1,
-      borderBottomColor: '#ccc', // Or use a themed color
-      width: '100%',
-      flexDirection: 'row',  // Align icon and text horizontally
-      alignItems: 'center',   // Center vertically
-    },
-    optionContent: { // Style for the content (icon and text)
-      flex: 1, // Allow text to take remaining space
-      marginLeft: 10, // Add some space between icon and text
-    },
-  });
+});
