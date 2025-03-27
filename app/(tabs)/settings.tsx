@@ -1,14 +1,5 @@
 import React, { useState } from 'react';
-import { 
-  StyleSheet, 
-  View, 
-  Alert, 
-  useColorScheme, 
-  TouchableOpacity,
-  ScrollView,
-  Image,
-  Share,
-} from 'react-native';
+import { StyleSheet, View, Alert, useColorScheme, TouchableOpacity, Image, Share,} from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import * as DocumentPicker from 'expo-document-picker';
 import * as FileSystem from 'expo-file-system';
@@ -200,9 +191,8 @@ export default function SettingsScreen() {
 
 
     const aboutOption = async () => {
-        // Implement restore logic here (e.g., using a file picker)
-        Alert.alert('About', 'Made with ❤️ in India 🇮🇳');
-      };
+      Alert.alert('About', 'Made with ❤️ in India 🇮🇳');
+    };
 
       return (
         <ParallaxScrollView
@@ -293,8 +283,6 @@ const styles = StyleSheet.create({
         justifyContent: 'space-between',
         alignItems: 'center',
         paddingVertical: 12,
-        borderBottomWidth: 0.5,
-        borderBottomColor: '#3f3f3f',
     },
     settingText: {
         fontSize: 17,
@@ -310,12 +298,12 @@ const styles = StyleSheet.create({
     },
     actionButtonText: {
         fontSize: 17,
-        color: '#8b71b5',
+        color: '#457B9D',
         paddingHorizontal: 10,
     },
     separator: {
         fontSize: 17,
-        color: '#8b71b5',
+        color: '#457B9D',
         opacity: 0.5,
         marginHorizontal: 5,
     },
@@ -325,7 +313,7 @@ const styles = StyleSheet.create({
     },
     aboutAppText: {
         fontSize: 17,
-        color: '#8b71b5',
+        color: '#457B9D',
         marginBottom: 10,
     },
     versionText: {
@@ -348,7 +336,7 @@ const styles = StyleSheet.create({
         justifyContent: 'center',
     },
     toggleContainerActive: {
-        backgroundColor: '#8b71b5',
+        backgroundColor: '#457B9D',
     },
     toggleContainerInactive: {
         backgroundColor: '#3f3f3f',
