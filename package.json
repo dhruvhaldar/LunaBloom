@@ -51,7 +51,8 @@
     "react-native-web": "~0.19.13",
     "react-native-webview": "13.12.5",
     "victory": "^37.3.6",
-    "victory-native": "^37.3.6"
+    "victory-native": "^37.3.6",
+    "expo-document-picker": "~13.0.3"
   },
   "devDependencies": {
     "@babel/core": "^7.26.9",
