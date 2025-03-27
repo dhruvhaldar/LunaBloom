@@ -1,9 +1,10 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { StyleSheet, View, Alert, useColorScheme, TouchableOpacity, Image, Share,} from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import * as DocumentPicker from 'expo-document-picker';
 import * as FileSystem from 'expo-file-system';
 import * as Sharing from 'expo-sharing';
+import * as ScreenCapture from 'expo-screen-capture';
 import { ThemedText } from '@/components/ThemedText';
 import { ThemedView } from '@/components/ThemedView';
 import ParallaxScrollView from '@/components/ParallaxScrollView';
@@ -32,6 +33,41 @@ export default function SettingsScreen() {
     // Add state for the two toggles
     const [lutealPhase, setLutealPhase] = useState(false);
     const [preventScreenshots, setPreventScreenshots] = useState(false);
+
+    // Load saved screenshot prevention setting
+    useEffect(() => {
+        const loadScreenshotSetting = async () => {
+            try {
+                const savedSetting = await AsyncStorage.getItem('preventScreenshots');
+                if (savedSetting !== null) {
+                    const isEnabled = JSON.parse(savedSetting);
+                    setPreventScreenshots(isEnabled);
+                    await ScreenCapture.preventScreenCaptureAsync();
+                }
+            } catch (error) {
+                console.error('Error loading screenshot setting:', error);
+            }
+        };
+        loadScreenshotSetting();
+    }, []);
+
+    // Handle screenshot prevention toggle
+    const handleScreenshotToggle = async (value: boolean) => {
+        try {
+            setPreventScreenshots(value);
+            if (value) {
+                await ScreenCapture.preventScreenCaptureAsync();
+            } else {
+                await ScreenCapture.allowScreenCaptureAsync();
+            }
+            await AsyncStorage.setItem('preventScreenshots', JSON.stringify(value));
+        } catch (error) {
+            console.error('Error toggling screenshot prevention:', error);
+            // Revert the toggle if there's an error
+            setPreventScreenshots(!value);
+            Alert.alert('Error', 'Failed to update screenshot settings');
+        }
+    };
 
     const backupData = async () => {
             console.log('🔄 Starting backup process...');
@@ -224,7 +260,7 @@ export default function SettingsScreen() {
                         <ThemedText style={[styles.settingText, { color: textColor }]}>Prevent Screenshots</ThemedText>
                         <ToggleSwitch
                             value={preventScreenshots}
-                            onValueChange={setPreventScreenshots}
+                            onValueChange={handleScreenshotToggle}
                         />
                     </View>
                 </View>
