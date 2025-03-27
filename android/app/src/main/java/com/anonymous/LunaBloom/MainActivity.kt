@@ -1,4 +1,4 @@
-package com.anonymous.LunaBloom
+package com.lunabloom.app
 import expo.modules.splashscreen.SplashScreenManager
 
 import android.os.Build

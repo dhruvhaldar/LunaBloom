@@ -1,4 +1,4 @@
-package com.anonymous.LunaBloom
+package com.lunabloom.app
 
 import android.app.Application
 import android.content.res.Configuration
