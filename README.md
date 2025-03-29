@@ -43,4 +43,4 @@ LunaBloom is your ultimate companion in understanding and managing your menstrua
 
 ## 🌈 Why LunaBloom?
 
-LunaBloom is more than just a menstrual tracking app; it's a supportive friend that empowers you to take control of your reproductive health. Our user-friendly interface, personalized features, and AI assistance make managing your menstrual cycle a breeze. Join the LunaBloom community and embark on a journey of self-discovery and well-being.
+LunaBloom is more than just a menstrual tracking app; it's a supportive friend that empowers you to take control of your reproductive health. Our user-friendly interface, personalized features, and AI assistance make managing your menstrual cycle a breeze. Join the [LunaBloom discussions](https://github.com/dhruvhaldar/LunaBloom/discussions) and embark on a journey of self-discovery and well-being.
