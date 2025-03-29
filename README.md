@@ -1,6 +1,16 @@
-# 🌟 LunaBloom: MenstruAI Health Tracking App
+![GPLv3.0](https://img.shields.io/badge/GPL--3.0-red?style=for-the-badge)
+![Expo](https://img.shields.io/badge/Expo-1B1F23?style=for-the-badge&logo=expo&logoColor=white)
+![React Native](https://img.shields.io/badge/React_Native-20232A?style=for-the-badge&logo=react&logoColor=61DAFB)
+![NPM](https://img.shields.io/badge/npm-CB3837?style=for-the-badge&logo=npm&logoColor=white)
+![TypeScript](https://img.shields.io/badge/TypeScript-007ACC?style=for-the-badge&logo=typescript&logoColor=white)
+![Android Studio](https://img.shields.io/badge/Android_Studio-3DDC84?style=for-the-badge&logo=android-studio&logoColor=white)
+![VS Code](https://img.shields.io/badge/VSCode-0078D4?style=for-the-badge&logo=visual%20studio%20code&logoColor=white)
 
-🌟 LunaBloom is your ultimate companion in understanding and managing your menstrual health. Designed with love and care, this app offers a seamless and personalized experience to track, predict, and gain insights into your menstrual cycle.
+
+
+# LunaBloom: MenstruAI Health Tracking App
+
+LunaBloom is your ultimate companion in understanding and managing your menstrual health. Designed with love and care, this app offers a seamless and personalized experience to track, predict, and gain insights into your menstrual cycle.
 
 ## 🌟 Key Features
 
@@ -9,7 +19,6 @@
 - Get answers to your menstrual health questions
 - Receive advice on managing symptoms
 - Learn more about your reproductive health
-- No sign in required
   
 ### 📅 Period Tracking
 - Effortlessly log the first day of your period
@@ -31,21 +40,7 @@
 - See your average period duration
 - Track the number of periods logged
 - Get predictions for your next period and ovulation
-- Monitor cycle regularity over time
-
-### 💾 Data Management
-- Export your data as JSON for backup
-- Import data from previous backups
-- Cross-device data synchronization
 
 ## 🌈 Why LunaBloom?
 
 LunaBloom is more than just a menstrual tracking app; it's a supportive friend that empowers you to take control of your reproductive health. Our user-friendly interface, personalized features, and AI assistance make managing your menstrual cycle a breeze. Join the LunaBloom community and embark on a journey of self-discovery and well-being.
-
-## 🔒 Data Privacy & Security
-
-Your privacy is the top priority. All data is:
-- Stored locally on your device
-- Encrypted for security
-- Never shared without your explicit permission
-- Backed up securely when you choose to export
