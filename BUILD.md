@@ -2,6 +2,9 @@
 
 This guide provides instructions for building the LunaBloom Android application in different environments (debug, staging, and release).
 
+## Quick Start
+`npx expo start`
+
 ## Prerequisites
 
 - Node.js (v18 or higher)
