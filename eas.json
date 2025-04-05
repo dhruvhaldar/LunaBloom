@@ -21,6 +21,11 @@
         "simulator": true
       },
       "environment": "development"
+    },
+    "dev": {
+      "developmentClient": true,
+      "distribution": "internal",
+      "channel": "dev"
     }
   },
   "submit": {

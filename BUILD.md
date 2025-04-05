@@ -2,6 +2,16 @@
 
 This guide provides instructions for building the LunaBloom Android application in different environments (debug, staging, and release).
 
+## Quick Start
+### Expo Build
+`npx expo start`
+
+### Building apk
+`./gradlew app:assembleRelease -x lint -x test --configure-on-demand --build-cache -PreactNativeDevServerPort=8081 -PreactNativeArchitectures=x86_64,arm64-v8a --info`
+
+`~/LunaBloom/android/app/build/outputs/apk/release/app-x86_64-release.apk`  - `Pixel_7a_API_36`
+`~/LunaBloom/android/app/build/outputs/apk/release/app-x86_64-release.apk`  - `Pixel 8 Pro API 29`
+
 ## Prerequisites
 
 - Node.js (v18 or higher)
