@@ -3,7 +3,11 @@
 This guide provides instructions for building the LunaBloom Android application in different environments (debug, staging, and release).
 
 ## Quick Start
+### Expo Build
 `npx expo start`
+
+### Building apk
+`./gradlew app:assembleRelease -x lint -x test --configure-on-demand --build-cache -PreactNativeDevServerPort=8081 -PreactNativeArchitectures=x86_64,arm64-v8a --info`
 
 ## Prerequisites
 
