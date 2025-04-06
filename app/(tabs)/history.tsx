@@ -36,7 +36,8 @@ export default function TabTwoScreen() {
           const parsedEntries = JSON.parse(storedEntries);
           
           if (Array.isArray(parsedEntries)) {
-            parsedEntries.sort((a, b) => new Date(b.date) - new Date(a.date));
+            // Sort by lastPeriod in descending order (most recent first)
+            parsedEntries.sort((a, b) => new Date(b.lastPeriod) - new Date(a.lastPeriod));
             setEntries(parsedEntries);
           } else {
             console.error('Fetched data is not an array');
@@ -54,40 +55,38 @@ export default function TabTwoScreen() {
     }
   };
   
+  if (Platform.OS === 'android' && UIManager.setLayoutAnimationEnabledExperimental) {
+    UIManager.setLayoutAnimationEnabledExperimental(true);
+  }
 
-if (Platform.OS === 'android' && UIManager.setLayoutAnimationEnabledExperimental) {
-  UIManager.setLayoutAnimationEnabledExperimental(true);
-}
+  const deleteEntry = async (index: number) => {
+    Alert.alert(
+      '🗑️ Confirm Deletion',
+      'Are you sure you want to delete this entry? This action cannot be undone.',
+      [
+        { text: 'Cancel', style: 'cancel' },
+        {
+          text: '🗑️ Delete',
+          style: 'destructive',
+          onPress: async () => {
+            try {
+              Vibration.vibrate(50); // Haptic feedback
+              const updatedEntries = entries.filter((_, i) => i !== index);
 
-const deleteEntry = async (index: number) => {
-  Alert.alert(
-    '🗑️ Confirm Deletion',
-    'Are you sure you want to delete this entry? This action cannot be undone.',
-    [
-      { text: 'Cancel', style: 'cancel' },
-      {
-        text: '🗑️ Delete',
-        style: 'destructive',
-        onPress: async () => {
-          try {
-            Vibration.vibrate(50); // Haptic feedback
-            const updatedEntries = entries.filter((_, i) => i !== index);
-
-            await AsyncStorage.setItem('periodEntries', JSON.stringify(updatedEntries));
-            
-            LayoutAnimation.easeInEaseOut(); // Smooth UI transition
-            setEntries(updatedEntries);
-          } catch (error) {
-            console.error('Error deleting entry:', error);
-            Alert.alert('Error', 'Failed to delete the entry. Please try again.');
-          }
+              await AsyncStorage.setItem('periodEntries', JSON.stringify(updatedEntries));
+              
+              LayoutAnimation.easeInEaseOut(); // Smooth UI transition
+              setEntries(updatedEntries);
+            } catch (error) {
+              console.error('Error deleting entry:', error);
+              Alert.alert('Error', 'Failed to delete the entry. Please try again.');
+            }
+          },
         },
-      },
-    ]
-  );
-};
+      ]
+    );
+  };
  
-
   return (
     <ParallaxScrollView
       headerBackgroundColor={{ light: Parallaxheaderlightcolor, dark: Parallaxheaderdarkcolor }}
@@ -125,7 +124,6 @@ const deleteEntry = async (index: number) => {
                 <TouchableOpacity style={styles.deleteIconContainer} onPress={() => deleteEntry(index)}>
                   <IconSymbol name="delete.fill" size={24} color={deleteIconColor} />
                 </TouchableOpacity>
-              
               </View>
             </View>
           ))}
