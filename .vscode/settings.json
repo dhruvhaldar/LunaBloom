@@ -1,5 +1,6 @@
 {
     "typescript.tsdk": "node_modules/typescript/lib",
     "java.configuration.updateBuildConfiguration": "automatic",
-    "terminal.integrated.fontSize": 18
+    "terminal.integrated.fontSize": 18,
+    "java.compile.nullAnalysis.mode": "automatic"
 }
