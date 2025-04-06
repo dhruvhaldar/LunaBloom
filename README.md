@@ -49,7 +49,7 @@ LunaBloom is more than just a menstrual tracking app; it's a supportive friend t
 
 ## 🧑‍💻 Development Process
 
-[Development_process](public/Development_process.png)
+![Development_process](public/Development_process.png)
 
 ## 📑 TO DO
 
