@@ -68,4 +68,4 @@ LunaBloom is more than just a menstrual tracking app; it's a supportive friend t
 
 ## Github Stargazers
 
-[![Stargazers over time](https://starchart.cc/Naereen/badges.svg)](https://starchart.cc/Naereen/badges)
+[![Stargazers over time](https://starchart.cc/dhruvhaldar/badges.svg)](https://starchart.cc/dhruvhaldar/badges)
