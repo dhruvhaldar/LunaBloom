@@ -65,3 +65,7 @@ LunaBloom is more than just a menstrual tracking app; it's a supportive friend t
 4. Landing page
 
 5. Calendar focus?
+
+## Github Stargazers
+
+[![Stargazers over time](https://starchart.cc/Naereen/badges.svg)](https://starchart.cc/Naereen/badges)
