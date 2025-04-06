@@ -7,6 +7,9 @@
 ![VS Code](https://img.shields.io/badge/VSCode-0078D4?style=for-the-badge&logo=visual%20studio%20code&logoColor=white)
 
 ![CodeRabbit Pull Request Reviews](https://img.shields.io/coderabbit/prs/github/dhruvhaldar/LunaBloom?utm_source=oss&utm_medium=github&utm_campaign=dhruvhaldar%2FLunaBloom&labelColor=171717&color=FF570A&link=https%3A%2F%2Fcoderabbit.ai&label=CodeRabbit+Reviews)
+[![Maintenance](https://img.shields.io/badge/Maintained%3F-yes-green.svg)](https://github.com/dhruvhaldar/LunaBloom/graphs/commit-activity)
+[![GitHub release](https://img.shields.io/github/release/Naereen/StrapDown.js.svg)](https://github.com/dhruvhaldar/LunaBloom/releases/)
+[![GitHub tag](https://img.shields.io/github/tag/Naereen/StrapDown.js.svg)](https://github.com/dhruvhaldar/LunaBloom/tags/)
 
 
 
@@ -47,6 +50,10 @@ LunaBloom is your ultimate companion in understanding and managing your menstrua
 
 LunaBloom is more than just a menstrual tracking app; it's a supportive friend that empowers you to take control of your reproductive health. Our user-friendly interface, personalized features, and AI assistance make managing your menstrual cycle a breeze. Join the [LunaBloom discussions](https://github.com/dhruvhaldar/LunaBloom/discussions) and embark on a journey of self-discovery and well-being.
 
+## 🧑‍💻 Development Process
+
+![Development_process](public/Development_process.png)
+
 ## 📑 TO DO
 
 ~~1. Check flow~~
@@ -58,3 +65,4 @@ LunaBloom is more than just a menstrual tracking app; it's a supportive friend t
 4. Landing page
 
 5. Calendar focus?
+
