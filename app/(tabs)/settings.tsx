@@ -317,10 +317,10 @@ export default function SettingsScreen() {
                 {/* About Section */}
                 <View style={styles.aboutSection}>
                     <TouchableOpacity onPress={aboutOption}>
-                        <ThemedText style={styles.aboutAppText}>About App</ThemedText>
+                        <ThemedText style={styles.aboutAppText}>About</ThemedText>
                     </TouchableOpacity>
                     <ThemedText style={[styles.versionText, { color: textColor }]}>
-                        App Version: 2.0-beta
+                        App Version: 2.1-beta
                     </ThemedText>
                 </View>
             </ThemedView>

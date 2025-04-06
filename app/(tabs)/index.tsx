@@ -19,6 +19,8 @@ export default function HomeScreen() {
   const [notes, setNotes] = useState('');
   const [predictedOvulations, setPredictedOvulations] = useState<Date[]>([]);
   const [lutealPhaseEnabled, setLutealPhaseEnabled] = useState(false);
+  const [selectedFlow, setSelectedFlow] = useState<string | null>(null);
+  const flowTypes = ['Light', 'Normal', 'Heavy', 'Spotting'];
 
   // Date Picker States
   const [date, setDate] = useState(new Date());
@@ -178,6 +180,7 @@ export default function HomeScreen() {
         lastPeriod,
         cycleLength,
         periodDuration,
+        selectedFlow,
         selectedSymptoms,
         notes,
         predictedNextPeriod: predictedPeriods[0]?.toISOString() || null,
@@ -200,6 +203,7 @@ export default function HomeScreen() {
   
       try {
         await AsyncStorage.setItem('periodEntries', JSON.stringify(entries));
+        setSelectedFlow(null); // Reset new field
         setSelectedSymptoms([]);
         setNotes('');
         
@@ -282,6 +286,37 @@ export default function HomeScreen() {
               value={periodDuration}
               onChangeText={handlePeriodDurationChange}
             />
+          </ThemedView>
+        </ThemedView>
+
+        {/* Period Flow Section */}
+        <ThemedView style={styles.section}>
+          <ThemedText type="subtitle" style={{ color: sectionHeadingtextColor, marginBottom: 10 }}>
+            Period Flow 🩸
+          </ThemedText>
+          <ThemedView style={styles.symptomsGrid}>
+            {flowTypes.map((flow) => (
+              <TouchableOpacity
+                key={flow}
+                style={[
+                  styles.symptomButton,
+                  { borderColor: symptomButtonBorderColor },
+                  selectedFlow === flow && { backgroundColor: selectedSymptomBackgroundColor },
+                ]}
+                onPress={() => {
+                  setSelectedFlow((prev) => (prev === flow ? null : flow));
+                }}
+              >
+                <ThemedText
+                  style={[
+                    { color: symptomtextColor },
+                    selectedFlow === flow && styles.selectedSymptom,
+                  ]}
+                >
+                  {flow}
+                </ThemedText>
+              </TouchableOpacity>
+            ))}
           </ThemedView>
         </ThemedView>
 
