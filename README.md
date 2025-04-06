@@ -7,10 +7,10 @@
 ![VS Code](https://img.shields.io/badge/VSCode-0078D4?style=for-the-badge&logo=visual%20studio%20code&logoColor=white)
 
 ![CodeRabbit Pull Request Reviews](https://img.shields.io/coderabbit/prs/github/dhruvhaldar/LunaBloom?utm_source=oss&utm_medium=github&utm_campaign=dhruvhaldar%2FLunaBloom&labelColor=171717&color=FF570A&link=https%3A%2F%2Fcoderabbit.ai&label=CodeRabbit+Reviews)
-
 [![Maintenance](https://img.shields.io/badge/Maintained%3F-yes-green.svg)](https://github.com/dhruvhaldar/LunaBloom/graphs/commit-activity)
-
 [![GitHub release](https://img.shields.io/github/release/Naereen/StrapDown.js.svg)](https://github.com/dhruvhaldar/LunaBloom/releases/)
+[![GitHub tag](https://img.shields.io/github/tag/Naereen/StrapDown.js.svg)](https://github.com/dhruvhaldar/LunaBloom/tags/)
+
 
 
 # LunaBloom: MenstruAI Health Tracking App
