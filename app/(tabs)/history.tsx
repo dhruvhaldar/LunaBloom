@@ -117,6 +117,7 @@ const deleteEntry = async (index: number) => {
                   <Text style={{ color: textColor }}>Last Period: {new Date(item.lastPeriod).toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year:'numeric'})}</Text>
                   <Text style={{ color: textColor }}>Cycle Length: {item.cycleLength} days</Text>
                   <Text style={{ color: textColor }}>Symptoms: {item.selectedSymptoms.join(', ')}</Text>
+                  <Text style={{ color: textColor }}>Flow: {item.selectedFlow || 'Not logged'}</Text>
                   <Text style={{ color: textColor }}>Notes: {item.notes}</Text>
                   <Text style={{ color: textColor }}>Log Date: {new Date(item.date).toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year:'numeric'})}</Text>
                 </View>
