@@ -21,8 +21,8 @@ export default function TabLayout() {
     height: 70,
     alignContent: 'center',
     backgroundColor: colorScheme === 'dark' 
-      ? '#1D3557' 
-      : '#F1FAEE',
+      ? '#402c63' 
+      : '#f4e6ff',
     borderWidth: 1,
     borderTopWidth: 1,
     borderColor: borderColor,
@@ -159,7 +159,11 @@ export default function TabLayout() {
           title: 'MenstruAI',
           tabBarIcon: ({ color, focused }) => (
             <View style={styles.tabItemContainer}>
-              <Image source={require('@/assets/images/ai.png')} style={styles.tinyLogo}/>
+              <Image source={
+        colorScheme === 'dark'
+          ? require('@/assets/images/icons/dark_menstruai.png')
+          : require('@/assets/images/icons/light_menstruai.png')
+      } style={styles.tinyLogo}/>
     </View>
           ),
         }}
@@ -211,7 +215,7 @@ const styles = StyleSheet.create({
     marginTop: 0,
   },
   tinyLogo: {
-    width: 40,
-    height: 40,
+    width: 48,
+    height: 48,
   },
 });

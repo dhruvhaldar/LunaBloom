@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 500 500" xmlns:bx="https://boxy-svg.com">
+  <defs>
+    <bx:export>
+      <bx:file format="png" path="dark_menstruai.png"/>
+    </bx:export>
+  </defs>
+  <rect style="stroke: rgb(0, 0, 0); stroke-width: 0px; fill: none;" x="35.183" y="53.426" width="429.634" height="393.149" rx="164.416" ry="164.416"/>
+  <path d="M 226.743 113.231 Q 244.961 87.176 263.179 113.231 L 289.565 150.966 Q 307.783 177.021 271.346 177.021 L 218.576 177.021 Q 182.139 177.021 200.357 150.966 Z" bx:shape="triangle 182.139 87.176 125.644 89.845 0.5 0.29 1@58d1dc6f" style="fill: none; stroke-width: 20px; transform-box: fill-box; transform-origin: 50% 50%; stroke: rgb(243, 229, 255);" transform="matrix(0.882919, -0.469526, 0.469526, 0.882919, -93.666416, 214.431369)"/>
+  <g id="Capa_1" transform="matrix(0.680687, 0, 0, 0.798703, -95.795197, -7.784985)" style="">
+    <g transform="matrix(1, 0, 0, 1, 409.961151, 173.373535)">
+      <g>
+        <path d="M96.103,0.799c-3.025,3.166-74.198,77.98-74.198,119.158c0,41.99,34.156,76.139,76.143,76.139 c42.001,0,76.143-34.153,76.143-76.139c0-41.178-71.171-115.993-74.198-119.158C98.972-0.267,97.114-0.267,96.103,0.799z" style="fill: rgb(255, 176, 189);"/>
+      </g>
+    </g>
+  </g>
+  <circle cx="163.901" cy="150.712" r="28.604" style="fill: none; stroke-width: 3.93312px; stroke: rgb(244, 230, 255);" transform="matrix(5.75002, 0, 0, 4.420014, -692.434021, -447.149139)"/>
+</svg>

@@ -30,8 +30,8 @@ export default function HomeScreen() {
   // Color Scheme
   // https://coolors.co/palette/e63946-f1faee-a8dadc-457b9d-1d3557
   const colorScheme = useColorScheme();
-  const Parallaxheaderlightcolor = '#A8DADC';
-  const Parallaxheaderdarkcolor = '#A8DADC';
+  const Parallaxheaderlightcolor = '#f4e6ff';
+  const Parallaxheaderdarkcolor = '#402c63';
   const textColor = colorScheme === 'dark' ? '#F1FAEE' : '#1D3557';
   const sectionHeadingtextColor = colorScheme === 'dark' ? '#E63946' : '#1D3557';
   const symptomtextColor = colorScheme === 'dark' ? '#F1FAEE' : '#E63946';  
@@ -232,11 +232,23 @@ export default function HomeScreen() {
      
 
   return (
-    <ParallaxScrollView headerBackgroundColor={{ light: Parallaxheaderlightcolor, dark: Parallaxheaderdarkcolor }}
-      headerImage={
-        <Image source={require('@/assets/images/LunaBloom_adaptive.png')} style={styles.reactLogo} resizeMode="contain"/>
+    <ParallaxScrollView
+  headerBackgroundColor={{
+    light: Parallaxheaderlightcolor,
+    dark: Parallaxheaderdarkcolor
+  }}
+  headerImage={
+    <Image
+      source={
+        colorScheme === 'dark'
+          ? require('@/assets/images/dark_header_index.png')
+          : require('@/assets/images/light_header_index.png')
       }
-    >
+      style={styles.reactLogo}
+      resizeMode="cover"
+    />
+  }
+>
       <ThemedView style={styles.container}>
         <ThemedText type="title" style={[styles.header, { color: textColor }]}>
           Period Tracker
@@ -547,7 +559,7 @@ const styles = StyleSheet.create({
     fontSize: 16,
   },
   logButton: {
-    backgroundColor: '#457B9D',
+    backgroundColor: '#402c63',
     borderRadius: 40,
     padding: 16,
     marginTop: 8,

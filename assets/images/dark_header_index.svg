@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 2980.8 1200" xmlns:bx="https://boxy-svg.com" width="2980.835px" height="1440px">
+  <defs>
+    <bx:export>
+      <bx:file format="png" path="dark_header_index.png" background="#fff0" dpi="400"/>
+    </bx:export>
+  </defs>
+  <path style="stroke-width: 11.5037px; transform-box: fill-box; transform-origin: 50% 50%; stroke: rgb(254, 172, 188); fill: rgb(254, 172, 188);" transform="matrix(-1.103846, 0.380084, -0.388578, -1.128511, 574.745434, 52.076859)" d="M 213.962 490.795 A 111.5 111.5 0 1 1 213.962 671.205 A 95.392 95.392 0 1 0 213.962 490.795 Z" bx:shape="crescent 279.5 581 111.5 252 0.773 1@bd89c159"/>
+  <g id="_x32_" transform="matrix(0.266036, 0, 0, 0.266036, 520.800964, 427.208435)" style="">
+    <g transform="matrix(1, 0, 0, 1, 1325.019653, 435.256592)">
+      <path class="st0" d="M512,223.537c0-61.46-49.773-111.264-111.264-111.264c-11.768,0-22.922,2.31-33.496,5.644 C366.948,56.657,317.346,7.084,255.985,7.084c-61.32,0-110.993,49.573-111.224,110.833c-10.573-3.334-21.728-5.644-33.496-5.644 C49.774,112.273,0,162.077,0,223.537c0,49.241,32.171,90.479,76.533,105.12c-13.294,18.354-21.276,40.656-21.276,64.985 c0,61.46,49.773,111.274,111.254,111.274c36.86,0,69.222-18.043,89.475-45.646c20.283,27.603,52.645,45.646,89.465,45.646 c61.521,0,111.264-49.813,111.264-111.274c0-24.329-7.993-46.631-21.246-64.985C479.829,314.017,512,272.779,512,223.537z M255.985,337.433c-31.971,0-57.927-25.916-57.927-57.887c0-31.981,25.956-57.897,57.927-57.897c32,0,57.926,25.916,57.926,57.897 C313.912,311.517,287.986,337.433,255.985,337.433z" style="stroke-width: 40.8735px; stroke: rgb(254, 173, 188); fill: rgb(254, 171, 188);"/>
+    </g>
+  </g>
+  <ellipse style="stroke-width: 13.58px; stroke: rgb(64, 43, 99); fill: rgb(64, 43, 99);" cx="942.271" cy="618.755" rx="23.523" ry="23.523"/>
+  <text id="shape0" style="fill: rgb(255, 246, 255); font-family: &quot;Lobster Two&quot;; font-size: 256.8px; font-style: italic; font-weight: 700; stroke: rgb(0, 0, 0); stroke-linecap: square; stroke-linejoin: bevel; stroke-opacity: 0; stroke-width: 0px; white-space: pre;" x="1032.67" y="696.73">LunaBloom</text>
+</svg>
