@@ -95,7 +95,7 @@ export default function TabLayout() {
       <Tabs.Screen
         name="index"
         options={{
-          title: 'Home',
+          title: 'Dashboard',
           tabBarIcon: ({ focused }) => (
             <View style={styles.tabItemContainer}>
               <Image 
