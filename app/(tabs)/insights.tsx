@@ -27,7 +27,7 @@ export default function InsightsScreen() {
   const colorScheme = useColorScheme();
   const sectionHeadingtextColor = colorScheme === 'dark' ? '#f4e6ff' : '#402c63';
   const textColor = colorScheme === 'dark' ? '#f4e6ff' : '#402c63';
-  const barColor = colorScheme === 'dark' ? '#F1FAEE' : '#457B9D';
+  const barColor = colorScheme === 'dark' ? '#ffb1bd' : '#402b61';
 
   useFocusEffect(
     useCallback(() => {

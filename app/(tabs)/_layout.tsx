@@ -19,13 +19,13 @@ export default function TabLayout() {
     position: 'absolute',
     bottom: 10,
     borderRadius: 25,
-    height: 70,
+    height: 60,
     alignContent: 'center',
     backgroundColor: colorScheme === 'dark' 
       ? '#402c63' 
       : '#f4e6ff',
-    borderWidth: 1,
-    borderTopWidth: 1,
+    borderWidth: 2,
+    borderTopWidth: 2,
     borderColor: borderColor,
     overflow: 'hidden',
     paddingHorizontal: 0,
@@ -88,6 +88,12 @@ export default function TabLayout() {
           flex: 1,
           justifyContent: 'center',
           alignItems: 'center',
+        },
+        tabBarLabelStyle: {
+          fontSize: 12, // Increase from default (~12) to 14
+          fontWeight: 'bold', // Optional: makes text bolder
+          padding: 5,
+          paddingBottom: 0,
         },
       }}>
 
@@ -175,8 +181,7 @@ export default function TabLayout() {
           ? require('@/assets/images/icons/dark_menstruai.png')
           : require('@/assets/images/icons/light_menstruai.png')
       } style={[
-        styles.tinyLogo, 
-        focused && styles.focused
+        styles.tinyLogoAi
       ]}/>
     </View>
           ),
@@ -227,9 +232,14 @@ const styles = StyleSheet.create({
     gap: 4,
   },
   tinyLogo: {
-    width: 48,
-    height: 48,
-    opacity: 0.8,
+    width: 36,
+    height: 36,
+    opacity: 0.6,
+  },
+  tinyLogoAi: {
+    width: 36,
+    height: 36,
+    opacity: 1,
   },
   focused: {
     opacity: 1,

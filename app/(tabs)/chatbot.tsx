@@ -62,7 +62,7 @@ export default function MenstruationScreen() {
   };  
 
   return (
-    <ParallaxScrollView headerBackgroundColor={{ light: '#ffdde2', dark: '#151718' }} 
+    <ParallaxScrollView headerBackgroundColor={{ light: '#f4e6ff', dark: '#402c63' }} 
     
     headerImage={
       <Image 
@@ -78,7 +78,7 @@ export default function MenstruationScreen() {
     >
       
       <ThemedView style={styles.container}>
-        <ThemedText type="title" style={[styles.header, { color: textColor }]}>MenstruAI 🩸</ThemedText>
+        <ThemedText type="title" style={[styles.header, { color: textColor }]}>MenstruAi 🩸</ThemedText>
         
         <View style={styles.inputContainer}>
           <TextInput style={[styles.input, { color: textColor }]} placeholder="Ask a menstrual health question..." placeholderTextColor={placeholderTextColor + '90'} value={question} onChangeText={setQuestion} editable={!isLoading}/>

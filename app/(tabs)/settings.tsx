@@ -28,7 +28,8 @@ const ToggleSwitch: React.FC<ToggleSwitchProps> = ({ value, onValueChange }) => 
 export default function SettingsScreen() {
     const colorScheme = useColorScheme();
     const textColor = colorScheme === 'dark' ? '#f4e6ff' : '#402c63';
-    const sectionHeadingtextColor = colorScheme === 'dark' ? '#E63946' : '#1D3557';
+    const actiontextColor = colorScheme === 'dark' ? '#ffb1bd' : '#402b61';
+    
     
     // Add state for the two toggles
     const [lutealPhase, setLutealPhase] = useState(false);
@@ -304,11 +305,11 @@ export default function SettingsScreen() {
                         <ThemedText style={[styles.settingText, { color: textColor }]}>Period Entries</ThemedText>
                         <View style={styles.actionButtons}>
                             <TouchableOpacity onPress={restoreData}>
-                                <ThemedText style={styles.actionButtonText}>Import</ThemedText>
+                                <ThemedText style={[styles.actionButtonText, { color: actiontextColor }]}>Import</ThemedText>
                             </TouchableOpacity>
-                            <ThemedText style={styles.separator}>|</ThemedText>
+                            <ThemedText style={[styles.separator, { color: textColor }]}>|</ThemedText>
                             <TouchableOpacity onPress={backupData}>
-                                <ThemedText style={styles.actionButtonText}>Export</ThemedText>
+                                <ThemedText style={[styles.actionButtonText, { color: actiontextColor }]}>Export</ThemedText>
                             </TouchableOpacity>
                         </View>
                     </View>
@@ -317,7 +318,9 @@ export default function SettingsScreen() {
                 {/* About Section */}
                 <View style={styles.aboutSection}>
                     <TouchableOpacity onPress={aboutOption}>
-                        <ThemedText style={styles.aboutAppText}>About</ThemedText>
+                        <ThemedText style={[styles.aboutAppText, { color: actiontextColor }]}>
+                            About
+                        </ThemedText>
                     </TouchableOpacity>
                     <ThemedText style={[styles.versionText, { color: textColor }]}>
                         App Version: 2.1-beta

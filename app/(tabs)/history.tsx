@@ -18,7 +18,7 @@ export default function TabTwoScreen() {
   const Parallaxheaderdarkcolor = '#A8DADC';
   const sectionHeadingtextColor = colorScheme === 'dark' ? '#f4e6ff' : '#402c63';
   const textColor = colorScheme === 'dark' ? '#f4e6ff' : '#402c63';
-  const deleteIconColor = colorScheme === 'dark' ? '#F1FAEE' : '#E63946';
+  const deleteIconColor = colorScheme === 'dark' ? '#e5322e' : '#e5322e';
 
 
   useFocusEffect(
