@@ -27,7 +27,7 @@ const ToggleSwitch: React.FC<ToggleSwitchProps> = ({ value, onValueChange }) => 
 
 export default function SettingsScreen() {
     const colorScheme = useColorScheme();
-    const textColor = colorScheme === 'dark' ? '#f0f0f0' : '#413c58';
+    const textColor = colorScheme === 'dark' ? '#f4e6ff' : '#402c63';
     const sectionHeadingtextColor = colorScheme === 'dark' ? '#E63946' : '#1D3557';
     
     // Add state for the two toggles
@@ -274,7 +274,7 @@ export default function SettingsScreen() {
             }
         >
             <ThemedView style={styles.container}>
-                <ThemedText type="title" style={[styles.title, { color: textColor }]}>Settings</ThemedText>
+                <ThemedText type="title" style={[styles.header, { color: textColor }]}>Settings</ThemedText>
 
                 {/* Other Settings Section */}
                 <View style={styles.section}>
@@ -333,9 +333,10 @@ const styles = StyleSheet.create({
         flex: 1,
         padding: 20,
     },
-    title: {
-      textAlign: 'center',
-      marginBottom: 20,
+    header: {
+        marginTop: -30,
+        marginBottom: 10,
+        textAlign: 'center',
     },
     section: {
         marginBottom: 30,
@@ -366,12 +367,12 @@ const styles = StyleSheet.create({
     },
     actionButtonText: {
         fontSize: 17,
-        color: '#457B9D',
+        color: '#ffb1bd',
         paddingHorizontal: 10,
     },
     separator: {
         fontSize: 17,
-        color: '#457B9D',
+        color: '#ffb1bd',
         opacity: 0.5,
         marginHorizontal: 5,
     },
@@ -381,7 +382,7 @@ const styles = StyleSheet.create({
     },
     aboutAppText: {
         fontSize: 17,
-        color: '#457B9D',
+        color: '#ffb1bd',
         marginBottom: 10,
     },
     versionText: {

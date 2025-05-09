@@ -16,8 +16,8 @@ export default function TabTwoScreen() {
   const colorScheme = useColorScheme();
   const Parallaxheaderlightcolor = '#A8DADC';
   const Parallaxheaderdarkcolor = '#A8DADC';
-  const sectionHeadingtextColor = colorScheme === 'dark' ? '#E63946' : '#1D3557';
-  const textColor = colorScheme === 'dark' ? '#F1FAEE' : '#1D3557';
+  const sectionHeadingtextColor = colorScheme === 'dark' ? '#f4e6ff' : '#402c63';
+  const textColor = colorScheme === 'dark' ? '#f4e6ff' : '#402c63';
   const deleteIconColor = colorScheme === 'dark' ? '#F1FAEE' : '#E63946';
 
 
@@ -109,24 +109,45 @@ export default function TabTwoScreen() {
             Logged Entries 📝
           </ThemedText>
           
-          {entries.map((item, index) => (
-            <View key={index} style={styles.entry}>
-              <View style={styles.entryContent}>
-                <View style={styles.entryTextContainer}>
-                  <Text style={{ color: textColor }}>Last Period: {new Date(item.lastPeriod).toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year:'numeric'})}</Text>
-                  <Text style={{ color: textColor }}>Cycle Length: {item.cycleLength} days</Text>
-                  <Text style={{ color: textColor }}>Symptoms: {item.selectedSymptoms.join(', ')}</Text>
-                  <Text style={{ color: textColor }}>Flow: {item.selectedFlow || 'Not logged'}</Text>
-                  <Text style={{ color: textColor }}>Notes: {item.notes}</Text>
-                  <Text style={{ color: textColor }}>Log Date: {new Date(item.date).toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year:'numeric'})}</Text>
+          {entries.length > 0 ? (
+            entries.map((item, index) => (
+              <View key={index} style={styles.entry}>
+                <View style={styles.entryContent}>
+                  <View style={styles.entryTextContainer}>
+                    <Text style={{ color: textColor }}>
+                      Last Period: {new Date(item.lastPeriod).toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' })}
+                    </Text>
+                    <Text style={{ color: textColor }}>
+                      Cycle Length: {item.cycleLength} days
+                    </Text>
+                    <Text style={{ color: textColor }}>
+                      Symptoms: {item.selectedSymptoms.join(', ')}
+                    </Text>
+                    <Text style={{ color: textColor }}>
+                      Flow: {item.selectedFlow || 'Not logged'}
+                    </Text>
+                    <Text style={{ color: textColor }}>
+                      Notes: {item.notes}
+                    </Text>
+                    <Text style={{ color: textColor }}>
+                      Log Date: {new Date(item.date).toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' })}
+                    </Text>
+                  </View>
+                  
+                  <TouchableOpacity
+                    style={styles.deleteIconContainer}
+                    onPress={() => deleteEntry(index)}
+                  >
+                    <IconSymbol name="delete.fill" size={24} color={deleteIconColor} />
+                  </TouchableOpacity>
                 </View>
-                
-                <TouchableOpacity style={styles.deleteIconContainer} onPress={() => deleteEntry(index)}>
-                  <IconSymbol name="delete.fill" size={24} color={deleteIconColor} />
-                </TouchableOpacity>
               </View>
-            </View>
-          ))}
+            ))
+          ) : (
+            <Text style={{ color: textColor, textAlign: 'center', marginTop: 20 }}>
+              No data available
+            </Text>
+          )}
         </View>
       </ThemedView>
     </ParallaxScrollView>

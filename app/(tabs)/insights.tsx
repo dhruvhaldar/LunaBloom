@@ -25,8 +25,8 @@ export default function InsightsScreen() {
 
   // Color Scheme
   const colorScheme = useColorScheme();
-  const sectionHeadingtextColor = colorScheme === 'dark' ? '#E63946' : '#1D3557';
-  const textColor = colorScheme === 'dark' ? '#1D3557' : '#457B9D';
+  const sectionHeadingtextColor = colorScheme === 'dark' ? '#f4e6ff' : '#402c63';
+  const textColor = colorScheme === 'dark' ? '#f4e6ff' : '#402c63';
   const barColor = colorScheme === 'dark' ? '#F1FAEE' : '#457B9D';
 
   useFocusEffect(
@@ -172,7 +172,7 @@ export default function InsightsScreen() {
       }
     >
       <ThemedView style={styles.container}>
-        <ThemedText type="title" style={[styles.title, { color: sectionHeadingtextColor }]}>Cycle Insights</ThemedText>
+        <ThemedText type="title" style={[styles.header, { color: textColor }]}>Cycle Insights</ThemedText>
 
         {/* Previous Cycles Section */}
         <ThemedView style={styles.sectionContainer}>
@@ -256,9 +256,10 @@ const styles = StyleSheet.create({
     padding: 16,
     paddingBottom: 90, // Add enough padding to prevent overlap with the tab bar
   },
-  title: {
+  header: {
+    marginTop: -30,
+    marginBottom: 10,
     textAlign: 'center',
-    marginBottom: 20,
   },
   sectionContainer: {
     borderRadius: 25,
@@ -276,7 +277,7 @@ const styles = StyleSheet.create({
   },
   noDataText: {
     textAlign: 'center',
-    color: '#E63946',
+    color: '#c41e3d',
     padding: 20,
   },
   reactLogo: {

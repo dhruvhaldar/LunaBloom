@@ -78,12 +78,12 @@ export default function MenstruationScreen() {
     >
       
       <ThemedView style={styles.container}>
-        <ThemedText type="title" style={styles.title}>MenstruAI 🩸</ThemedText>
+        <ThemedText type="title" style={[styles.header, { color: textColor }]}>MenstruAI 🩸</ThemedText>
         
         <View style={styles.inputContainer}>
           <TextInput style={[styles.input, { color: textColor }]} placeholder="Ask a menstrual health question..." placeholderTextColor={placeholderTextColor + '90'} value={question} onChangeText={setQuestion} editable={!isLoading}/>
           <TouchableOpacity style={styles.button} onPress={handleChat} disabled={isLoading}>
-            {isLoading ? <ActivityIndicator color="#c41e3d" /> : <ThemedText style={styles.buttonText}>Ask 🔍</ThemedText>}
+            {isLoading ? <ActivityIndicator color="#F4E6FF" /> : <ThemedText style={styles.buttonText}>Ask 🔍</ThemedText>}
           </TouchableOpacity>
         </View>
 
@@ -104,9 +104,10 @@ const styles = StyleSheet.create({
     flex: 1,
     padding: 16,
   },
-  title: {
+  header: {
+    marginTop: -30,
+    marginBottom: 10,
     textAlign: 'center',
-    marginBottom: 20,
   },
   reactLogo: {
     height: 380,
