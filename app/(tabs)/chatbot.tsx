@@ -22,9 +22,9 @@ export default function MenstruationScreen() {
 
   // Color Scheme
   const colorScheme = useColorScheme();
-  const responseBackgroundColor = colorScheme === 'dark' ? '#457B9D' : '#A8DADC';
-  const textColor = colorScheme === 'dark' ? '#F1FAEE' : '#1D3557';
-  const placeholderTextColor = colorScheme === 'dark' ? '#F1FAEE' : '#1D3557';
+  const responseBackgroundColor = colorScheme === 'dark' ? '#402b62' : '#f4e6ff';
+  const textColor = colorScheme === 'dark' ? '#f4e6ff' : '#402c63';
+  const placeholderTextColor = colorScheme === 'dark' ? '#f4e6ff' : '#402c63';
 
   const handleChat = async () => {
     if (!question.trim()) return;
@@ -79,6 +79,13 @@ export default function MenstruationScreen() {
       
       <ThemedView style={styles.container}>
         <ThemedText type="title" style={styles.title}>MenstruAI 🩸</ThemedText>
+        
+        <View style={styles.inputContainer}>
+          <TextInput style={[styles.input, { color: textColor }]} placeholder="Ask a menstrual health question..." placeholderTextColor={placeholderTextColor + '90'} value={question} onChangeText={setQuestion} editable={!isLoading}/>
+          <TouchableOpacity style={styles.button} onPress={handleChat} disabled={isLoading}>
+            {isLoading ? <ActivityIndicator color="#c41e3d" /> : <ThemedText style={styles.buttonText}>Ask 🔍</ThemedText>}
+          </TouchableOpacity>
+        </View>
 
         <ScrollView style={[styles.responseContainer, { backgroundColor: responseBackgroundColor }]}>
           {response ? (<ThemedText style={styles.response}>{response}</ThemedText>) : (
@@ -86,12 +93,7 @@ export default function MenstruationScreen() {
           )}
         </ScrollView>
         
-        <View style={styles.inputContainer}>
-          <TextInput style={[styles.input, { color: textColor }]} placeholder="Ask a menstrual health question..." placeholderTextColor={placeholderTextColor + '90'} value={question} onChangeText={setQuestion} editable={!isLoading}/>
-          <TouchableOpacity style={styles.button} onPress={handleChat} disabled={isLoading}>
-            {isLoading ? <ActivityIndicator color="#F1FAEE" /> : <ThemedText style={styles.buttonText}>Ask 🔍</ThemedText>}
-          </TouchableOpacity>
-        </View>
+        <ThemedText style={styles.placeholder}>Note: This is not a substitute for professional medical advice.</ThemedText>
       </ThemedView>
     </ParallaxScrollView>
   );
@@ -116,9 +118,9 @@ const styles = StyleSheet.create({
   },
   responseContainer: {
     flex: 1,
-    maxHeight: 400, // Set a max height for the response area
-    padding: 10,
-    borderRadius: 8,
+    maxHeight: 600, // Set a max height for the response area
+    padding: 15,
+    borderRadius: 25,
     marginBottom: 16,
   },
   inputContainer: {
@@ -126,21 +128,22 @@ const styles = StyleSheet.create({
   },
   input: {
     height: 60,
-    borderColor: '#E63946',
+    borderColor: '#c41e3d',
     borderWidth: 1,
     paddingHorizontal: 15,
-    borderRadius: 8,
+    borderRadius: 25,
     marginBottom: 15,
     fontSize: 16,
   },
   button: {
-    backgroundColor: '#E63946',
+    backgroundColor: '#c41e3d',
     padding: 12,
     borderRadius: 25,
     alignItems: 'center',
+    marginBottom: 16,
   },
   buttonText: {
-    color: 'white',
+    color: '#F4E6FF',
     fontWeight: 'bold',
     fontSize: 16,
   },
