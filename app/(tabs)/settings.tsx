@@ -1,5 +1,5 @@
-import React, { useState, useEffect } from 'react';
-import { StyleSheet, View, Alert, useColorScheme, TouchableOpacity, Image, Share,} from 'react-native';
+import React, { useState, useEffect, useRef } from 'react';
+import { StyleSheet, View, Alert, useColorScheme, TouchableOpacity, Image, Share, Animated, Easing } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import * as DocumentPicker from 'expo-document-picker';
 import * as FileSystem from 'expo-file-system';
@@ -15,12 +15,37 @@ interface ToggleSwitchProps {
 }
 
 const ToggleSwitch: React.FC<ToggleSwitchProps> = ({ value, onValueChange }) => {
+    const animatedValue = useRef(new Animated.Value(value ? 1 : 0)).current;
+
+    useEffect(() => {
+        Animated.timing(animatedValue, {
+            toValue: value ? 1 : 0,
+            duration: 200,
+            easing: Easing.out(Easing.ease),
+            useNativeDriver: false,
+        }).start();
+    }, [value]);
+
     return (
-        <TouchableOpacity 
-            onPress={() => onValueChange(!value)} 
-            style={[styles.toggleContainer, value ? styles.toggleContainerActive : styles.toggleContainerInactive]}
-        >
-            <View style={[styles.toggleCircle, value ? styles.toggleCircleActive : styles.toggleCircleInactive]} />
+        <TouchableOpacity onPress={() => onValueChange(!value)} style={styles.toggleContainer}>
+            <Animated.View style={{
+                width: '100%',
+                height: '100%',
+                borderRadius: 25,
+                backgroundColor: animatedValue.interpolate({
+                    inputRange: [0, 1],
+                    outputRange: ['#717171', '#402b61']
+                }),
+            }}>
+                <Animated.View style={[styles.toggleCircle, {
+                    transform: [{
+                        translateX: animatedValue.interpolate({
+                            inputRange: [0, 1],
+                            outputRange: [0, 37] // Moves from left:2 to right:2 within 70 - 29 - 4 = 37
+                        })
+                    }]
+                }]} />
+            </Animated.View>
         </TouchableOpacity>
     );
 };
@@ -30,7 +55,6 @@ export default function SettingsScreen() {
     const textColor = colorScheme === 'dark' ? '#f4e6ff' : '#402c63';
     const actiontextColor = colorScheme === 'dark' ? '#ffb1bd' : '#402b61';
     const circleColor = colorScheme === 'dark' ? '#402c63' : '#f4e6ff';
-    
     
     // Add state for the two toggles
     const [lutealPhase, setLutealPhase] = useState(false);
@@ -69,7 +93,6 @@ export default function SettingsScreen() {
             setLutealPhase(value);
             await AsyncStorage.setItem('lutealPhase', JSON.stringify(value));
             
-            // Show information alert when enabling luteal phase
             if (value) {
                 Alert.alert(
                     'Luteal Phase Calculation Enabled',
@@ -79,7 +102,6 @@ export default function SettingsScreen() {
             }
         } catch (error) {
             console.error('Error saving luteal phase setting:', error);
-            // Revert the toggle if there's an error
             setLutealPhase(!value);
             Alert.alert('Error', 'Failed to update luteal phase setting');
         }
@@ -97,119 +119,108 @@ export default function SettingsScreen() {
             await AsyncStorage.setItem('preventScreenshots', JSON.stringify(value));
         } catch (error) {
             console.error('Error toggling screenshot prevention:', error);
-            // Revert the toggle if there's an error
             setPreventScreenshots(!value);
             Alert.alert('Error', 'Failed to update screenshot settings');
         }
     };
 
     const backupData = async () => {
-            console.log('🔄 Starting backup process...');
-            try {
-              console.log('📱 Fetching entries from AsyncStorage...');
-              const existingEntries = await AsyncStorage.getItem('periodEntries');
-              if (!existingEntries) {
+        console.log('🔄 Starting backup process...');
+        try {
+            console.log('📱 Fetching entries from AsyncStorage...');
+            const existingEntries = await AsyncStorage.getItem('periodEntries');
+            if (!existingEntries) {
                 console.log('⚠️ No entries found to backup');
                 Alert.alert('No data to backup', 'Please log at least one entry.');
                 return;
-              }
+            }
 
-              console.log('✅ Found existing entries, parsing JSON...');
-              const entries = JSON.parse(existingEntries);
-              
-              // Check if entries array is empty
-              if (!Array.isArray(entries) || entries.length === 0) {
+            console.log('✅ Found existing entries, parsing JSON...');
+            const entries = JSON.parse(existingEntries);
+            
+            if (!Array.isArray(entries) || entries.length === 0) {
                 console.log('⚠️ Entries array is empty');
                 Alert.alert(
-                  'No Data to Backup',
-                  'Please log at least one period entry before backing up.'
+                    'No Data to Backup',
+                    'Please log at least one period entry before backing up.'
                 );
                 return;
-              }
+            }
 
-              console.log(`📊 Found ${entries.length} entries to backup`);
-              
-              const backup = {
+            console.log(`📊 Found ${entries.length} entries to backup`);
+            
+            const backup = {
                 version: '1.0',
                 timestamp: new Date().toISOString(),
                 entries: entries
-              };
+            };
 
-              console.log('📝 Creating backup JSON...');
-              const backupJson = JSON.stringify(backup, null, 2);
+            console.log('📝 Creating backup JSON...');
+            const backupJson = JSON.stringify(backup, null, 2);
 
-              // Show options dialog
-              Alert.alert(
+            Alert.alert(
                 'Save Backup',
                 'Would you like to save your data backup?',
                 [
-                  {
-                    text: 'Save',
-                    onPress: async () => {
-                      try {
-                        console.log('💾 Preparing file for saving...');
-                        
-                        // Create a temporary file
-                        const fileName = `period_tracker_backup_${new Date().toISOString().split('T')[0]}.json`;
-                        const fileUri = `${FileSystem.cacheDirectory}${fileName}`;
-                        
-                        // Write the backup data to the temporary file
-                        await FileSystem.writeAsStringAsync(fileUri, backupJson);
-                        
-                        // Check if sharing is available
-                        const isAvailable = await Sharing.isAvailableAsync();
-                        if (!isAvailable) {
-                          throw new Error('Sharing is not available on this device');
-                        }
+                    {
+                        text: 'Save',
+                        onPress: async () => {
+                            try {
+                                console.log('💾 Preparing file for saving...');
+                                
+                                const fileName = `period_tracker_backup_${new Date().toISOString().split('T')[0]}.json`;
+                                const fileUri = `${FileSystem.cacheDirectory}${fileName}`;
+                                
+                                await FileSystem.writeAsStringAsync(fileUri, backupJson);
+                                
+                                const isAvailable = await Sharing.isAvailableAsync();
+                                if (!isAvailable) {
+                                    throw new Error('Sharing is not available on this device');
+                                }
 
-                        // Share the file (this will open the system's save/share dialog)
-                        await Sharing.shareAsync(fileUri, {
-                          mimeType: 'application/json',
-                          dialogTitle: 'Save Period Tracker Backup',
-                          UTI: 'public.json' // iOS only
-                        }).then(() => {
-                          // The shareAsync completed without throwing an error
-                          // But this doesn't guarantee the user actually saved the file
-                          // We'll skip the success message to avoid false positives
-                          console.log('📤 Share dialog was closed');
-                        }).catch(error => {
-                          console.error('❌ Share failed with error:', error);
-                          Alert.alert(
-                            '❌ Backup Failed',
-                            'There was an error sharing your backup. Please try again.'
-                          );
-                        });
-                      } catch (error) {
-                        console.error('❌ Save failed with error:', error);
-                        Alert.alert(
-                          '❌ Save Failed',
-                          'There was an error saving your backup. Please try again.'
-                        );
-                      }
+                                await Sharing.shareAsync(fileUri, {
+                                    mimeType: 'application/json',
+                                    dialogTitle: 'Save Period Tracker Backup',
+                                    UTI: 'public.json'
+                                }).then(() => {
+                                    console.log('📤 Share dialog was closed');
+                                }).catch(error => {
+                                    console.error('❌ Share failed with error:', error);
+                                    Alert.alert(
+                                        '❌ Backup Failed',
+                                        'There was an error sharing your backup. Please try again.'
+                                    );
+                                });
+                            } catch (error) {
+                                console.error('❌ Save failed with error:', error);
+                                Alert.alert(
+                                    '❌ Save Failed',
+                                    'There was an error saving your backup. Please try again.'
+                                );
+                            }
+                        }
+                    },
+                    {
+                        text: 'Cancel',
+                        style: 'cancel',
+                        onPress: () => {
+                            console.log('❌ Save to file canceled by user');
+                            Alert.alert(
+                                '❌ Backup Failed',
+                                'Backup was canceled.'
+                            );
+                        }
                     }
-                  },
-                  {
-                    text: 'Cancel',
-                    style: 'cancel',
-                    onPress: () => {
-                      console.log('❌ Save to file canceled by user');
-                      Alert.alert(
-                        '❌ Backup Failed',
-                        'Backup was canceled.'
-                      );
-                    }
-                  }
                 ]
-              );
-            } catch (error) {
-              console.error('❌ Backup failed with error:', error);
-              Alert.alert(
+            );
+        } catch (error) {
+            console.error('❌ Backup failed with error:', error);
+            Alert.alert(
                 '❌ Backup Failed',
                 'There was an error creating your backup. Please try again.'
-              );
-            }
-      };
-      
+            );
+        }
+    };
 
     const restoreData = async () => {
         console.log('🔄 Starting restore process...');
@@ -230,7 +241,6 @@ export default function SettingsScreen() {
             const response = await fetch(file.uri);
             const backupData = await response.json();
 
-            // Validate backup data structure
             if (!backupData.version || !backupData.entries || !Array.isArray(backupData.entries)) {
                 console.error('❌ Invalid backup file format');
                 Alert.alert(
@@ -242,7 +252,6 @@ export default function SettingsScreen() {
 
             console.log(`📊 Found ${backupData.entries.length} entries to restore`);
             
-            // Store the entries in AsyncStorage
             await AsyncStorage.setItem('periodEntries', JSON.stringify(backupData.entries));
             
             console.log('✅ Data restored successfully!');
@@ -259,26 +268,24 @@ export default function SettingsScreen() {
         }
     };
 
-
     const aboutOption = async () => {
-      Alert.alert('About', 'Made with ❤️ in India 🇮🇳');
+        Alert.alert('About', 'Made with ❤️ in India 🇮🇳');
     };
 
-      return (
+    return (
         <ParallaxScrollView
-              headerBackgroundColor={{ light: '#ffdde2', dark: '#151718' }}
-              headerImage={
+            headerBackgroundColor={{ light: '#ffdde2', dark: '#151718' }}
+            headerImage={
                 <Image 
-                  source={require('@/assets/images/history2.png')}
-                  style={styles.reactLogo}
-                  resizeMode="contain"
+                    source={require('@/assets/images/history2.png')}
+                    style={styles.reactLogo}
+                    resizeMode="contain"
                 />
             }
         >
             <ThemedView style={styles.container}>
                 <ThemedText type="title" style={[styles.header, { color: textColor }]}>Settings</ThemedText>
 
-                {/* Other Settings Section */}
                 <View style={styles.section}>
                     <ThemedText style={[styles.sectionTitle, { color: textColor }]}>Other Settings</ThemedText>
                     
@@ -299,7 +306,6 @@ export default function SettingsScreen() {
                     </View>
                 </View>
 
-                {/* Backup Section */}
                 <View style={styles.section}>
                     <ThemedText style={[styles.sectionTitle, { color: textColor }]}>Backup</ThemedText>
                     <View style={styles.settingRow}>
@@ -316,7 +322,6 @@ export default function SettingsScreen() {
                     </View>
                 </View>
 
-                {/* About Section */}
                 <View style={styles.aboutSection}>
                     <TouchableOpacity onPress={aboutOption}>
                         <ThemedText style={[styles.aboutAppText, { color: actiontextColor }]}>
@@ -402,10 +407,12 @@ const styles = StyleSheet.create({
         marginTop: -50,
     },
     toggleContainer: {
-        width: 70,
-        height: 30,
+        width: 75,
+        height: 35,
+        borderWidth: 4,
         borderRadius: 25,
-        padding: 2,
+        padding: 1.3,
+        borderColor: '#ffb1bd',
         justifyContent: 'center',
     },
     toggleContainerActive: {
@@ -415,17 +422,21 @@ const styles = StyleSheet.create({
         backgroundColor: '#717171',
     },
     toggleCircle: {
-        width: 29,
-        height: 26,
+        width: 27.5,
+        height: 24.5,
         borderRadius: 25,
         position: 'absolute',
+        backgroundColor: 'white',
+
+        left: 0,
+        top: 0,
+        borderWidth: 2,
+        borderColor: '#402b61',
     },
     toggleCircleActive: {
-        backgroundColor: '#ffffff',
         right: 2,
     },
     toggleCircleInactive: {
-        backgroundColor: '#ffffff',
         left: 2,
     },
 });
