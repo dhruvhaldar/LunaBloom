@@ -1,3 +1,4 @@
+// Palette: https://coolors.co/ffb1bd-f4e6ff-402c63-32224a-c41e3d
 import React, { useState, useEffect } from 'react';
 import { StyleSheet, TouchableOpacity, TextInput, Alert, useColorScheme, View, Button } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
@@ -36,7 +37,7 @@ export default function HomeScreen() {
   const sectionHeadingtextColor = colorScheme === 'dark' ? '#f4e6ff' : '#402c63';
   const symptomtextColor = colorScheme === 'dark' ? '#F1FAEE' : '#E63946';  
   const predictedsectionHeadingtextColor = colorScheme === 'dark' ? '#f4e6ff' : '#402c63';
-  const selectedSymptomBackgroundColor = colorScheme === 'dark' ? '#E63946' : '#A8DADC';
+  const selectedSymptomBackgroundColor = colorScheme === 'dark' ? '#e5322e' : '#ffdbe6';
   const symptomButtonBorderColor = colorScheme === 'dark' ? '#F1FAEE' : '#1D3557';
   
   // Date Picker Functions

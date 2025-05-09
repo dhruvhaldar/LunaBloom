@@ -11,7 +11,8 @@ import { Image } from 'react-native';
 
 export default function TabLayout() {
   const colorScheme = useColorScheme();
-  const borderColor = colorScheme === 'dark' ? '#F1FAEE' : '#1D3557';
+  const borderColor = colorScheme === 'dark' ? '#f4e6ff' : '#402c63';
+  const textColor = colorScheme === 'dark' ? '#f4e6ff' : '#402c63';
   const tabBarButtonSize = 32;
 
   const tabBarStyle: ViewStyle = {
@@ -75,7 +76,8 @@ export default function TabLayout() {
   return (
     <Tabs
       screenOptions={{
-        tabBarActiveTintColor: Colors[colorScheme ?? 'light'].tint,
+        tabBarActiveTintColor: textColor,
+        tabBarInactiveTintColor: colorScheme === 'dark' ? '#ffb1bd' : '#402b61',
         headerShown: false,
         tabBarButton: (props) => <AnimatedTabButton {...props} />,
         tabBarBackground: TabBarBackground,
@@ -94,15 +96,18 @@ export default function TabLayout() {
         name="index"
         options={{
           title: 'Home',
-          tabBarIcon: ({ color, focused }) => (
+          tabBarIcon: ({ focused }) => (
             <View style={styles.tabItemContainer}>
-              <IconSymbol 
-                size={tabBarButtonSize} 
-                name="house.fill" 
-                color={color}
-                style={{ 
-                  opacity: focused ? 1 : 0.8 
-                }} 
+              <Image 
+              source={
+                colorScheme === 'dark'
+                ? require('@/assets/images/icons/dashboard_48dp_FFB1BD_FILL1_wght400_GRAD0_opsz48.png')
+                : require('@/assets/images/icons/dashboard_48dp_38275A_FILL1_wght400_GRAD0_opsz48.png')
+              } 
+              style={[
+                styles.tinyLogo, 
+                focused && styles.focused
+              ]}
               />
               {focused}
             </View>
@@ -115,15 +120,18 @@ export default function TabLayout() {
         name="history"
         options={{
           title: 'History',
-          tabBarIcon: ({ color, focused }) => (
+          tabBarIcon: ({ focused }) => (
             <View style={styles.tabItemContainer}>
-              <IconSymbol 
-                size={tabBarButtonSize} 
-                name="history.fill" 
-                color={color}
-                style={{ 
-                  opacity: focused ? 1 : 1 
-                }} 
+              <Image 
+              source={
+                colorScheme === 'dark'
+                ? require('@/assets/images/icons/history_48dp_FFB1BD_FILL1_wght400_GRAD0_opsz48.png')
+                : require('@/assets/images/icons/history_48dp_38275A_FILL1_wght400_GRAD0_opsz48.png')
+              } 
+              style={[
+                styles.tinyLogo, 
+                focused && styles.focused
+              ]}
               />
               {focused}
             </View>
@@ -136,15 +144,18 @@ export default function TabLayout() {
         name="insights"
         options={{
           title: 'Insights',
-          tabBarIcon: ({ color, focused }) => (
+          tabBarIcon: ({ focused }) => (
             <View style={styles.tabItemContainer}>
-              <IconSymbol 
-                size={tabBarButtonSize} 
-                name="bar-chart.fill" 
-                color={color}
-                style={{ 
-                  opacity: focused ? 1 : 0.8 
-                }} 
+              <Image 
+              source={
+                colorScheme === 'dark'
+                ? require('@/assets/images/icons/analytics_48dp_FFB1BD_FILL1_wght400_GRAD0_opsz48.png')
+                : require('@/assets/images/icons/analytics_48dp_38275A_FILL1_wght400_GRAD0_opsz48.png')
+              } 
+              style={[
+                styles.tinyLogo, 
+                focused && styles.focused
+              ]}
               />
               {focused}
             </View>
@@ -157,13 +168,16 @@ export default function TabLayout() {
         name="chatbot"
         options={{
           title: 'MenstruAI',
-          tabBarIcon: ({ color, focused }) => (
+          tabBarIcon: ({ focused }) => (
             <View style={styles.tabItemContainer}>
               <Image source={
         colorScheme === 'dark'
           ? require('@/assets/images/icons/dark_menstruai.png')
           : require('@/assets/images/icons/light_menstruai.png')
-      } style={styles.tinyLogo}/>
+      } style={[
+        styles.tinyLogo, 
+        focused && styles.focused
+      ]}/>
     </View>
           ),
         }}
@@ -174,17 +188,19 @@ export default function TabLayout() {
         name="settings"
         options={{
           title: 'Settings',
-          tabBarIcon: ({ color, focused }) => (
+          tabBarIcon: ({ focused }) => (
             <View style={styles.tabItemContainer}>
-              <IconSymbol 
-                size={tabBarButtonSize} 
-                name="settings.fill" 
-                color={color}
-                style={{ 
-                  opacity: focused ? 1 : 0.8 
-                }} 
+              <Image 
+              source={
+                colorScheme === 'dark'
+                ? require('@/assets/images/icons/settings_48dp_FFB1BD_FILL1_wght400_GRAD0_opsz48.png')
+                : require('@/assets/images/icons/settings_48dp_402C63_FILL1_wght400_GRAD0_opsz48.png')
+              } 
+              style={[
+                styles.tinyLogo, 
+                focused && styles.focused
+              ]}
               />
-              {focused}
             </View>
           ),
         }}
@@ -217,5 +233,9 @@ const styles = StyleSheet.create({
   tinyLogo: {
     width: 48,
     height: 48,
+    opacity: 0.8,
+  },
+  focused: {
+    opacity: 1,
   },
 });

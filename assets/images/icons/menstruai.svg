@@ -1,2 +1,26 @@
 <?xml version="1.0" encoding="utf-8"?>
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 500 500" xmlns:bx="https://boxy-svg.com" width="500px" height="500px"><defs/><rect style="stroke: rgb(0, 0, 0); stroke-width: 0px; fill: none;" x="35.183" y="53.426" width="429.634" height="393.149" rx="164.416" ry="164.416"/><path d="M 226.743 113.231 Q 244.961 87.176 263.179 113.231 L 289.565 150.966 Q 307.783 177.021 271.346 177.021 L 218.576 177.021 Q 182.139 177.021 200.357 150.966 Z" style="fill: none; stroke: rgb(57, 37, 81); stroke-width: 20px; transform-box: fill-box; transform-origin: 50% 50%;" transform="matrix(0.882919, -0.469526, 0.469526, 0.882919, -93.666416, 214.431369)"/><g id="Capa_1" transform="matrix(0.680687, 0, 0, 0.798703, -95.795197, -7.784985)" style=""><g transform="matrix(1, 0, 0, 1, 409.961151, 173.373535)"><g><path d="M96.103,0.799c-3.025,3.166-74.198,77.98-74.198,119.158c0,41.99,34.156,76.139,76.143,76.139 c42.001,0,76.143-34.153,76.143-76.139c0-41.178-71.171-115.993-74.198-119.158C98.972-0.267,97.114-0.267,96.103,0.799z" style="fill: rgb(57, 37, 81);"/></g></g></g><circle cx="163.901" cy="150.712" r="28.604" style="fill: none; stroke-width: 3.93312px; stroke: rgb(57, 37, 81);" transform="matrix(5.75002, 0, 0, 4.420014, -692.434021, -447.149139)"/></svg>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 500 500" xmlns:bx="https://boxy-svg.com" width="500px" height="500px">
+  <defs>
+    <bx:export>
+      <bx:file format="png" path="light_menstruai.png"/>
+    </bx:export>
+    <linearGradient gradientUnits="userSpaceOnUse" x1="163.901" y1="122.108" x2="163.901" y2="179.316" id="gradient-1">
+      <stop offset="0" style="stop-color: rgb(196, 28, 61);"/>
+      <stop offset="1" style="stop-color: rgb(15.57% 8.304% 24.804%)"/>
+    </linearGradient>
+    <linearGradient gradientUnits="userSpaceOnUse" x1="116.136" y1="342.57" x2="116.136" y2="449.81" id="gradient-0" gradientTransform="matrix(0.456588, 0.889677, -1.055234, 0.541553, 502.267093, 79.477777)">
+      <stop offset="0" style="stop-color: rgb(160, 26, 62);"/>
+      <stop offset="1" style="stop-color: rgb(15.57% 8.304% 24.804%)"/>
+    </linearGradient>
+  </defs>
+  <rect style="stroke: rgb(0, 0, 0); stroke-width: 0px; fill: none;" x="35.183" y="53.426" width="429.634" height="393.149" rx="164.416" ry="164.416"/>
+  <path d="M 90.704 360.757 C 107.658 336.508 124.613 336.508 141.569 360.757 L 178.404 413.436 C 195.359 437.686 186.881 449.81 152.97 449.81 L 79.303 449.81 C 45.39 449.81 36.912 437.686 53.867 413.436 L 90.704 360.757 Z" style="stroke: rgb(57, 37, 81); transform-box: fill-box; transform-origin: 50% 50%; fill: url(&quot;#gradient-0&quot;); stroke-width: 2px;" transform="matrix(0.882919, -0.469526, 0.469526, 0.882919, 0.000001, -0.000002)"/>
+  <circle cx="163.901" cy="150.712" r="28.604" style="stroke: rgb(57, 37, 81); fill: url(&quot;#gradient-1&quot;); stroke-width: 0.281737px;" transform="matrix(8.027175, 0, 0, 6.170454, -1065.526367, -679.961487)"/>
+  <g id="Capa_1" transform="matrix(0.906709, 0, 0, 1.304639, -210.61647, -131.280579)" style="">
+    <g transform="matrix(1, 0, 0, 1, 409.961151, 173.373535)">
+      <g>
+        <path d="M96.103,0.799c-3.025,3.166-74.198,77.98-74.198,119.158c0,41.99,34.156,76.139,76.143,76.139 c42.001,0,76.143-34.153,76.143-76.139c0-41.178-71.171-115.993-74.198-119.158C98.972-0.267,97.114-0.267,96.103,0.799z" style="paint-order: fill; stroke-width: 10.8531px; fill: rgb(255, 247, 255);"/>
+      </g>
+    </g>
+  </g>
+</svg>
