@@ -167,7 +167,7 @@ export default function TabLayout() {
       <Tabs.Screen
         name="chatbot"
         options={{
-          title: 'MenstruAI',
+          title: 'MenstruAi',
           tabBarIcon: ({ focused }) => (
             <View style={styles.tabItemContainer}>
               <Image source={
@@ -225,10 +225,6 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
     gap: 4,
-  },
-  tabLabel: {
-    fontSize: 8,
-    marginTop: 0,
   },
   tinyLogo: {
     width: 48,
