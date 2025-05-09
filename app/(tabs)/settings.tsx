@@ -29,6 +29,7 @@ export default function SettingsScreen() {
     const colorScheme = useColorScheme();
     const textColor = colorScheme === 'dark' ? '#f4e6ff' : '#402c63';
     const actiontextColor = colorScheme === 'dark' ? '#ffb1bd' : '#402b61';
+    const circleColor = colorScheme === 'dark' ? '#402c63' : '#f4e6ff';
     
     
     // Add state for the two toggles
@@ -401,20 +402,20 @@ const styles = StyleSheet.create({
         marginTop: -50,
     },
     toggleContainer: {
-        width: 50,
+        width: 70,
         height: 30,
         borderRadius: 25,
         padding: 2,
         justifyContent: 'center',
     },
     toggleContainerActive: {
-        backgroundColor: '#457B9D',
+        backgroundColor: '#402b61',
     },
     toggleContainerInactive: {
-        backgroundColor: '#3f3f3f',
+        backgroundColor: '#717171',
     },
     toggleCircle: {
-        width: 26,
+        width: 29,
         height: 26,
         borderRadius: 25,
         position: 'absolute',
@@ -424,7 +425,7 @@ const styles = StyleSheet.create({
         right: 2,
     },
     toggleCircleInactive: {
-        backgroundColor: '#909090',
+        backgroundColor: '#ffffff',
         left: 2,
     },
 });
