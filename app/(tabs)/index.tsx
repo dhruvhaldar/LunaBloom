@@ -32,10 +32,10 @@ export default function HomeScreen() {
   const colorScheme = useColorScheme();
   const Parallaxheaderlightcolor = '#f4e6ff';
   const Parallaxheaderdarkcolor = '#402c63';
-  const textColor = colorScheme === 'dark' ? '#F1FAEE' : '#1D3557';
-  const sectionHeadingtextColor = colorScheme === 'dark' ? '#E63946' : '#1D3557';
+  const textColor = colorScheme === 'dark' ? '#f4e6ff' : '#402c63';
+  const sectionHeadingtextColor = colorScheme === 'dark' ? '#f4e6ff' : '#402c63';
   const symptomtextColor = colorScheme === 'dark' ? '#F1FAEE' : '#E63946';  
-  const predictedsectionHeadingtextColor = colorScheme === 'dark' ? '#F1FAEE' : '#413c58';
+  const predictedsectionHeadingtextColor = colorScheme === 'dark' ? '#f4e6ff' : '#402c63';
   const selectedSymptomBackgroundColor = colorScheme === 'dark' ? '#E63946' : '#A8DADC';
   const symptomButtonBorderColor = colorScheme === 'dark' ? '#F1FAEE' : '#1D3557';
   

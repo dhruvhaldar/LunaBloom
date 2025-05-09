@@ -122,7 +122,7 @@ export default function TabLayout() {
                 name="history.fill" 
                 color={color}
                 style={{ 
-                  opacity: focused ? 1 : 0.8 
+                  opacity: focused ? 1 : 1 
                 }} 
               />
               {focused}

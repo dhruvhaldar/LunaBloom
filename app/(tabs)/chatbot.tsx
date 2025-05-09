@@ -62,7 +62,21 @@ export default function MenstruationScreen() {
   };  
 
   return (
-    <ParallaxScrollView headerBackgroundColor={{ light: '#ffdde2', dark: '#151718' }} headerImage={<Image source={require('@/assets/images/history2.png')} style={styles.reactLogo} resizeMode="contain"/>}>
+    <ParallaxScrollView headerBackgroundColor={{ light: '#ffdde2', dark: '#151718' }} 
+    
+    headerImage={
+      <Image 
+      source={
+        colorScheme === 'dark'
+          ? require('@/assets/images/icons/dark_history3.png')
+          : require('@/assets/images/icons/history3.png')
+      }
+      style={styles.reactLogo}
+      resizeMode="contain"
+      />
+      }
+    >
+      
       <ThemedView style={styles.container}>
         <ThemedText type="title" style={styles.title}>MenstruAI 🩸</ThemedText>
 
