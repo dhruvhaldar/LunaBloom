@@ -12,12 +12,12 @@ import { Image } from 'react-native';
 export default function TabLayout() {
   const colorScheme = useColorScheme();
   const borderColor = colorScheme === 'dark' ? '#F1FAEE' : '#1D3557';
-  const tabBarButtonSize = 29;
+  const tabBarButtonSize = 32;
 
   const tabBarStyle: ViewStyle = {
     position: 'absolute',
     bottom: 10,
-    borderRadius: 48,
+    borderRadius: 25,
     height: 70,
     alignContent: 'center',
     backgroundColor: colorScheme === 'dark' 

@@ -261,7 +261,7 @@ const styles = StyleSheet.create({
     marginBottom: 20,
   },
   sectionContainer: {
-    borderRadius: 8,
+    borderRadius: 25,
     padding: 5,
     marginBottom: 12,
   },

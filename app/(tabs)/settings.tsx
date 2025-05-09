@@ -399,7 +399,7 @@ const styles = StyleSheet.create({
     toggleContainer: {
         width: 50,
         height: 30,
-        borderRadius: 15,
+        borderRadius: 25,
         padding: 2,
         justifyContent: 'center',
     },
@@ -412,7 +412,7 @@ const styles = StyleSheet.create({
     toggleCircle: {
         width: 26,
         height: 26,
-        borderRadius: 13,
+        borderRadius: 25,
         position: 'absolute',
     },
     toggleCircleActive: {

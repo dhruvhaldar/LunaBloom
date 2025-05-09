@@ -503,7 +503,7 @@ const styles = StyleSheet.create({
     textAlign: 'center',
   },
   section: {
-    borderRadius: 8,
+    borderRadius: 25,
     padding: 5,
     marginBottom: 12,
   },
@@ -515,7 +515,7 @@ const styles = StyleSheet.create({
   },
   input: {
     borderWidth: 1,
-    borderRadius: 8,
+    borderRadius: 25,
     padding: 8,
     width: 100,
     textAlign: 'center',
@@ -523,10 +523,10 @@ const styles = StyleSheet.create({
   dateButton: {
     padding: 8,
     borderWidth: 1,
-    borderRadius: 8,
+    borderRadius: 25,
   },
   dateText: {
-    color: '#6b46c1',
+    color: '#F1FAEE',
   },
   datePickerWrapper: {
     marginTop: 10,
@@ -538,7 +538,7 @@ const styles = StyleSheet.create({
   },
   symptomButton: {
     padding: 8,
-    borderRadius: 20,
+    borderRadius: 25,
     borderWidth: 1,
   },
 
@@ -547,12 +547,12 @@ const styles = StyleSheet.create({
   },
   predictionItem: {
     padding: 12,
-    borderRadius: 8,
+    borderRadius: 25,
     marginBottom: 8,
   },
   notesInput: {
     borderWidth: 1,
-    borderRadius: 8,
+    borderRadius: 25,
     paddingHorizontal: 15,
     height: 100,
     textAlignVertical: 'top',
@@ -560,7 +560,7 @@ const styles = StyleSheet.create({
   },
   logButton: {
     backgroundColor: '#402c63',
-    borderRadius: 40,
+    borderRadius: 25,
     padding: 16,
     marginTop: 8,
     alignItems: 'center',
