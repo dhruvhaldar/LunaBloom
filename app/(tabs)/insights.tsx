@@ -254,7 +254,7 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     padding: 16,
-    paddingBottom: 90, // Add enough padding to prevent overlap with the tab bar
+    paddingBottom: 90,
   },
   header: {
     marginTop: -30,
@@ -281,7 +281,7 @@ const styles = StyleSheet.create({
     padding: 20,
   },
   reactLogo: {
-    height: 380,
+    height: 280,
     width: 500,
     alignSelf: 'center',
     marginBottom: -50,

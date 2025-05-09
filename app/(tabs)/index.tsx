@@ -571,8 +571,8 @@ const styles = StyleSheet.create({
     fontSize: 16,
   },
   reactLogo: {
-    height: 290,
-    width: 760,
+    height: 280,
+    width: 820,
     alignSelf: 'center',
     marginBottom: -50,
     marginTop: -50,

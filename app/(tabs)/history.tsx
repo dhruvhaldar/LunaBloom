@@ -144,9 +144,9 @@ export default function TabTwoScreen() {
               </View>
             ))
           ) : (
-            <Text style={{ color: textColor, textAlign: 'center', marginTop: 20 }}>
+            <ThemedText style={styles.noDataText}>
               No data available
-            </Text>
+            </ThemedText>
           )}
         </View>
       </ThemedView>
@@ -191,6 +191,11 @@ const styles = StyleSheet.create({
   },
   deleteIconContainer: {
     padding: 10,
+  },
+  noDataText: {
+    textAlign: 'center',
+    color: '#c41e3d',
+    padding: 20,
   },
   reactLogo: {
     height: 280,
