@@ -16,7 +16,6 @@ import { useFocusEffect } from '@react-navigation/native';
 const screenWidth = Dimensions.get('window').width;
 
 export default function InsightsScreen() {
-  console.log('InsightsScreen rendering...');
   const [entries, setEntries] = useState([]);
   const [cycleData, setCycleData] = useState([]);
   const [averageCycleLength, setAverageCycleLength] = useState(0);
@@ -36,16 +35,13 @@ export default function InsightsScreen() {
   );
 
   const fetchEntries = async () => {
-    console.log('Fetching entries...');
     try {
       const storedEntries = await AsyncStorage.getItem('periodEntries');
       if (storedEntries) {
         const parsedEntries = JSON.parse(storedEntries);
-        console.log('Parsed entries:', parsedEntries);
         setEntries(parsedEntries);
         analyzeCycleData(parsedEntries);
       } else {
-        console.log('No stored entries found');
       }
     } catch (error) {
       console.error('Error fetching entries:', error);
