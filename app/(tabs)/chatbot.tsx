@@ -6,8 +6,9 @@ import ParallaxScrollView from '@/components/ParallaxScrollView';
 import { AI_MODELS, DEFAULT_MODEL_ID, AIModel } from '@/constants/AIModels';
 import { generateChatResponse } from '@/services/aiService';
 
+const openaiKey = process.env.EXPO_PUBLIC_OPENAI_API_KEY || process.env.EXPO_PUBLIC_API_KEY;
+const huggingfaceKey = process.env.EXPO_PUBLIC_HUGGINGFACE_API_KEY;
 const baseurl = process.env.EXPO_PUBLIC_API_URL;
-const apikey = process.env.EXPO_PUBLIC_API_KEY;
 
 export default function MenstruationScreen() {
   
@@ -38,7 +39,27 @@ export default function MenstruationScreen() {
         content: `As a women's health expert, answer concisely based on facts, don't make assumptions: ${question}`
       }];
 
-      const answer = await generateChatResponse(selectedModel, messages, apikey, baseurl);
+      // Select the correct key based on provider
+      let apiKey = '';
+      if (selectedModel.provider === 'OpenAI') {
+        apiKey = openaiKey || '';
+      } else if (selectedModel.provider === 'Hugging Face') {
+        apiKey = huggingfaceKey || '';
+      }
+
+      // Check if key is available
+      if (!apiKey && !selectedModel.isFree) {
+         // Note: Some "free" models on HF still require a token for higher rate limits or access.
+         // But purely free/public ones might not strictly need it, though usually recommended.
+         // For OpenAI it's mandatory.
+         if (selectedModel.provider === 'OpenAI') {
+             setResponse('Error: OpenAI API Key is missing. Please configure EXPO_PUBLIC_OPENAI_API_KEY.');
+             setIsLoading(false);
+             return;
+         }
+      }
+
+      const answer = await generateChatResponse(selectedModel, messages, apiKey, baseurl);
       setResponse(answer || "Couldn't generate a response");
     } catch (error) {
       console.error('API Error:', error);

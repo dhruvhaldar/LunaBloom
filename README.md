@@ -20,6 +20,8 @@ LunaBloom is your ultimate companion in understanding and managing your menstrua
 
 ### 🩸 MenstruAI
 - AI-powered chat assistant
+- Support for multiple AI models (OpenAI, Hugging Face)
+- Includes free model options for non-commercial use
 - Get answers to your menstrual health questions
 - Receive advice on managing symptoms
 - Learn more about your reproductive health
