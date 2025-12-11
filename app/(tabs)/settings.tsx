@@ -125,16 +125,21 @@ export default function SettingsScreen() {
     };
 
     const backupData = async () => {
+        console.log('🔄 Starting backup process...');
         try {
+            console.log('📱 Fetching entries from AsyncStorage...');
             const existingEntries = await AsyncStorage.getItem('periodEntries');
             if (!existingEntries) {
+                console.log('⚠️ No entries found to backup');
                 Alert.alert('No data to backup', 'Please log at least one entry.');
                 return;
             }
 
+            console.log('✅ Found existing entries, parsing JSON...');
             const entries = JSON.parse(existingEntries);
             
             if (!Array.isArray(entries) || entries.length === 0) {
+                console.log('⚠️ Entries array is empty');
                 Alert.alert(
                     'No Data to Backup',
                     'Please log at least one period entry before backing up.'
@@ -142,6 +147,7 @@ export default function SettingsScreen() {
                 return;
             }
 
+            console.log(`📊 Found ${entries.length} entries to backup`);
             
             const backup = {
                 version: '1.0',
@@ -149,6 +155,7 @@ export default function SettingsScreen() {
                 entries: entries
             };
 
+            console.log('📝 Creating backup JSON...');
             const backupJson = JSON.stringify(backup, null, 2);
 
             Alert.alert(
@@ -159,6 +166,7 @@ export default function SettingsScreen() {
                         text: 'Save',
                         onPress: async () => {
                             try {
+                                console.log('💾 Preparing file for saving...');
                                 
                                 const fileName = `period_tracker_backup_${new Date().toISOString().split('T')[0]}.json`;
                                 const fileUri = `${FileSystem.cacheDirectory}${fileName}`;
@@ -175,6 +183,7 @@ export default function SettingsScreen() {
                                     dialogTitle: 'Save Period Tracker Backup',
                                     UTI: 'public.json'
                                 }).then(() => {
+                                    console.log('📤 Share dialog was closed');
                                 }).catch(error => {
                                     console.error('❌ Share failed with error:', error);
                                     Alert.alert(
@@ -195,6 +204,7 @@ export default function SettingsScreen() {
                         text: 'Cancel',
                         style: 'cancel',
                         onPress: () => {
+                            console.log('❌ Save to file canceled by user');
                             Alert.alert(
                                 '❌ Backup Failed',
                                 'Backup was canceled.'
@@ -213,16 +223,20 @@ export default function SettingsScreen() {
     };
 
     const restoreData = async () => {
+        console.log('🔄 Starting restore process...');
         try {
+            console.log('📂 Opening file picker...');
             const result = await DocumentPicker.getDocumentAsync({
                 type: 'application/json',
                 copyToCacheDirectory: true
             });
 
             if (result.canceled) {
+                console.log('❌ File picking was canceled');
                 return;
             }
 
+            console.log('📄 Reading selected file...');
             const file = result.assets[0];
             const response = await fetch(file.uri);
             const backupData = await response.json();
@@ -236,9 +250,11 @@ export default function SettingsScreen() {
                 return;
             }
 
+            console.log(`📊 Found ${backupData.entries.length} entries to restore`);
             
             await AsyncStorage.setItem('periodEntries', JSON.stringify(backupData.entries));
             
+            console.log('✅ Data restored successfully!');
             Alert.alert(
                 '✅ Restore Successful',
                 `Successfully restored ${backupData.entries.length} entries!`

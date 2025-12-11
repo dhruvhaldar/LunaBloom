@@ -177,11 +177,12 @@ const styles = StyleSheet.create({
   },
   reactLogo: {
     height: 380,
-    width: 500,
+    width: '100%',
+    maxWidth: 500,
     alignSelf: 'center',
     marginBottom: -50,
     marginTop: -50,
-    marginLeft: 6,
+    resizeMode: 'contain',
   },
   responseContainer: {
     flex: 1,
