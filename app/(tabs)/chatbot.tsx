@@ -8,9 +8,6 @@ import axios from 'axios';
 const baseurl = process.env.EXPO_PUBLIC_API_URL;
 const apikey = process.env.EXPO_PUBLIC_API_KEY;
 
-console.log('Base URL:',baseurl)
-console.log('API Key:',apikey)
-
 export default function MenstruationScreen() {
   
   const [question, setQuestion] = useState('');
@@ -54,7 +51,12 @@ export default function MenstruationScreen() {
       const answer = response.data.choices[0]?.message?.content?.trim();
       setResponse(answer || "Couldn't generate a response");
     } catch (error) {
-      console.error('API Error:', error);
+      // Securely log only the error message, not the full object which might contain sensitive headers
+      if (axios.isAxiosError(error)) {
+        console.error('API Error:', error.message);
+      } else {
+        console.error('API Error: An unexpected error occurred');
+      }
       setResponse('Error connecting to the assistant');
     } finally {
       setIsLoading(false);
