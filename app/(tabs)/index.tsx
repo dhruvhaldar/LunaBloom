@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback, useMemo } from 'react';
 import { StyleSheet, TouchableOpacity, TextInput, Alert, useColorScheme, View, Button } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import DateTimePicker from '@react-native-community/datetimepicker';
@@ -7,6 +7,14 @@ import { ThemedView } from '@/components/ThemedView';
 import ParallaxScrollView from '@/components/ParallaxScrollView';
 import { Image } from 'react-native';
 
+// Symptoms List
+const symptomsList = [
+  'Cramps', 'Bloating', 'Headache',
+  'Fatigue', 'Mood Swings', 'Tender Breasts'
+];
+
+// Flow Types
+const flowTypes = ['Light', 'Normal', 'Heavy', 'Spotting'];
 
 export default function HomeScreen() {
   console.log('HomeScreen rendering...');
@@ -14,13 +22,10 @@ export default function HomeScreen() {
   const [lastPeriod, setLastPeriod] = useState(new Date());
   const [cycleLength, setCycleLength] = useState('28');
   const [periodDuration, setPeriodDuration] = useState('5');
-  const [predictedPeriods, setPredictedPeriods] = useState<Date[]>([]);
   const [selectedSymptoms, setSelectedSymptoms] = useState<string[]>([]);
   const [notes, setNotes] = useState('');
-  const [predictedOvulations, setPredictedOvulations] = useState<Date[]>([]);
   const [lutealPhaseEnabled, setLutealPhaseEnabled] = useState(false);
   const [selectedFlow, setSelectedFlow] = useState<string | null>(null);
-  const flowTypes = ['Light', 'Normal', 'Heavy', 'Spotting'];
 
   // Date Picker States
   const [date, setDate] = useState(new Date());
@@ -28,7 +33,6 @@ export default function HomeScreen() {
   const [show, setShow] = useState(false);
 
   // Color Scheme
-  // https://coolors.co/palette/e63946-f1faee-a8dadc-457b9d-1d3557
   const colorScheme = useColorScheme();
   const Parallaxheaderlightcolor = '#A8DADC';
   const Parallaxheaderdarkcolor = '#A8DADC';
@@ -40,24 +44,24 @@ export default function HomeScreen() {
   const symptomButtonBorderColor = colorScheme === 'dark' ? '#F1FAEE' : '#1D3557';
   
   // Date Picker Functions
-  const onChange = (event: any, selectedDate: any) => {
+  const onChange = useCallback((event: any, selectedDate: any) => {
     if (selectedDate) {
       setShow(false);
       setDate(selectedDate);
       setLastPeriod(selectedDate);
     }
-  };  
+  }, []);
 
-  const showMode = (currentMode: React.SetStateAction<string>) => {
+  const showMode = useCallback((currentMode: React.SetStateAction<string>) => {
     setShow(true);
     setMode(currentMode);
-  };
+  }, []);
 
-  const showDatepicker = () => {
+  const showDatepicker = useCallback(() => {
     showMode('date');
-  };
+  }, [showMode]);
 
-  const handleCycleLengthChange = (text: string) => {
+  const handleCycleLengthChange = useCallback((text: string) => {
     const filteredText = text.replace(/[^0-9]/g, '');
     let number = parseInt(filteredText, 10);
 
@@ -84,10 +88,10 @@ export default function HomeScreen() {
     }    
 
     setCycleLength(number.toString());
-  };
+  }, []);
 
   // Input Validation Functions
-  const handlePeriodDurationChange = (text: string) => {
+  const handlePeriodDurationChange = useCallback((text: string) => {
     const filteredText = text.replace(/[^0-9]/g, '');
     let number = parseInt(filteredText, 10);
 
@@ -105,7 +109,7 @@ export default function HomeScreen() {
       );
     }
     setPeriodDuration(number.toString());
-  };
+  }, []);
 
   // Load luteal phase setting
   useEffect(() => {
@@ -123,7 +127,7 @@ export default function HomeScreen() {
   }, []);
 
   // Update calculatePredictions to use luteal phase
-  const calculatePredictions = () => {
+  const { predictedPeriods, predictedOvulations } = useMemo(() => {
     const predictions = [];
     const ovulations = [];
     const baseDate = new Date(lastPeriod);
@@ -156,24 +160,11 @@ export default function HomeScreen() {
       ovulations.push(ovulationDate);
     }
   
-    setPredictedPeriods(predictions);
-    setPredictedOvulations(ovulations);
-  };
-  
-
-  // Symptoms List
-  const symptomsList = [
-    'Cramps', 'Bloating', 'Headache', 
-    'Fatigue', 'Mood Swings', 'Tender Breasts'
-  ];
-
-  // Effect for Predictions
-  useEffect(() => {
-    calculatePredictions();
-  }, [lastPeriod, cycleLength, periodDuration]);
+    return { predictedPeriods: predictions, predictedOvulations: ovulations };
+  }, [lastPeriod, cycleLength, lutealPhaseEnabled]);
 
   // Save Period Data
-  const logPeriod = async () => {
+  const logPeriod = useCallback(async () => {
     try {
       const entry = {
         date: new Date().toISOString(),
@@ -228,7 +219,7 @@ export default function HomeScreen() {
         [{ text: "Got it! 🆗" }]
       );
     }
-  };
+  }, [lastPeriod, cycleLength, periodDuration, selectedFlow, selectedSymptoms, notes, predictedPeriods, predictedOvulations]);
      
 
   return (
