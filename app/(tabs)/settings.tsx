@@ -12,13 +12,17 @@ import ParallaxScrollView from '@/components/ParallaxScrollView';
 interface ToggleSwitchProps {
     value: boolean;
     onValueChange: (value: boolean) => void;
+    accessibilityLabel: string;
 }
 
-const ToggleSwitch: React.FC<ToggleSwitchProps> = ({ value, onValueChange }) => {
+const ToggleSwitch: React.FC<ToggleSwitchProps> = ({ value, onValueChange, accessibilityLabel }) => {
     return (
         <TouchableOpacity 
             onPress={() => onValueChange(!value)} 
             style={[styles.toggleContainer, value ? styles.toggleContainerActive : styles.toggleContainerInactive]}
+            accessibilityRole="switch"
+            accessibilityState={{ checked: value }}
+            accessibilityLabel={accessibilityLabel}
         >
             <View style={[styles.toggleCircle, value ? styles.toggleCircleActive : styles.toggleCircleInactive]} />
         </TouchableOpacity>
@@ -285,6 +289,7 @@ export default function SettingsScreen() {
                         <ToggleSwitch
                             value={lutealPhase}
                             onValueChange={handleLutealPhaseToggle}
+                            accessibilityLabel="Luteal Phase Calculation"
                         />
                     </View>
 
@@ -293,6 +298,7 @@ export default function SettingsScreen() {
                         <ToggleSwitch
                             value={preventScreenshots}
                             onValueChange={handleScreenshotToggle}
+                            accessibilityLabel="Prevent Screenshots"
                         />
                     </View>
                 </View>
