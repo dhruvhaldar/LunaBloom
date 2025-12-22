@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { StyleSheet, TouchableOpacity, TextInput, Alert, useColorScheme, View, Button } from 'react-native';
+import { StyleSheet, TouchableOpacity, TextInput, Alert, useColorScheme, View, Button, ActivityIndicator } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import DateTimePicker from '@react-native-community/datetimepicker';
 import { ThemedText } from '@/components/ThemedText';
@@ -20,6 +20,7 @@ export default function HomeScreen() {
   const [predictedOvulations, setPredictedOvulations] = useState<Date[]>([]);
   const [lutealPhaseEnabled, setLutealPhaseEnabled] = useState(false);
   const [selectedFlow, setSelectedFlow] = useState<string | null>(null);
+  const [isLogging, setIsLogging] = useState(false);
   const flowTypes = ['Light', 'Normal', 'Heavy', 'Spotting'];
 
   // Date Picker States
@@ -174,6 +175,9 @@ export default function HomeScreen() {
 
   // Save Period Data
   const logPeriod = async () => {
+    if (isLogging) return;
+    setIsLogging(true);
+
     try {
       const entry = {
         date: new Date().toISOString(),
@@ -227,6 +231,8 @@ export default function HomeScreen() {
         "An unexpected error occurred. Please try again later. 🛠️",
         [{ text: "Got it! 🆗" }]
       );
+    } finally {
+      setIsLogging(false);
     }
   };
      
@@ -298,6 +304,10 @@ export default function HomeScreen() {
             {flowTypes.map((flow) => (
               <TouchableOpacity
                 key={flow}
+                accessible={true}
+                accessibilityRole="radio"
+                accessibilityState={{ checked: selectedFlow === flow }}
+                accessibilityLabel={`${flow} flow`}
                 style={[
                   styles.symptomButton,
                   { borderColor: symptomButtonBorderColor },
@@ -329,6 +339,10 @@ export default function HomeScreen() {
             {symptomsList.map((symptom) => (
               <TouchableOpacity
                 key={symptom}
+                accessible={true}
+                accessibilityRole="checkbox"
+                accessibilityState={{ checked: selectedSymptoms.includes(symptom) }}
+                accessibilityLabel={`${symptom} symptom`}
                 style={[
                   styles.symptomButton,
                   { borderColor: symptomButtonBorderColor },
@@ -371,10 +385,21 @@ export default function HomeScreen() {
         </ThemedView>
 
         {/* Log Period Button */}
-        <TouchableOpacity style={styles.logButton} onPress={logPeriod}>
-          <ThemedText style={styles.logButtonText}>
-            Log Period Entry 📖
-          </ThemedText>
+        <TouchableOpacity
+          style={[styles.logButton, isLogging && { opacity: 0.7 }]}
+          onPress={logPeriod}
+          disabled={isLogging}
+          accessibilityRole="button"
+          accessibilityLabel={isLogging ? "Logging entry" : "Log Period Entry"}
+          accessibilityState={{ busy: isLogging }}
+        >
+          {isLogging ? (
+            <ActivityIndicator color="white" />
+          ) : (
+            <ThemedText style={styles.logButtonText}>
+              Log Period Entry 📖
+            </ThemedText>
+          )}
         </TouchableOpacity>
 
         {/* Predicted Periods */}
