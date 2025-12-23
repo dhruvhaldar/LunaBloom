@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 import { StyleSheet, TouchableOpacity, TextInput, Alert, useColorScheme, View, Button } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import DateTimePicker from '@react-native-community/datetimepicker';
@@ -14,10 +14,9 @@ export default function HomeScreen() {
   const [lastPeriod, setLastPeriod] = useState(new Date());
   const [cycleLength, setCycleLength] = useState('28');
   const [periodDuration, setPeriodDuration] = useState('5');
-  const [predictedPeriods, setPredictedPeriods] = useState<Date[]>([]);
+  // Predictions are now derived via useMemo
   const [selectedSymptoms, setSelectedSymptoms] = useState<string[]>([]);
   const [notes, setNotes] = useState('');
-  const [predictedOvulations, setPredictedOvulations] = useState<Date[]>([]);
   const [lutealPhaseEnabled, setLutealPhaseEnabled] = useState(false);
   const [selectedFlow, setSelectedFlow] = useState<string | null>(null);
   const flowTypes = ['Light', 'Normal', 'Heavy', 'Spotting'];
@@ -122,55 +121,48 @@ export default function HomeScreen() {
     loadLutealPhaseSetting();
   }, []);
 
-  // Update calculatePredictions to use luteal phase
-  const calculatePredictions = () => {
+  // Calculate predictions using useMemo to avoid extra renders and state synchronization
+  const { predictedPeriods, predictedOvulations } = useMemo(() => {
     const predictions = [];
     const ovulations = [];
     const baseDate = new Date(lastPeriod);
     const cycleLengthNum = Number(cycleLength);
 
     // Calculate ovulation based on luteal phase
-    const calculateOvulationDay = (cycleLength: number) => {
+    const calculateOvulationDay = (cLength: number) => {
       if (lutealPhaseEnabled) {
         // With luteal phase enabled, count backwards 14 days from the next period
-        return cycleLength - 14;
+        return cLength - 14;
       } else {
         // Without luteal phase, use the previous calculation method
-        return cycleLength <= 28 
-          ? Math.floor(cycleLength * 0.5) - 1
-          : Math.floor(cycleLength * 0.55) - 1;
+        return cLength <= 28
+          ? Math.floor(cLength * 0.5) - 1
+          : Math.floor(cLength * 0.55) - 1;
       }
     };
 
     const ovulationOffset = calculateOvulationDay(cycleLengthNum);
-  
+
     for (let i = 1; i <= 3; i++) {
       // Predicted period
       const periodDate = new Date(baseDate);
       periodDate.setDate(baseDate.getDate() + cycleLengthNum * i);
       predictions.push(periodDate);
-  
+
       // Predicted ovulation
       const ovulationDate = new Date(baseDate);
       ovulationDate.setDate(baseDate.getDate() + cycleLengthNum * (i - 1) + ovulationOffset);
       ovulations.push(ovulationDate);
     }
-  
-    setPredictedPeriods(predictions);
-    setPredictedOvulations(ovulations);
-  };
-  
+
+    return { predictedPeriods: predictions, predictedOvulations: ovulations };
+  }, [lastPeriod, cycleLength, lutealPhaseEnabled]);
 
   // Symptoms List
   const symptomsList = [
     'Cramps', 'Bloating', 'Headache', 
     'Fatigue', 'Mood Swings', 'Tender Breasts'
   ];
-
-  // Effect for Predictions
-  useEffect(() => {
-    calculatePredictions();
-  }, [lastPeriod, cycleLength, periodDuration]);
 
   // Save Period Data
   const logPeriod = async () => {
