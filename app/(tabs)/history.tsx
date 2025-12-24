@@ -43,15 +43,15 @@ export default function TabTwoScreen() {
             console.error('Fetched data is not an array');
             setEntries([]);
           }
-        } catch (parseError) {
-          console.error('Error parsing stored period entries:', parseError);
+        } catch (parseError: any) {
+          console.error('Error parsing stored period entries:', parseError instanceof Error ? parseError.message : String(parseError));
           setEntries([]);
         }
       } else {
         setEntries([]);
       }
-    } catch (error) {
-      console.error('Error fetching period entries:', error);
+    } catch (error: any) {
+      console.error('Error fetching period entries:', error instanceof Error ? error.message : String(error));
     }
   };
   
@@ -77,8 +77,8 @@ export default function TabTwoScreen() {
               
               LayoutAnimation.easeInEaseOut(); // Smooth UI transition
               setEntries(updatedEntries);
-            } catch (error) {
-              console.error('Error deleting entry:', error);
+            } catch (error: any) {
+              console.error('Error deleting entry:', error instanceof Error ? error.message : String(error));
               Alert.alert('Error', 'Failed to delete the entry. Please try again.');
             }
           },

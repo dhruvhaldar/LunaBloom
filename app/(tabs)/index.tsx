@@ -115,8 +115,8 @@ export default function HomeScreen() {
         if (savedSetting !== null) {
           setLutealPhaseEnabled(JSON.parse(savedSetting));
         }
-      } catch (error) {
-        console.error('Error loading luteal phase setting:', error);
+      } catch (error: any) {
+        console.error('Error loading luteal phase setting:', error instanceof Error ? error.message : String(error));
       }
     };
     loadLutealPhaseSetting();
@@ -188,8 +188,8 @@ export default function HomeScreen() {
       try {
         const existingEntries = await AsyncStorage.getItem('periodEntries');
         entries = existingEntries ? JSON.parse(existingEntries) : [];
-      } catch (parseError) {
-        console.error('🚨 Error parsing period entries:', parseError);
+      } catch (parseError: any) {
+        console.error('🚨 Error parsing period entries:', parseError instanceof Error ? parseError.message : String(parseError));
         entries = [];
       }
   
@@ -206,16 +206,16 @@ export default function HomeScreen() {
           "Your period start has been successfully recorded. 🩸💖",
           [{ text: "Great! 🎉" }]
         );
-      } catch (saveError) {
-        console.error('❌ Error saving period entry:', saveError);
+      } catch (saveError: any) {
+        console.error('❌ Error saving period entry:', saveError instanceof Error ? saveError.message : String(saveError));
         Alert.alert(
           "⚠️ Save Failed",
           "We couldn't save your entry. Please try again. 🔄",
           [{ text: "Okay, I'll retry 🔁" }]
         );
       }
-    } catch (error) {
-      console.error('🚨 Unexpected error in logPeriod:', error);
+    } catch (error: any) {
+      console.error('🚨 Unexpected error in logPeriod:', error instanceof Error ? error.message : String(error));
       Alert.alert(
         "❌ Oops! Something went wrong",
         "An unexpected error occurred. Please try again later. 🛠️",

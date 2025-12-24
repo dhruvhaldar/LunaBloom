@@ -47,8 +47,8 @@ export default function InsightsScreen() {
       } else {
         console.log('No stored entries found');
       }
-    } catch (error) {
-      console.error('Error fetching entries:', error);
+    } catch (error: any) {
+      console.error('Error fetching entries:', error instanceof Error ? error.message : String(error));
     }
   };
 
