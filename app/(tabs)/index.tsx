@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useMemo } from 'react';
-import { StyleSheet, TouchableOpacity, TextInput, Alert, useColorScheme, View, Button } from 'react-native';
+import { StyleSheet, TouchableOpacity, TextInput, Alert, useColorScheme, View, Button, ActivityIndicator } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import DateTimePicker from '@react-native-community/datetimepicker';
 import { ThemedText } from '@/components/ThemedText';
@@ -19,6 +19,7 @@ export default function HomeScreen() {
   const [notes, setNotes] = useState('');
   const [lutealPhaseEnabled, setLutealPhaseEnabled] = useState(false);
   const [selectedFlow, setSelectedFlow] = useState<string | null>(null);
+  const [isLogging, setIsLogging] = useState(false);
   const flowTypes = ['Light', 'Normal', 'Heavy', 'Spotting'];
 
   // Date Picker States
@@ -166,6 +167,7 @@ export default function HomeScreen() {
 
   // Save Period Data
   const logPeriod = async () => {
+    setIsLogging(true);
     try {
       const entry = {
         date: new Date().toISOString(),
@@ -219,6 +221,8 @@ export default function HomeScreen() {
         "An unexpected error occurred. Please try again later. 🛠️",
         [{ text: "Got it! 🆗" }]
       );
+    } finally {
+      setIsLogging(false);
     }
   };
      
@@ -363,10 +367,21 @@ export default function HomeScreen() {
         </ThemedView>
 
         {/* Log Period Button */}
-        <TouchableOpacity style={styles.logButton} onPress={logPeriod}>
-          <ThemedText style={styles.logButtonText}>
-            Log Period Entry 📖
-          </ThemedText>
+        <TouchableOpacity
+          style={[styles.logButton, isLogging && styles.logButtonDisabled]}
+          onPress={logPeriod}
+          disabled={isLogging}
+          accessibilityLabel="Log Period Entry"
+          accessibilityRole="button"
+          accessibilityState={{ disabled: isLogging, busy: isLogging }}
+        >
+          {isLogging ? (
+            <ActivityIndicator color="#ffffff" />
+          ) : (
+            <ThemedText style={styles.logButtonText}>
+              Log Period Entry 📖
+            </ThemedText>
+          )}
         </TouchableOpacity>
 
         {/* Predicted Periods */}
@@ -549,6 +564,9 @@ const styles = StyleSheet.create({
     color: 'white',
     fontWeight: 'bold',
     fontSize: 16,
+  },
+  logButtonDisabled: {
+    opacity: 0.7,
   },
   reactLogo: {
     height: 290,
