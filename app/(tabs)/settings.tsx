@@ -58,8 +58,8 @@ export default function SettingsScreen() {
                         await ScreenCapture.preventScreenCaptureAsync();
                     }
                 }
-            } catch (error) {
-                console.error('Error loading settings:', error);
+            } catch (error: any) {
+                console.error('Error loading settings:', error instanceof Error ? error.message : String(error));
             }
         };
         loadSettings();
@@ -79,8 +79,8 @@ export default function SettingsScreen() {
                     [{ text: 'Got it!' }]
                 );
             }
-        } catch (error) {
-            console.error('Error saving luteal phase setting:', error);
+        } catch (error: any) {
+            console.error('Error saving luteal phase setting:', error instanceof Error ? error.message : String(error));
             // Revert the toggle if there's an error
             setLutealPhase(!value);
             Alert.alert('Error', 'Failed to update luteal phase setting');
@@ -97,8 +97,8 @@ export default function SettingsScreen() {
                 await ScreenCapture.allowScreenCaptureAsync();
             }
             await AsyncStorage.setItem('preventScreenshots', JSON.stringify(value));
-        } catch (error) {
-            console.error('Error toggling screenshot prevention:', error);
+        } catch (error: any) {
+            console.error('Error toggling screenshot prevention:', error instanceof Error ? error.message : String(error));
             // Revert the toggle if there's an error
             setPreventScreenshots(!value);
             Alert.alert('Error', 'Failed to update screenshot settings');
@@ -174,15 +174,15 @@ export default function SettingsScreen() {
                           // But this doesn't guarantee the user actually saved the file
                           // We'll skip the success message to avoid false positives
                           console.log('📤 Share dialog was closed');
-                        }).catch(error => {
-                          console.error('❌ Share failed with error:', error);
+                        }).catch((error: any) => {
+                          console.error('❌ Share failed with error:', error instanceof Error ? error.message : String(error));
                           Alert.alert(
                             '❌ Backup Failed',
                             'There was an error sharing your backup. Please try again.'
                           );
                         });
-                      } catch (error) {
-                        console.error('❌ Save failed with error:', error);
+                      } catch (error: any) {
+                        console.error('❌ Save failed with error:', error instanceof Error ? error.message : String(error));
                         Alert.alert(
                           '❌ Save Failed',
                           'There was an error saving your backup. Please try again.'
@@ -203,8 +203,8 @@ export default function SettingsScreen() {
                   }
                 ]
               );
-            } catch (error) {
-              console.error('❌ Backup failed with error:', error);
+            } catch (error: any) {
+              console.error('❌ Backup failed with error:', error instanceof Error ? error.message : String(error));
               Alert.alert(
                 '❌ Backup Failed',
                 'There was an error creating your backup. Please try again.'
@@ -252,8 +252,8 @@ export default function SettingsScreen() {
                 '✅ Restore Successful',
                 `Successfully restored ${backupData.entries.length} entries!`
             );
-        } catch (error) {
-            console.error('❌ Restore failed with error:', error);
+        } catch (error: any) {
+            console.error('❌ Restore failed with error:', error instanceof Error ? error.message : String(error));
             Alert.alert(
                 '❌ Restore Failed',
                 'There was an error restoring your backup. Please try again.'
