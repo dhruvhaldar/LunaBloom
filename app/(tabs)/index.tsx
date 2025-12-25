@@ -181,8 +181,7 @@ export default function HomeScreen() {
         predictedNextOvulation: predictedOvulations[0]?.toISOString() || null,
       };
 
-      console.log('Logging entry:', entry);
-  
+      // Sentinel: Prevent logging of sensitive user data (PHI)
       let entries = [];
       
       try {

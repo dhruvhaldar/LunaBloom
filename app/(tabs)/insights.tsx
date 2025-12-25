@@ -41,7 +41,7 @@ export default function InsightsScreen() {
       const storedEntries = await AsyncStorage.getItem('periodEntries');
       if (storedEntries) {
         const parsedEntries = JSON.parse(storedEntries);
-        console.log('Parsed entries:', parsedEntries);
+        // Sentinel: Prevent logging of sensitive user data (PHI)
         setEntries(parsedEntries);
         analyzeCycleData(parsedEntries);
       } else {
