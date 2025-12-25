@@ -1,4 +1,4 @@
-import React, { useState, useCallback } from 'react';
+import React, { useState, useCallback, useMemo } from 'react';
 import { 
   StyleSheet, 
   View, 
@@ -16,17 +16,11 @@ import { useFocusEffect } from '@react-navigation/native';
 const screenWidth = Dimensions.get('window').width;
 
 export default function InsightsScreen() {
-  console.log('InsightsScreen rendering...');
   const [entries, setEntries] = useState([]);
-  const [cycleData, setCycleData] = useState([]);
-  const [averageCycleLength, setAverageCycleLength] = useState(0);
-  const [averagePeriodDuration, setAveragePeriodDuration] = useState(0);
-  const [averageOvulationDay, setAverageOvulationDay] = useState(0);
 
   // Color Scheme
   const colorScheme = useColorScheme();
   const sectionHeadingtextColor = colorScheme === 'dark' ? '#E63946' : '#1D3557';
-  const textColor = colorScheme === 'dark' ? '#1D3557' : '#457B9D';
   const barColor = colorScheme === 'dark' ? '#F1FAEE' : '#457B9D';
 
   useFocusEffect(
@@ -36,43 +30,61 @@ export default function InsightsScreen() {
   );
 
   const fetchEntries = async () => {
-    console.log('Fetching entries...');
     try {
       const storedEntries = await AsyncStorage.getItem('periodEntries');
       if (storedEntries) {
         const parsedEntries = JSON.parse(storedEntries);
-        console.log('Parsed entries:', parsedEntries);
+        // Note: We're just setting entries here. Sorting and derivation happen in useMemo.
         setEntries(parsedEntries);
-        analyzeCycleData(parsedEntries);
       } else {
-        console.log('No stored entries found');
+        setEntries([]);
       }
     } catch (error: any) {
       console.error('Error fetching entries:', error instanceof Error ? error.message : String(error));
     }
   };
 
-  const analyzeCycleData = (entriesData) => {
-    if (entriesData.length < 2) {
-      setAverageCycleLength(0);
-      setAveragePeriodDuration(0);
-      setAverageOvulationDay(0);
-      setCycleData([]);
-      return;
+  // ⚡ Bolt: Derived State Optimization
+  // Instead of syncing state with useEffect/functions, we derive expensive data during render.
+  // This reduces re-renders and ensures data consistency.
+  const {
+    cycleData,
+    averageCycleLength,
+    averagePeriodDuration,
+    averageOvulationDay,
+    nextPeriodPrediction,
+    nextOvulationPrediction
+  } = useMemo(() => {
+    if (!entries || entries.length < 2) {
+      return {
+        cycleData: [],
+        averageCycleLength: 0,
+        averagePeriodDuration: 0,
+        averageOvulationDay: 0,
+        nextPeriodPrediction: 'N/A',
+        nextOvulationPrediction: 'N/A'
+      };
     }
-  
-    // Calculate averages based on the original entry order
-    const periodDurations = entriesData.map((entry) => Number(entry.periodDuration) || 5);
+
+    // Sort entries by date descending (newest first) for predictions and consistent processing
+    const sortedEntries = [...entries].sort((a, b) => new Date(b.lastPeriod).getTime() - new Date(a.lastPeriod).getTime());
+
+    // Calculate averages
+    const periodDurations = sortedEntries.map((entry) => Number(entry.periodDuration) || 5);
     const avgPeriodDuration = periodDurations.reduce((sum, duration) => sum + duration, 0) / periodDurations.length;
-    setAveragePeriodDuration(Math.round(avgPeriodDuration));
-  
-    const cycleLengths = entriesData.map((entry) => Number(entry.cycleLength) || 28);
+
+    const cycleLengths = sortedEntries.map((entry) => Number(entry.cycleLength) || 28);
     const avgCycleLength = cycleLengths.reduce((sum, length) => sum + length, 0) / cycleLengths.length;
-    setAverageCycleLength(Math.round(avgCycleLength));
-  
-    // Prepare formatted data for display
-    let formattedData = entriesData.map((entry, index) => ({
-      x: index + 1,
+
+    // Calculate formatted data for VictoryBar
+    // VictoryBar expects x and y. x should be sequential or date.
+    // Original logic: map entries, then sort descending by date (so newest first), then assign x based on index.
+    // Wait, original logic:
+    // 1. Map entries (unsorted in original fetch)
+    // 2. Sort by date descending
+    // 3. Map again to assign x: formattedData.length - sortedIndex (so x=1 is oldest, x=N is newest)
+
+    let formattedData = sortedEntries.map((entry) => ({
       y: Number(entry.cycleLength) || 28,
       dateRange: `${new Date(entry.lastPeriod).toLocaleDateString('en-GB', { day: 'numeric', month: 'short' })} - ${entry.predictedNextPeriod ? new Date(entry.predictedNextPeriod).toLocaleDateString('en-GB', { day: 'numeric', month: 'short' }) : 'N/A'}`,
       date: new Date(entry.lastPeriod),
@@ -80,85 +92,64 @@ export default function InsightsScreen() {
         ? Math.floor((new Date(entry.predictedNextOvulation).getTime() - new Date(entry.lastPeriod).getTime()) / (1000 * 60 * 60 * 24)) 
         : 14
     }));
-  
-    // Sort formatted data for display purposes (most recent last period at the top)
-    formattedData = formattedData
-      .sort((a, b) => b.date.getTime() - a.date.getTime())
-      .map((item, sortedIndex) => ({ ...item, x: formattedData.length - sortedIndex }));
-  
-    setCycleData(formattedData);
-  
-    // Calculate average ovulation day based on original entry order
-    const ovulationDays = entriesData.map((entry) => 
+
+    // Since we already sorted sortedEntries descending, formattedData is already sorted descending.
+    // Assign x so that oldest is on left (x=1) or right?
+    // Original: x: formattedData.length - sortedIndex.
+    // Index 0 (newest) -> x = length - 0 = length (Right side)
+    // Index last (oldest) -> x = length - (length-1) = 1 (Left side)
+    // So graph goes Old -> New from Left -> Right.
+    formattedData = formattedData.map((item, index) => ({
+      ...item,
+      x: formattedData.length - index
+    }));
+
+    const ovulationDays = sortedEntries.map((entry) =>
       entry.predictedNextOvulation 
         ? Math.floor((new Date(entry.predictedNextOvulation).getTime() - new Date(entry.lastPeriod).getTime()) / (1000 * 60 * 60 * 24)) 
         : 14
     );
     const avgOvulationDay = ovulationDays.reduce((sum, day) => sum + day, 0) / ovulationDays.length;
-    setAverageOvulationDay(Math.round(avgOvulationDay));
-  };
-  
 
-  const predictNextPeriod = () => {
-    if (entries.length === 0) return 'N/A';
-    
-    const lastEntry = entries[0]; // Use the most recent entry
-    
-    // Use the stored predicted next period if available
+    // Predictions using the most recent entry (which is sortedEntries[0])
+    const lastEntry = sortedEntries[0];
+    const calculatedAvgCycleLength = Math.round(avgCycleLength);
+    const calculatedAvgOvulationDay = Math.round(avgOvulationDay);
+
+    // Predict Period
+    let periodPrediction = 'N/A';
     if (lastEntry.predictedNextPeriod) {
-      const predictedDate = new Date(lastEntry.predictedNextPeriod);
-      return predictedDate.toLocaleDateString('en-GB', { 
-        day: 'numeric', 
-        month: 'short', 
-        year: 'numeric' 
-      });
+      periodPrediction = new Date(lastEntry.predictedNextPeriod).toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' });
+    } else {
+      const lastPeriodDate = new Date(lastEntry.lastPeriod);
+      const predictedDate = new Date(lastPeriodDate);
+      const cycleLen = calculatedAvgCycleLength > 0 ? calculatedAvgCycleLength : (Number(lastEntry.cycleLength) || 28);
+      predictedDate.setDate(lastPeriodDate.getDate() + cycleLen);
+      periodPrediction = predictedDate.toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' });
     }
-    
-    // Fallback calculation if no predicted period is stored
-    const lastPeriodDate = new Date(lastEntry.lastPeriod);
-    const predictedDate = new Date(lastPeriodDate);
-    
-    // Use average cycle length for prediction if available
-    const cycleLength = averageCycleLength > 0 
-      ? averageCycleLength 
-      : (Number(lastEntry.cycleLength) || 28); // Fallback to 28 if no data
-    
-    predictedDate.setDate(lastPeriodDate.getDate() + cycleLength);
-  
-    return predictedDate.toLocaleDateString('en-GB', { 
-      day: 'numeric', month: 'short', year: 'numeric' 
-    });
-  };
 
-  const predictNextOvulation = () => {
-    if (entries.length === 0) return 'N/A';
-    
-    const lastEntry = entries[0]; // Use the most recent entry
-    
-    // Use the stored predicted next ovulation if available
+    // Predict Ovulation
+    let ovulationPrediction = 'N/A';
     if (lastEntry.predictedNextOvulation) {
-      const predictedDate = new Date(lastEntry.predictedNextOvulation);
-      return predictedDate.toLocaleDateString('en-GB', { 
-        day: 'numeric', month: 'short', year: 'numeric' 
-      });
+      ovulationPrediction = new Date(lastEntry.predictedNextOvulation).toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' });
+    } else {
+      const lastPeriodDate = new Date(lastEntry.lastPeriod);
+      const predictedDate = new Date(lastPeriodDate);
+      const cycleLen = calculatedAvgCycleLength > 0 ? calculatedAvgCycleLength : (Number(lastEntry.cycleLength) || 28);
+      const ovDay = calculatedAvgOvulationDay > 0 ? calculatedAvgOvulationDay : 14;
+      predictedDate.setDate(lastPeriodDate.getDate() + cycleLen - ovDay);
+      ovulationPrediction = predictedDate.toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' });
     }
-    
-    // Fallback calculation if no predicted ovulation is stored
-    const lastPeriodDate = new Date(lastEntry.lastPeriod);
-    const predictedDate = new Date(lastPeriodDate);
-    
-    // Use average cycle length and average ovulation day for prediction if available
-    const cycleLength = averageCycleLength > 0 ? averageCycleLength : (Number(lastEntry.cycleLength) || 28);
-    const ovulationDay = averageOvulationDay > 0 ? averageOvulationDay : 14;
-    
-    predictedDate.setDate(lastPeriodDate.getDate() + cycleLength - ovulationDay);
-  
-    return predictedDate.toLocaleDateString('en-GB', { 
-      day: 'numeric', 
-      month: 'short', 
-      year: 'numeric' 
-    });
-  };
+
+    return {
+      cycleData: formattedData,
+      averageCycleLength: calculatedAvgCycleLength,
+      averagePeriodDuration: Math.round(avgPeriodDuration),
+      averageOvulationDay: calculatedAvgOvulationDay,
+      nextPeriodPrediction: periodPrediction,
+      nextOvulationPrediction: ovulationPrediction
+    };
+  }, [entries]);
 
   return (
     <ParallaxScrollView
@@ -229,11 +220,11 @@ export default function InsightsScreen() {
             
             <View style={styles.metricItem}>
               <ThemedText>Next Period Prediction</ThemedText>
-              <ThemedText type="subtitle">{predictNextPeriod()}</ThemedText>
+              <ThemedText type="subtitle">{nextPeriodPrediction}</ThemedText>
             </View>
             <View style={styles.metricItem}>
               <ThemedText>Next Ovulation Prediction</ThemedText>
-              <ThemedText type="subtitle">{predictNextOvulation()}</ThemedText>
+              <ThemedText type="subtitle">{nextOvulationPrediction}</ThemedText>
             </View>
 
             <View style={styles.metricItem}>
