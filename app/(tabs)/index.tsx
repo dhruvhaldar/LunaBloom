@@ -180,8 +180,6 @@ export default function HomeScreen() {
         predictedNextPeriod: predictedPeriods[0]?.toISOString() || null,
         predictedNextOvulation: predictedOvulations[0]?.toISOString() || null,
       };
-
-      console.log('Logging entry:', entry);
   
       let entries = [];
       
