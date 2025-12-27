@@ -64,15 +64,33 @@ export default function MenstruationScreen() {
       <ThemedView style={styles.container}>
         <ThemedText type="title" style={styles.title}>MenstruAI 🩸</ThemedText>
 
-        <ScrollView style={[styles.responseContainer, { backgroundColor: responseBackgroundColor }]}>
+        <ScrollView
+          style={[styles.responseContainer, { backgroundColor: responseBackgroundColor }]}
+          accessibilityLiveRegion="polite"
+        >
           {response ? (<ThemedText style={styles.response}>{response}</ThemedText>) : (
             <ThemedText style={styles.placeholder}>AI assistant will respond here...</ThemedText>
           )}
         </ScrollView>
         
         <View style={styles.inputContainer}>
-          <TextInput style={[styles.input, { color: textColor }]} placeholder="Ask a menstrual health question..." placeholderTextColor={placeholderTextColor + '90'} value={question} onChangeText={setQuestion} editable={!isLoading}/>
-          <TouchableOpacity style={styles.button} onPress={handleChat} disabled={isLoading}>
+          <TextInput
+            style={[styles.input, { color: textColor }]}
+            placeholder="Ask a menstrual health question..."
+            placeholderTextColor={placeholderTextColor + '90'}
+            value={question}
+            onChangeText={setQuestion}
+            editable={!isLoading}
+            accessibilityLabel="Ask a menstrual health question"
+          />
+          <TouchableOpacity
+            style={styles.button}
+            onPress={handleChat}
+            disabled={isLoading}
+            accessibilityLabel="Send question to AI assistant"
+            accessibilityRole="button"
+            accessibilityState={{ disabled: isLoading, busy: isLoading }}
+          >
             {isLoading ? <ActivityIndicator color="#F1FAEE" /> : <ThemedText style={styles.buttonText}>Ask 🔍</ThemedText>}
           </TouchableOpacity>
         </View>
