@@ -9,7 +9,6 @@ import { Image } from 'react-native';
 
 
 export default function HomeScreen() {
-  console.log('HomeScreen rendering...');
   // State Management
   const [lastPeriod, setLastPeriod] = useState(new Date());
   const [cycleLength, setCycleLength] = useState('28');
@@ -180,8 +179,6 @@ export default function HomeScreen() {
         predictedNextPeriod: predictedPeriods[0]?.toISOString() || null,
         predictedNextOvulation: predictedOvulations[0]?.toISOString() || null,
       };
-
-      console.log('Logging entry:', entry);
   
       let entries = [];
       
