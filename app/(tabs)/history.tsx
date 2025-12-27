@@ -9,7 +9,6 @@ import { Image } from 'react-native';
 import { IconSymbol } from '@/components/ui/IconSymbol';
 
 export default function TabTwoScreen() {
-  console.log('TabTwoScreen rendering...');
   const [entries, setEntries] = useState([]);
   
   // Color Scheme
