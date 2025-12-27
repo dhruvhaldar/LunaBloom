@@ -1,16 +1,25 @@
-import React, { useState, useEffect, useCallback } from 'react';
-import { StyleSheet, View, Text, ScrollView, Alert, Button, useColorScheme, Platform, UIManager, Vibration, LayoutAnimation, TouchableOpacity } from 'react-native';
+import React, { useState, useCallback, useMemo } from 'react';
+import { StyleSheet, View, Text, Alert, useColorScheme, Platform, UIManager, Vibration, LayoutAnimation, TouchableOpacity, Image } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { ThemedText } from '@/components/ThemedText';
 import { ThemedView } from '@/components/ThemedView';
 import ParallaxScrollView from '@/components/ParallaxScrollView';
 import { useFocusEffect } from '@react-navigation/native';
-import { Image } from 'react-native';
 import { IconSymbol } from '@/components/ui/IconSymbol';
+
+// Define the shape of a raw entry from AsyncStorage
+interface Entry {
+  lastPeriod: string;
+  date: string;
+  cycleLength: string;
+  selectedSymptoms: string[];
+  selectedFlow: string | null;
+  notes: string;
+}
 
 export default function TabTwoScreen() {
   console.log('TabTwoScreen rendering...');
-  const [entries, setEntries] = useState([]);
+  const [entries, setEntries] = useState<Entry[]>([]);
   
   // Color Scheme
   const colorScheme = useColorScheme();
@@ -19,7 +28,6 @@ export default function TabTwoScreen() {
   const sectionHeadingtextColor = colorScheme === 'dark' ? '#E63946' : '#1D3557';
   const textColor = colorScheme === 'dark' ? '#F1FAEE' : '#1D3557';
   const deleteIconColor = colorScheme === 'dark' ? '#F1FAEE' : '#E63946';
-
 
   useFocusEffect(
     useCallback(() => {
@@ -37,7 +45,7 @@ export default function TabTwoScreen() {
           
           if (Array.isArray(parsedEntries)) {
             // Sort by lastPeriod in descending order (most recent first)
-            parsedEntries.sort((a, b) => new Date(b.lastPeriod) - new Date(a.lastPeriod));
+            parsedEntries.sort((a, b) => new Date(b.lastPeriod).getTime() - new Date(a.lastPeriod).getTime());
             setEntries(parsedEntries);
           } else {
             console.error('Fetched data is not an array');
@@ -86,6 +94,20 @@ export default function TabTwoScreen() {
       ]
     );
   };
+
+  // ⚡ Bolt: Memoize entry processing to prevent repetitive Date parsing on every render
+  const processedEntries = useMemo(() => {
+    return entries.map((item, index) => ({
+      ...item,
+      // Create a stable key using date + index fallback
+      key: `${item.date}-${index}`,
+      formattedLastPeriod: new Date(item.lastPeriod).toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year:'numeric'}),
+      formattedLogDate: new Date(item.date).toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year:'numeric'}),
+      symptomsDisplay: item.selectedSymptoms.join(', '),
+      flowDisplay: item.selectedFlow || 'Not logged',
+      originalIndex: index // Keep track of original index for deletion
+    }));
+  }, [entries]);
  
   return (
     <ParallaxScrollView
@@ -109,19 +131,19 @@ export default function TabTwoScreen() {
             Logged Entries 📝
           </ThemedText>
           
-          {entries.map((item, index) => (
-            <View key={index} style={styles.entry}>
+          {processedEntries.map((item) => (
+            <View key={item.key} style={styles.entry}>
               <View style={styles.entryContent}>
                 <View style={styles.entryTextContainer}>
-                  <Text style={{ color: textColor }}>Last Period: {new Date(item.lastPeriod).toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year:'numeric'})}</Text>
+                  <Text style={{ color: textColor }}>Last Period: {item.formattedLastPeriod}</Text>
                   <Text style={{ color: textColor }}>Cycle Length: {item.cycleLength} days</Text>
-                  <Text style={{ color: textColor }}>Symptoms: {item.selectedSymptoms.join(', ')}</Text>
-                  <Text style={{ color: textColor }}>Flow: {item.selectedFlow || 'Not logged'}</Text>
+                  <Text style={{ color: textColor }}>Symptoms: {item.symptomsDisplay}</Text>
+                  <Text style={{ color: textColor }}>Flow: {item.flowDisplay}</Text>
                   <Text style={{ color: textColor }}>Notes: {item.notes}</Text>
-                  <Text style={{ color: textColor }}>Log Date: {new Date(item.date).toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year:'numeric'})}</Text>
+                  <Text style={{ color: textColor }}>Log Date: {item.formattedLogDate}</Text>
                 </View>
                 
-                <TouchableOpacity style={styles.deleteIconContainer} onPress={() => deleteEntry(index)}>
+                <TouchableOpacity style={styles.deleteIconContainer} onPress={() => deleteEntry(item.originalIndex)}>
                   <IconSymbol name="delete.fill" size={24} color={deleteIconColor} />
                 </TouchableOpacity>
               </View>
