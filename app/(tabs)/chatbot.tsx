@@ -1,9 +1,10 @@
-import React, { useState } from 'react';
-import { StyleSheet, View, Image, useColorScheme, TextInput, TouchableOpacity, ScrollView, ActivityIndicator } from 'react-native';
+import React, { useState, useRef } from 'react';
+import { StyleSheet, View, Image, useColorScheme, TextInput, TouchableOpacity, ScrollView, ActivityIndicator, Alert } from 'react-native';
 import { ThemedText } from '@/components/ThemedText';
 import { ThemedView } from '@/components/ThemedView';
 import ParallaxScrollView from '@/components/ParallaxScrollView';
 import axios from 'axios';
+import { validateChatInput, MAX_QUESTION_LENGTH } from '@/app/utils/validation';
 
 const baseurl = process.env.EXPO_PUBLIC_API_URL;
 const apikey = process.env.EXPO_PUBLIC_API_KEY;
@@ -13,6 +14,8 @@ export default function MenstruationScreen() {
   const [question, setQuestion] = useState('');
   const [response, setResponse] = useState('');
   const [isLoading, setIsLoading] = useState(false);
+  const lastRequestTime = useRef<number>(0);
+  const RATE_LIMIT_MS = 3000;
 
   const API_URL = baseurl;
   const API_KEY = apikey;
@@ -24,7 +27,22 @@ export default function MenstruationScreen() {
   const placeholderTextColor = colorScheme === 'dark' ? '#F1FAEE' : '#1D3557';
 
   const handleChat = async () => {
-    if (!question.trim()) return;
+    // 1. Rate Limiting
+    const now = Date.now();
+    if (now - lastRequestTime.current < RATE_LIMIT_MS) {
+      Alert.alert("Please wait", "You are sending messages too quickly. Please wait a moment.");
+      return;
+    }
+
+    // 2. Input Validation
+    const validation = validateChatInput(question);
+    if (!validation.isValid) {
+      Alert.alert("Invalid Input", validation.error || "Please enter a valid question.");
+      return;
+    }
+
+    const sanitizedQuestion = validation.sanitized || question;
+    lastRequestTime.current = now;
     
     setIsLoading(true);
     setResponse(''); // Clear previous response
@@ -35,7 +53,7 @@ export default function MenstruationScreen() {
           model: "gpt-3.5-turbo", // Select model
           messages: [{
             role: "user",
-            content: `As a women's health expert, answer concisely based on facts, don't make assumptions: ${question}`
+            content: `As a women's health expert, answer concisely based on facts, don't make assumptions: ${sanitizedQuestion}`
           }],
           temperature: 0.7,
           max_tokens: 150
@@ -81,6 +99,7 @@ export default function MenstruationScreen() {
             value={question}
             onChangeText={setQuestion}
             editable={!isLoading}
+            maxLength={MAX_QUESTION_LENGTH}
             accessibilityLabel="Ask a menstrual health question"
           />
           <TouchableOpacity
