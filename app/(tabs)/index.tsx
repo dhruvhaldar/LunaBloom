@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useMemo } from 'react';
+import React, { useState, useEffect, useMemo, useCallback } from 'react';
 import { StyleSheet, TouchableOpacity, TextInput, Alert, useColorScheme, View, Button, ActivityIndicator } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import DateTimePicker from '@react-native-community/datetimepicker';
@@ -7,6 +7,18 @@ import { ThemedView } from '@/components/ThemedView';
 import ParallaxScrollView from '@/components/ParallaxScrollView';
 import { Image } from 'react-native';
 
+// Static Data & Configuration
+// Bolt Optimization: Move static data outside component to prevent reallocation on every render
+const symptomsList = [
+  'Cramps', 'Bloating', 'Headache',
+  'Fatigue', 'Mood Swings', 'Tender Breasts'
+];
+
+const flowTypes = ['Light', 'Normal', 'Heavy', 'Spotting'];
+
+const PARALLAX_HEADER_LIGHT_COLOR = '#A8DADC';
+const PARALLAX_HEADER_DARK_COLOR = '#A8DADC';
+const HEADER_BACKGROUND_COLOR = { light: PARALLAX_HEADER_LIGHT_COLOR, dark: PARALLAX_HEADER_DARK_COLOR };
 
 export default function HomeScreen() {
   // State Management
@@ -19,7 +31,6 @@ export default function HomeScreen() {
   const [lutealPhaseEnabled, setLutealPhaseEnabled] = useState(false);
   const [selectedFlow, setSelectedFlow] = useState<string | null>(null);
   const [isLogging, setIsLogging] = useState(false);
-  const flowTypes = ['Light', 'Normal', 'Heavy', 'Spotting'];
 
   // Date Picker States
   const [date, setDate] = useState(new Date());
@@ -29,8 +40,6 @@ export default function HomeScreen() {
   // Color Scheme
   // https://coolors.co/palette/e63946-f1faee-a8dadc-457b9d-1d3557
   const colorScheme = useColorScheme();
-  const Parallaxheaderlightcolor = '#A8DADC';
-  const Parallaxheaderdarkcolor = '#A8DADC';
   const textColor = colorScheme === 'dark' ? '#F1FAEE' : '#1D3557';
   const sectionHeadingtextColor = colorScheme === 'dark' ? '#E63946' : '#1D3557';
   const symptomtextColor = colorScheme === 'dark' ? '#F1FAEE' : '#E63946';  
@@ -39,13 +48,14 @@ export default function HomeScreen() {
   const symptomButtonBorderColor = colorScheme === 'dark' ? '#F1FAEE' : '#1D3557';
   
   // Date Picker Functions
-  const onChange = (event: any, selectedDate: any) => {
+  // Bolt Optimization: Memoize handlers to stabilize function references
+  const onChange = useCallback((event: any, selectedDate: any) => {
     if (selectedDate) {
       setShow(false);
       setDate(selectedDate);
       setLastPeriod(selectedDate);
     }
-  };  
+  }, []);
 
   const showMode = (currentMode: React.SetStateAction<string>) => {
     setShow(true);
@@ -56,7 +66,7 @@ export default function HomeScreen() {
     showMode('date');
   };
 
-  const handleCycleLengthChange = (text: string) => {
+  const handleCycleLengthChange = useCallback((text: string) => {
     const filteredText = text.replace(/[^0-9]/g, '');
     let number = parseInt(filteredText, 10);
 
@@ -83,10 +93,10 @@ export default function HomeScreen() {
     }    
 
     setCycleLength(number.toString());
-  };
+  }, []);
 
   // Input Validation Functions
-  const handlePeriodDurationChange = (text: string) => {
+  const handlePeriodDurationChange = useCallback((text: string) => {
     const filteredText = text.replace(/[^0-9]/g, '');
     let number = parseInt(filteredText, 10);
 
@@ -104,7 +114,7 @@ export default function HomeScreen() {
       );
     }
     setPeriodDuration(number.toString());
-  };
+  }, []);
 
   // Load luteal phase setting
   useEffect(() => {
@@ -158,14 +168,8 @@ export default function HomeScreen() {
     return { predictedPeriods: predictions, predictedOvulations: ovulations };
   }, [lastPeriod, cycleLength, lutealPhaseEnabled]);
 
-  // Symptoms List
-  const symptomsList = [
-    'Cramps', 'Bloating', 'Headache', 
-    'Fatigue', 'Mood Swings', 'Tender Breasts'
-  ];
-
   // Save Period Data
-  const logPeriod = async () => {
+  const logPeriod = useCallback(async () => {
     setIsLogging(true);
     try {
       const entry = {
@@ -221,11 +225,11 @@ export default function HomeScreen() {
     } finally {
       setIsLogging(false);
     }
-  };
+  }, [lastPeriod, cycleLength, periodDuration, selectedFlow, selectedSymptoms, notes, predictedPeriods, predictedOvulations]);
      
 
   return (
-    <ParallaxScrollView headerBackgroundColor={{ light: Parallaxheaderlightcolor, dark: Parallaxheaderdarkcolor }}
+    <ParallaxScrollView headerBackgroundColor={HEADER_BACKGROUND_COLOR}
       headerImage={
         <Image source={require('@/assets/images/LunaBloom_adaptive.png')} style={styles.reactLogo} resizeMode="contain"/>
       }
