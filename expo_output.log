@@ -1,0 +1,22 @@
+Starting project at /app
+Starting Metro Bundler
+Waiting on http://localhost:8081
+Logs for your project will appear below.
+Web node_modules/.pnpm/expo-router@4.0.17_a2eeb6c705f8a43b6c5e953a613fe400/node_modules/expo-router/entry.js ░░░░░░░░░░░░░░░░  0.0% (0/1)
+λ node_modules/.pnpm/expo-router@4.0.17_a2eeb6c705f8a43b6c5e953a613fe400/node_modules/expo-router/node/render.js ░░░░░░░░░░░░░░░░  0.0% (0/1)
+λ Bundled 2777ms node_modules/.pnpm/expo-router@4.0.17_a2eeb6c705f8a43b6c5e953a613fe400/node_modules/expo-router/node/render.js (1692 modules)
+λ  WARN  props.pointerEvents is deprecated. Use style.pointerEvents
+Web node_modules/.pnpm/expo-router@4.0.17_a2eeb6c705f8a43b6c5e953a613fe400/node_modules/expo-router/entry.js ▓▓▓▓▓▓▓▓▓▓▓▓▓░░░ 84.1% ( 911/1008)
+Web node_modules/.pnpm/expo-router@4.0.17_a2eeb6c705f8a43b6c5e953a613fe400/node_modules/expo-router/entry.js ▓▓▓▓▓▓▓▓▓▓▓▓▓▓░░ 93.2% (1517/1625)
+Web Bundled 9829ms node_modules/.pnpm/expo-router@4.0.17_a2eeb6c705f8a43b6c5e953a613fe400/node_modules/expo-router/entry.js (1672 modules)
+Web node_modules/.pnpm/expo-router@4.0.17_a2eeb6c705f8a43b6c5e953a613fe400/node_modules/expo-router/entry.js ▓▓▓▓▓▓░░░░░░░░░░ 40.3% (353/588)
+Web node_modules/.pnpm/expo-router@4.0.17_a2eeb6c705f8a43b6c5e953a613fe400/node_modules/expo-router/entry.js ▓▓▓▓▓▓▓▓▓░░░░░░░ 60.6% (703/924)
+Web node_modules/.pnpm/expo-router@4.0.17_a2eeb6c705f8a43b6c5e953a613fe400/node_modules/expo-router/entry.js ▓▓▓▓▓▓▓▓▓▓▓▓▓▓░░ 89.5% (1343/1479)
+Web Bundled 11121ms node_modules/.pnpm/expo-router@4.0.17_a2eeb6c705f8a43b6c5e953a613fe400/node_modules/expo-router/entry.js (1672 modules)
+ LOG  [web] Logs will appear in the browser console
+Web node_modules/.pnpm/expo-router@4.0.17_a2eeb6c705f8a43b6c5e953a613fe400/node_modules/expo-router/entry.js ░░░░░░░░░░░░░░░░  0.0% (0/1)
+λ Bundled 251ms node_modules/.pnpm/expo-router@4.0.17_a2eeb6c705f8a43b6c5e953a613fe400/node_modules/expo-router/node/render.js (1 module)
+λ  WARN  props.pointerEvents is deprecated. Use style.pointerEvents
+Web Bundled 1188ms node_modules/.pnpm/expo-router@4.0.17_a2eeb6c705f8a43b6c5e953a613fe400/node_modules/expo-router/entry.js (1 module)
+Web Bundled 145ms node_modules/.pnpm/expo-router@4.0.17_a2eeb6c705f8a43b6c5e953a613fe400/node_modules/expo-router/entry.js (1 module)
+ LOG  [web] Logs will appear in the browser console

@@ -127,13 +127,15 @@ const styles = StyleSheet.create({
     marginTop: 10,
   },
   input: {
-    height: 60,
+    minHeight: 60,
+    maxHeight: 120,
     borderColor: '#E63946',
     borderWidth: 1,
-    paddingHorizontal: 15,
+    padding: 15,
     borderRadius: 8,
     marginBottom: 15,
     fontSize: 16,
+    textAlignVertical: 'top', // Ensure text starts at the top
   },
   button: {
     backgroundColor: '#E63946',
