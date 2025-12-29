@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useMemo } from 'react';
+import React, { useState, useEffect, useMemo, useCallback } from 'react';
 import { StyleSheet, TouchableOpacity, TextInput, Alert, useColorScheme, View, Button, ActivityIndicator } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import DateTimePicker from '@react-native-community/datetimepicker';
@@ -19,7 +19,6 @@ export default function HomeScreen() {
   const [lutealPhaseEnabled, setLutealPhaseEnabled] = useState(false);
   const [selectedFlow, setSelectedFlow] = useState<string | null>(null);
   const [isLogging, setIsLogging] = useState(false);
-  const flowTypes = ['Light', 'Normal', 'Heavy', 'Spotting'];
 
   // Date Picker States
   const [date, setDate] = useState(new Date());
@@ -39,24 +38,24 @@ export default function HomeScreen() {
   const symptomButtonBorderColor = colorScheme === 'dark' ? '#F1FAEE' : '#1D3557';
   
   // Date Picker Functions
-  const onChange = (event: any, selectedDate: any) => {
+  const onChange = useCallback((event: any, selectedDate: any) => {
     if (selectedDate) {
       setShow(false);
       setDate(selectedDate);
       setLastPeriod(selectedDate);
     }
-  };  
+  }, []);
 
-  const showMode = (currentMode: React.SetStateAction<string>) => {
+  const showMode = useCallback((currentMode: React.SetStateAction<string>) => {
     setShow(true);
     setMode(currentMode);
-  };
+  }, []);
 
-  const showDatepicker = () => {
+  const showDatepicker = useCallback(() => {
     showMode('date');
-  };
+  }, [showMode]);
 
-  const handleCycleLengthChange = (text: string) => {
+  const handleCycleLengthChange = useCallback((text: string) => {
     const filteredText = text.replace(/[^0-9]/g, '');
     let number = parseInt(filteredText, 10);
 
@@ -83,10 +82,10 @@ export default function HomeScreen() {
     }    
 
     setCycleLength(number.toString());
-  };
+  }, []);
 
   // Input Validation Functions
-  const handlePeriodDurationChange = (text: string) => {
+  const handlePeriodDurationChange = useCallback((text: string) => {
     const filteredText = text.replace(/[^0-9]/g, '');
     let number = parseInt(filteredText, 10);
 
@@ -104,7 +103,7 @@ export default function HomeScreen() {
       );
     }
     setPeriodDuration(number.toString());
-  };
+  }, []);
 
   // Load luteal phase setting
   useEffect(() => {
@@ -158,14 +157,8 @@ export default function HomeScreen() {
     return { predictedPeriods: predictions, predictedOvulations: ovulations };
   }, [lastPeriod, cycleLength, lutealPhaseEnabled]);
 
-  // Symptoms List
-  const symptomsList = [
-    'Cramps', 'Bloating', 'Headache', 
-    'Fatigue', 'Mood Swings', 'Tender Breasts'
-  ];
-
   // Save Period Data
-  const logPeriod = async () => {
+  const logPeriod = useCallback(async () => {
     setIsLogging(true);
     try {
       const entry = {
@@ -221,7 +214,7 @@ export default function HomeScreen() {
     } finally {
       setIsLogging(false);
     }
-  };
+  }, [lastPeriod, cycleLength, periodDuration, selectedFlow, selectedSymptoms, notes, predictedPeriods, predictedOvulations]);
      
 
   return (
@@ -484,6 +477,12 @@ export default function HomeScreen() {
     </ParallaxScrollView>
   );
 }
+
+const flowTypes = ['Light', 'Normal', 'Heavy', 'Spotting'];
+const symptomsList = [
+  'Cramps', 'Bloating', 'Headache',
+  'Fatigue', 'Mood Swings', 'Tender Breasts'
+];
 
 const styles = StyleSheet.create({
   container: {
