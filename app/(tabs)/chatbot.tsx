@@ -4,6 +4,7 @@ import { ThemedText } from '@/components/ThemedText';
 import { ThemedView } from '@/components/ThemedView';
 import ParallaxScrollView from '@/components/ParallaxScrollView';
 import axios from 'axios';
+import { validateChatInput } from '@/utils/validation';
 
 const baseurl = process.env.EXPO_PUBLIC_API_URL;
 const apikey = process.env.EXPO_PUBLIC_API_KEY;
@@ -24,7 +25,12 @@ export default function MenstruationScreen() {
   const placeholderTextColor = colorScheme === 'dark' ? '#F1FAEE' : '#1D3557';
 
   const handleChat = async () => {
-    if (!question.trim()) return;
+    // Input Validation
+    const validation = validateChatInput(question);
+    if (!validation.isValid) {
+      setResponse(validation.error || 'Invalid input');
+      return;
+    }
     
     setIsLoading(true);
     setResponse(''); // Clear previous response
