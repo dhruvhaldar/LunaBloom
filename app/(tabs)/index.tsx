@@ -215,7 +215,138 @@ export default function HomeScreen() {
       setIsLogging(false);
     }
   }, [lastPeriod, cycleLength, periodDuration, selectedFlow, selectedSymptoms, notes, predictedPeriods, predictedOvulations]);
-     
+
+  const flowButtons = useMemo(() => flowTypes.map((flow) => (
+    <TouchableOpacity
+      key={flow}
+      style={[
+        styles.symptomButton,
+        { borderColor: symptomButtonBorderColor },
+        selectedFlow === flow && { backgroundColor: selectedSymptomBackgroundColor },
+      ]}
+      onPress={() => {
+        setSelectedFlow((prev) => (prev === flow ? null : flow));
+      }}
+    >
+      <ThemedText
+        style={[
+          { color: symptomtextColor },
+          selectedFlow === flow && styles.selectedSymptom,
+        ]}
+      >
+        {flow}
+      </ThemedText>
+    </TouchableOpacity>
+  )), [selectedFlow, symptomButtonBorderColor, selectedSymptomBackgroundColor, symptomtextColor]);
+
+  const symptomButtons = useMemo(() => symptomsList.map((symptom) => (
+    <TouchableOpacity
+      key={symptom}
+      style={[
+        styles.symptomButton,
+        { borderColor: symptomButtonBorderColor },
+        selectedSymptoms.includes(symptom) && {
+          backgroundColor: selectedSymptomBackgroundColor
+        }
+      ]}
+      onPress={() => {
+        setSelectedSymptoms(prev =>
+          prev.includes(symptom)
+            ? prev.filter(s => s !== symptom)
+            : [...prev, symptom]
+        );
+      }}
+    >
+      <ThemedText style={[
+        { color: symptomtextColor },
+        selectedSymptoms.includes(symptom) && styles.selectedSymptom
+      ]}>
+        {symptom}
+      </ThemedText>
+    </TouchableOpacity>
+  )), [selectedSymptoms, symptomButtonBorderColor, selectedSymptomBackgroundColor, symptomtextColor]);
+
+  const predictedPeriodsView = useMemo(() => predictedPeriods.map((date, index) => {
+    // Calculate period start date
+    const periodStartDate = new Date(date);
+
+    // Calculate period end date
+    const periodEndDate = new Date(date);
+    periodEndDate.setDate(periodEndDate.getDate() + Number(periodDuration) - 1);
+
+    return (
+      <ThemedView
+        key={index}
+        style={[
+          styles.predictionItem,
+          { borderColor: textColor, borderWidth: 1 }
+        ]}
+      >
+        <ThemedText style={{ color: textColor }}>
+          {date.toLocaleDateString('en-GB', {
+            day: 'numeric',
+            month: 'short'
+          })}
+        </ThemedText>
+        <ThemedText
+          style={{
+            color: textColor,
+            fontSize: 12,
+            marginTop: 5
+          }}
+        >
+          {periodStartDate.toLocaleDateString('en-GB', {
+            day: 'numeric',
+            month: 'short'
+          })} - {periodEndDate.toLocaleDateString('en-GB', {
+            day: 'numeric',
+            month: 'short'
+          })}
+        </ThemedText>
+      </ThemedView>
+    );
+  }), [predictedPeriods, periodDuration, textColor]);
+
+  const predictedOvulationsView = useMemo(() => predictedOvulations.map((date, index) => {
+    // Calculate fertile window start (5 days before ovulation)
+    const fertileWindowStart = new Date(date);
+    fertileWindowStart.setDate(fertileWindowStart.getDate() - 2);
+
+    // Calculate fertile window end (day of ovulation)
+    const fertileWindowEnd = new Date(date);
+
+    return (
+      <ThemedView
+        key={index}
+        style={[
+          styles.predictionItem,
+          { borderColor: textColor, borderWidth: 1 }
+        ]}
+      >
+        <ThemedText style={{ color: textColor }}>
+          Ovulation: {date.toLocaleDateString('en-GB', {
+            day: 'numeric',
+            month: 'short'
+          })}
+        </ThemedText>
+        <ThemedText
+          style={{
+            color: textColor,
+            fontSize: 12,
+            marginTop: 5
+          }}
+        >
+          Fertile Window: {fertileWindowStart.toLocaleDateString('en-GB', {
+            day: 'numeric',
+            month: 'short'
+          })} - {fertileWindowEnd.toLocaleDateString('en-GB', {
+            day: 'numeric',
+            month: 'short'
+          })}
+        </ThemedText>
+      </ThemedView>
+    );
+  }), [predictedOvulations, textColor]);
 
   return (
     <ParallaxScrollView headerBackgroundColor={{ light: Parallaxheaderlightcolor, dark: Parallaxheaderdarkcolor }}
@@ -281,28 +412,7 @@ export default function HomeScreen() {
             Period Flow 🩸
           </ThemedText>
           <ThemedView style={styles.symptomsGrid}>
-            {flowTypes.map((flow) => (
-              <TouchableOpacity
-                key={flow}
-                style={[
-                  styles.symptomButton,
-                  { borderColor: symptomButtonBorderColor },
-                  selectedFlow === flow && { backgroundColor: selectedSymptomBackgroundColor },
-                ]}
-                onPress={() => {
-                  setSelectedFlow((prev) => (prev === flow ? null : flow));
-                }}
-              >
-                <ThemedText
-                  style={[
-                    { color: symptomtextColor },
-                    selectedFlow === flow && styles.selectedSymptom,
-                  ]}
-                >
-                  {flow}
-                </ThemedText>
-              </TouchableOpacity>
-            ))}
+            {flowButtons}
           </ThemedView>
         </ThemedView>
 
@@ -312,32 +422,7 @@ export default function HomeScreen() {
             Today's Symptoms 😟
           </ThemedText>
           <ThemedView style={styles.symptomsGrid}>
-            {symptomsList.map((symptom) => (
-              <TouchableOpacity
-                key={symptom}
-                style={[
-                  styles.symptomButton,
-                  { borderColor: symptomButtonBorderColor },
-                  selectedSymptoms.includes(symptom) && { 
-                    backgroundColor: selectedSymptomBackgroundColor 
-                  }
-                ]}
-                onPress={() => {
-                  setSelectedSymptoms(prev =>
-                    prev.includes(symptom)
-                      ? prev.filter(s => s !== symptom)
-                      : [...prev, symptom]
-                  );
-                }}
-              >
-                <ThemedText style={[
-                  { color: symptomtextColor },
-                  selectedSymptoms.includes(symptom) && styles.selectedSymptom
-                ]}>
-                  {symptom}
-                </ThemedText>
-              </TouchableOpacity>
-            ))}
+            {symptomButtons}
           </ThemedView>
         </ThemedView>
 
@@ -375,102 +460,23 @@ export default function HomeScreen() {
         </TouchableOpacity>
 
         {/* Predicted Periods */}
-        {/* Predicted Periods */}
-<ThemedView style={styles.section}>
-  <ThemedText type="subtitle" style={{ color: predictedsectionHeadingtextColor, marginBottom: 10, marginTop: 15 }}>
-    Predicted Periods
-  </ThemedText>
-  {predictedPeriods.map((date, index) => {
-    // Calculate period start date
-    const periodStartDate = new Date(date);
-    
-    // Calculate period end date
-    const periodEndDate = new Date(date);
-    periodEndDate.setDate(periodEndDate.getDate() + Number(periodDuration) - 1);
-
-    return (
-      <ThemedView 
-        key={index} 
-        style={[
-          styles.predictionItem, 
-          { borderColor: textColor, borderWidth: 1 }
-        ]}
-      >
-        <ThemedText style={{ color: textColor }}>
-          {date.toLocaleDateString('en-GB', { 
-            day: 'numeric', 
-            month: 'short' 
-          })}
-        </ThemedText>
-        <ThemedText 
-          style={{ 
-            color: textColor, 
-            fontSize: 12, 
-            marginTop: 5 
-          }}
-        >
-          {periodStartDate.toLocaleDateString('en-GB', { 
-            day: 'numeric', 
-            month: 'short' 
-          })} - {periodEndDate.toLocaleDateString('en-GB', { 
-            day: 'numeric', 
-            month: 'short' 
-          })}
-        </ThemedText>
-      </ThemedView>
-    );
-  })}
-</ThemedView>
+        <ThemedView style={styles.section}>
+          <ThemedText type="subtitle" style={{ color: predictedsectionHeadingtextColor, marginBottom: 10, marginTop: 15 }}>
+            Predicted Periods
+          </ThemedText>
+          {predictedPeriodsView}
+        </ThemedView>
 
         {/* Predicted Ovulations */}
-<ThemedView style={styles.section}>
-  <ThemedText 
-    type="subtitle" 
-    style={{ color: predictedsectionHeadingtextColor, marginBottom: 10 }}
-  >
-    Predicted Ovulations
-  </ThemedText>
-  {predictedOvulations.map((date, index) => {
-    // Calculate fertile window start (5 days before ovulation)
-    const fertileWindowStart = new Date(date);
-    fertileWindowStart.setDate(fertileWindowStart.getDate() - 2);
-
-    // Calculate fertile window end (day of ovulation)
-    const fertileWindowEnd = new Date(date);
-
-    return (
-      <ThemedView 
-        key={index} 
-        style={[
-          styles.predictionItem, 
-          { borderColor: textColor, borderWidth: 1 }
-        ]}
-      >
-        <ThemedText style={{ color: textColor }}>
-          Ovulation: {date.toLocaleDateString('en-GB', { 
-            day: 'numeric', 
-            month: 'short' 
-          })}
-        </ThemedText>
-        <ThemedText 
-          style={{ 
-            color: textColor, 
-            fontSize: 12, 
-            marginTop: 5 
-          }}
-        >
-          Fertile Window: {fertileWindowStart.toLocaleDateString('en-GB', { 
-            day: 'numeric', 
-            month: 'short' 
-          })} - {fertileWindowEnd.toLocaleDateString('en-GB', { 
-            day: 'numeric', 
-            month: 'short' 
-          })}
-        </ThemedText>
-      </ThemedView>
-    );
-  })}
-</ThemedView>
+        <ThemedView style={styles.section}>
+          <ThemedText
+            type="subtitle"
+            style={{ color: predictedsectionHeadingtextColor, marginBottom: 10 }}
+          >
+            Predicted Ovulations
+          </ThemedText>
+          {predictedOvulationsView}
+        </ThemedView>
 
         <View style={styles.tabBarSpacer} />
       </ThemedView>

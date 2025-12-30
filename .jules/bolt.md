@@ -1,3 +1,3 @@
-## 2024-05-22 - State Synchronization vs Derivation
-**Learning:** Avoid synchronizing state with `useEffect` when values can be derived. In `HomeScreen`, predictions were calculated in an effect and stored in state, causing an extra render and missing dependencies (luteal phase).
-**Action:** Use `useMemo` to derive expensive data directly during render. This ensures consistency and reduces render passes.
+## 2024-05-22 - Memoizing Rendered Lists
+**Learning:** In React Native, mapping over arrays in the render method to create components (like buttons or list items) inside a complex component causes those items to be re-created on every render, even if their data hasn't changed. This is particularly noticeable when typing in inputs that trigger frequent re-renders.
+**Action:** Use `useMemo` to memoize the resulting list of JSX elements. This ensures they are only re-created when their specific dependencies (e.g., selected state, theme colors) change, not when unrelated state (like text input) changes.
