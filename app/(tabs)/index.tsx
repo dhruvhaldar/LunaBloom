@@ -292,6 +292,9 @@ export default function HomeScreen() {
                 onPress={() => {
                   setSelectedFlow((prev) => (prev === flow ? null : flow));
                 }}
+                accessibilityRole="radio"
+                accessibilityState={{ checked: selectedFlow === flow }}
+                accessibilityLabel={`Select ${flow} flow`}
               >
                 <ThemedText
                   style={[
@@ -329,6 +332,9 @@ export default function HomeScreen() {
                       : [...prev, symptom]
                   );
                 }}
+                accessibilityRole="checkbox"
+                accessibilityState={{ checked: selectedSymptoms.includes(symptom) }}
+                accessibilityLabel={`Select ${symptom} symptom`}
               >
                 <ThemedText style={[
                   { color: symptomtextColor },
