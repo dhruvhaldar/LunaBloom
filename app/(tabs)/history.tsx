@@ -1,15 +1,15 @@
 import React, { useState, useEffect, useCallback } from 'react';
-import { StyleSheet, View, Text, ScrollView, Alert, Button, useColorScheme, Platform, UIManager, Vibration, LayoutAnimation, TouchableOpacity } from 'react-native';
+import { StyleSheet, View, Alert, Button, useColorScheme, Platform, UIManager, Vibration, LayoutAnimation } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { ThemedText } from '@/components/ThemedText';
 import { ThemedView } from '@/components/ThemedView';
 import ParallaxScrollView from '@/components/ParallaxScrollView';
 import { useFocusEffect } from '@react-navigation/native';
 import { Image } from 'react-native';
-import { IconSymbol } from '@/components/ui/IconSymbol';
+import HistoryItem, { HistoryEntry } from '@/components/HistoryItem';
 
 export default function TabTwoScreen() {
-  const [entries, setEntries] = useState([]);
+  const [entries, setEntries] = useState<HistoryEntry[]>([]);
   
   // Color Scheme
   const colorScheme = useColorScheme();
@@ -58,7 +58,7 @@ export default function TabTwoScreen() {
     UIManager.setLayoutAnimationEnabledExperimental(true);
   }
 
-  const deleteEntry = async (index: number) => {
+  const handleDelete = useCallback(async (date: string) => {
     Alert.alert(
       '🗑️ Confirm Deletion',
       'Are you sure you want to delete this entry? This action cannot be undone.',
@@ -70,12 +70,20 @@ export default function TabTwoScreen() {
           onPress: async () => {
             try {
               Vibration.vibrate(50); // Haptic feedback
-              const updatedEntries = entries.filter((_, i) => i !== index);
-
-              await AsyncStorage.setItem('periodEntries', JSON.stringify(updatedEntries));
+              // Optimization: Use functional update to ensure we have the latest state
+              // Also filtering by date (unique ID) instead of index is safer
+              setEntries(currentEntries => {
+                const updatedEntries = currentEntries.filter(item => item.date !== date);
+                // Async storage update should happen here or be triggered by state change
+                // But setState is sync-ish in batching.
+                // We'll update storage immediately using the computed new array
+                AsyncStorage.setItem('periodEntries', JSON.stringify(updatedEntries)).catch(err =>
+                  console.error('Failed to persist deletion', err)
+                );
+                return updatedEntries;
+              });
               
               LayoutAnimation.easeInEaseOut(); // Smooth UI transition
-              setEntries(updatedEntries);
             } catch (error: any) {
               console.error('Error deleting entry:', error instanceof Error ? error.message : String(error));
               Alert.alert('Error', 'Failed to delete the entry. Please try again.');
@@ -84,7 +92,7 @@ export default function TabTwoScreen() {
         },
       ]
     );
-  };
+  }, []); // useCallback dependency array is empty because we use functional state update
  
   return (
     <ParallaxScrollView
@@ -108,23 +116,14 @@ export default function TabTwoScreen() {
             Logged Entries 📝
           </ThemedText>
           
-          {entries.map((item, index) => (
-            <View key={index} style={styles.entry}>
-              <View style={styles.entryContent}>
-                <View style={styles.entryTextContainer}>
-                  <Text style={{ color: textColor }}>Last Period: {new Date(item.lastPeriod).toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year:'numeric'})}</Text>
-                  <Text style={{ color: textColor }}>Cycle Length: {item.cycleLength} days</Text>
-                  <Text style={{ color: textColor }}>Symptoms: {item.selectedSymptoms.join(', ')}</Text>
-                  <Text style={{ color: textColor }}>Flow: {item.selectedFlow || 'Not logged'}</Text>
-                  <Text style={{ color: textColor }}>Notes: {item.notes}</Text>
-                  <Text style={{ color: textColor }}>Log Date: {new Date(item.date).toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year:'numeric'})}</Text>
-                </View>
-                
-                <TouchableOpacity style={styles.deleteIconContainer} onPress={() => deleteEntry(index)}>
-                  <IconSymbol name="delete.fill" size={24} color={deleteIconColor} />
-                </TouchableOpacity>
-              </View>
-            </View>
+          {entries.map((item) => (
+            <HistoryItem
+              key={item.date}
+              item={item}
+              onDelete={handleDelete}
+              textColor={textColor}
+              deleteIconColor={deleteIconColor}
+            />
           ))}
         </View>
       </ThemedView>
