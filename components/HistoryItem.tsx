@@ -1,0 +1,72 @@
+import React from 'react';
+import { StyleSheet, View, Text, TouchableOpacity } from 'react-native';
+import { IconSymbol } from '@/components/ui/IconSymbol';
+
+// Define the shape of an entry based on usage in history.tsx
+export interface HistoryEntry {
+  date: string;
+  lastPeriod: string;
+  cycleLength: number;
+  selectedSymptoms: string[];
+  selectedFlow: string | null;
+  notes: string;
+}
+
+interface HistoryItemProps {
+  item: HistoryEntry;
+  onDelete: (date: string) => void;
+  textColor: string;
+  deleteIconColor: string;
+}
+
+const HistoryItem = React.memo(function HistoryItem({ item, onDelete, textColor, deleteIconColor }: HistoryItemProps) {
+  // Format dates once per render
+  const lastPeriodDate = new Date(item.lastPeriod).toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' });
+  const logDate = new Date(item.date).toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' });
+
+  return (
+    <View style={styles.entry}>
+      <View style={styles.entryContent}>
+        <View style={styles.entryTextContainer}>
+          <Text style={{ color: textColor }}>Last Period: {lastPeriodDate}</Text>
+          <Text style={{ color: textColor }}>Cycle Length: {item.cycleLength} days</Text>
+          <Text style={{ color: textColor }}>Symptoms: {item.selectedSymptoms.join(', ')}</Text>
+          <Text style={{ color: textColor }}>Flow: {item.selectedFlow || 'Not logged'}</Text>
+          <Text style={{ color: textColor }}>Notes: {item.notes}</Text>
+          <Text style={{ color: textColor }}>Log Date: {logDate}</Text>
+        </View>
+
+        <TouchableOpacity
+          style={styles.deleteIconContainer}
+          onPress={() => onDelete(item.date)}
+          accessibilityLabel="Delete entry"
+          accessibilityRole="button"
+        >
+          <IconSymbol name="delete.fill" size={24} color={deleteIconColor} />
+        </TouchableOpacity>
+      </View>
+    </View>
+  );
+});
+
+const styles = StyleSheet.create({
+  entry: {
+    padding: 12,
+    borderBottomWidth: 2,
+    borderBottomColor: '#ccc',
+  },
+  entryContent: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+  },
+  entryTextContainer: {
+    flex: 1,
+    marginRight: 10,
+  },
+  deleteIconContainer: {
+    padding: 10,
+  },
+});
+
+export default HistoryItem;
