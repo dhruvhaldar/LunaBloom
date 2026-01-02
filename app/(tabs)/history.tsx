@@ -36,7 +36,8 @@ export default function TabTwoScreen() {
           
           if (Array.isArray(parsedEntries)) {
             // Sort by lastPeriod in descending order (most recent first)
-            parsedEntries.sort((a, b) => new Date(b.lastPeriod) - new Date(a.lastPeriod));
+            // Optimization: Use string comparison for ISO dates to avoid expensive Date object creation
+            parsedEntries.sort((a, b) => b.lastPeriod.localeCompare(a.lastPeriod));
             setEntries(parsedEntries);
           } else {
             console.error('Fetched data is not an array');
