@@ -23,9 +23,15 @@ export default function MenstruationScreen() {
   const textColor = colorScheme === 'dark' ? '#F1FAEE' : '#1D3557';
   const placeholderTextColor = colorScheme === 'dark' ? '#F1FAEE' : '#1D3557';
 
-  const handleChat = async () => {
-    if (!question.trim()) return;
+  const handleChat = async (questionText?: string) => {
+    const textToAsk = typeof questionText === 'string' ? questionText : question;
+    if (!textToAsk.trim()) return;
     
+    // Update input if a chip was clicked
+    if (typeof questionText === 'string') {
+      setQuestion(questionText);
+    }
+
     setIsLoading(true);
     setResponse(''); // Clear previous response
     try {
@@ -35,7 +41,7 @@ export default function MenstruationScreen() {
           model: "gpt-3.5-turbo", // Select model
           messages: [{
             role: "user",
-            content: `As a women's health expert, answer concisely based on facts, don't make assumptions: ${question}`
+            content: `As a women's health expert, answer concisely based on facts, don't make assumptions: ${textToAsk}`
           }],
           temperature: 0.7,
           max_tokens: 150
@@ -59,6 +65,13 @@ export default function MenstruationScreen() {
     }
   };  
 
+  const suggestedQuestions = [
+    'Explain the menstrual cycle',
+    'How to relieve cramps?',
+    'Signs of ovulation',
+    'What is PMS?'
+  ];
+
   return (
     <ParallaxScrollView headerBackgroundColor={{ light: '#ffdde2', dark: '#151718' }} headerImage={<Image source={require('@/assets/images/history2.png')} style={styles.reactLogo} resizeMode="contain"/>}>
       <ThemedView style={styles.container}>
@@ -69,7 +82,22 @@ export default function MenstruationScreen() {
           accessibilityLiveRegion="polite"
         >
           {response ? (<ThemedText style={styles.response}>{response}</ThemedText>) : (
-            <ThemedText style={styles.placeholder}>AI assistant will respond here...</ThemedText>
+            <View>
+              <ThemedText style={styles.placeholder}>AI assistant will respond here...</ThemedText>
+              <View style={styles.suggestionsContainer}>
+                {suggestedQuestions.map((q, index) => (
+                  <TouchableOpacity
+                    key={index}
+                    style={[styles.suggestionChip, { borderColor: textColor }]}
+                    onPress={() => handleChat(q)}
+                    accessibilityLabel={`Ask: ${q}`}
+                    accessibilityRole="button"
+                  >
+                    <ThemedText style={styles.suggestionText}>{q}</ThemedText>
+                  </TouchableOpacity>
+                ))}
+              </View>
+            </View>
           )}
         </ScrollView>
         
@@ -82,10 +110,12 @@ export default function MenstruationScreen() {
             onChangeText={setQuestion}
             editable={!isLoading}
             accessibilityLabel="Ask a menstrual health question"
+            returnKeyType="send"
+            onSubmitEditing={() => handleChat()}
           />
           <TouchableOpacity
             style={styles.button}
-            onPress={handleChat}
+            onPress={() => handleChat()}
             disabled={isLoading}
             accessibilityLabel="Send question to AI assistant"
             accessibilityRole="button"
@@ -107,6 +137,23 @@ const styles = StyleSheet.create({
   title: {
     textAlign: 'center',
     marginBottom: 20,
+  },
+  suggestionsContainer: {
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+    justifyContent: 'center',
+    marginTop: 20,
+    gap: 10,
+  },
+  suggestionChip: {
+    paddingHorizontal: 12,
+    paddingVertical: 8,
+    borderRadius: 20,
+    borderWidth: 1,
+    marginBottom: 5,
+  },
+  suggestionText: {
+    fontSize: 14,
   },
   reactLogo: {
     height: 380,
