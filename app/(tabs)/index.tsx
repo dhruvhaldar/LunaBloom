@@ -237,7 +237,12 @@ export default function HomeScreen() {
           {/* Last Period Date */}
           <ThemedView style={styles.inputGroup}>
             <ThemedText style={{ color: textColor }}>Last Period Start</ThemedText>
-            <TouchableOpacity onPress={showDatepicker} style={[styles.dateButton, { borderColor: textColor }]}>
+            <TouchableOpacity
+              onPress={showDatepicker}
+              style={[styles.dateButton, { borderColor: textColor }]}
+              accessibilityLabel={`Select last period start date. Current: ${lastPeriod.toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' })}`}
+              accessibilityRole="button"
+            >
               <ThemedText style={[styles.dateText, { color: textColor }]}>
                 {lastPeriod.toLocaleDateString('en-GB', { 
                   day: 'numeric', 
@@ -260,7 +265,13 @@ export default function HomeScreen() {
           {/* Cycle Length */}
           <ThemedView style={styles.inputGroup}>
             <ThemedText style={{ color: textColor }}>Cycle Length (days)</ThemedText>
-            <TextInput style={[styles.input, { color: textColor, borderColor: textColor }]} keyboardType="numeric" value={cycleLength} onChangeText={handleCycleLengthChange}/>
+            <TextInput
+              style={[styles.input, { color: textColor, borderColor: textColor }]}
+              keyboardType="numeric"
+              value={cycleLength}
+              onChangeText={handleCycleLengthChange}
+              accessibilityLabel="Cycle length in days"
+            />
           </ThemedView>
 
           {/* Period Duration */}
@@ -271,6 +282,7 @@ export default function HomeScreen() {
               keyboardType="numeric"
               value={periodDuration}
               onChangeText={handlePeriodDurationChange}
+              accessibilityLabel="Period duration in days"
             />
           </ThemedView>
         </ThemedView>
@@ -359,6 +371,7 @@ export default function HomeScreen() {
             onChangeText={setNotes}
             placeholder="Record any additional notes..."
             placeholderTextColor={colorScheme === 'dark' ? '#AAAAAA' : '#888'}
+            accessibilityLabel="Notes"
           />
         </ThemedView>
 

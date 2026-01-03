@@ -39,7 +39,7 @@ const HistoryItem = React.memo(function HistoryItem({ item, onDelete, textColor,
         <TouchableOpacity
           style={styles.deleteIconContainer}
           onPress={() => onDelete(item.date)}
-          accessibilityLabel="Delete entry"
+          accessibilityLabel={`Delete entry from ${logDate}`}
           accessibilityRole="button"
         >
           <IconSymbol name="delete.fill" size={24} color={deleteIconColor} />
