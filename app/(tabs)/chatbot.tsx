@@ -1,70 +1,31 @@
-import React, { useState } from 'react';
-import { StyleSheet, View, Image, useColorScheme, TextInput, TouchableOpacity, ScrollView, ActivityIndicator, Keyboard } from 'react-native';
+import React from 'react';
+import { StyleSheet, View, Image, useColorScheme, TextInput, TouchableOpacity, ScrollView, ActivityIndicator, Platform } from 'react-native';
 import { ThemedText } from '@/components/ThemedText';
 import { ThemedView } from '@/components/ThemedView';
 import ParallaxScrollView from '@/components/ParallaxScrollView';
-import axios from 'axios';
-
-const baseurl = process.env.EXPO_PUBLIC_API_URL;
-const apikey = process.env.EXPO_PUBLIC_API_KEY;
+import { useChatbot } from '@/hooks/useChatbot'; // Expo automatically resolves .web.ts or .native.ts
 
 export default function MenstruationScreen() {
-  
-  const [question, setQuestion] = useState('');
-  const [response, setResponse] = useState('');
-  const [isLoading, setIsLoading] = useState(false);
-
-  const API_URL = baseurl;
-  const API_KEY = apikey;
+  const {
+    question,
+    setQuestion,
+    response,
+    isLoading,
+    isModelDownloaded,
+    isDownloading,
+    downloadProgress,
+    downloadModel,
+    isInitializing,
+    initializeLlama,
+    isReady,
+    handleChat
+  } = useChatbot();
 
   // Color Scheme
   const colorScheme = useColorScheme();
   const responseBackgroundColor = colorScheme === 'dark' ? '#457B9D' : '#A8DADC';
   const textColor = colorScheme === 'dark' ? '#F1FAEE' : '#1D3557';
   const placeholderTextColor = colorScheme === 'dark' ? '#F1FAEE' : '#1D3557';
-
-  const handleChat = async (questionText?: string) => {
-    Keyboard.dismiss();
-    const textToAsk = typeof questionText === 'string' ? questionText : question;
-    if (!textToAsk.trim()) return;
-    
-    // Update input if a chip was clicked
-    if (typeof questionText === 'string') {
-      setQuestion(questionText);
-    }
-
-    setIsLoading(true);
-    setResponse(''); // Clear previous response
-    try {
-      const response = await axios.post(
-        `${API_URL}/chat/completions`,
-        {
-          model: "gpt-3.5-turbo", // Select model
-          messages: [{
-            role: "user",
-            content: `As a women's health expert, answer concisely based on facts, don't make assumptions: ${textToAsk}`
-          }],
-          temperature: 0.7,
-          max_tokens: 150
-        },
-        {
-          headers: {
-            'Authorization': `Bearer ${API_KEY}`,
-            'Content-Type': 'application/json'
-          }
-        }
-      );
-
-      const answer = response.data.choices[0]?.message?.content?.trim();
-      setResponse(answer || "Couldn't generate a response");
-    } catch (error: any) {
-      // Sentinel: Prevent logging of full error object which may contain secrets in headers
-      console.error('API Error:', error.message);
-      setResponse('Error connecting to the assistant');
-    } finally {
-      setIsLoading(false);
-    }
-  };  
 
   const suggestedQuestions = [
     'Explain the menstrual cycle',
@@ -76,62 +37,97 @@ export default function MenstruationScreen() {
   return (
     <ParallaxScrollView headerBackgroundColor={{ light: '#ffdde2', dark: '#151718' }} headerImage={<Image source={require('@/assets/images/history2.png')} style={styles.reactLogo} resizeMode="contain"/>}>
       <ThemedView style={styles.container}>
-        <ThemedText type="title" style={styles.title}>MenstruAI 🩸</ThemedText>
+        <ThemedText type="title" style={styles.title}>MenstruAI 🩸 {Platform.OS === 'web' ? '(Web Lite)' : '(Local)'}</ThemedText>
 
-        <ScrollView
-          style={[styles.responseContainer, { backgroundColor: responseBackgroundColor }]}
-          accessibilityLiveRegion="polite"
-        >
-          {isLoading ? (
-            <View style={styles.loadingContainer}>
-              <ActivityIndicator size="large" color={textColor} />
-              <ThemedText style={styles.loadingText}>Generating response...</ThemedText>
-            </View>
-          ) : response ? (
-            <ThemedText style={styles.response}>{response}</ThemedText>
-          ) : (
-            <View>
-              <ThemedText style={styles.placeholder}>AI assistant will respond here...</ThemedText>
-              <View style={styles.suggestionsContainer}>
-                {suggestedQuestions.map((q, index) => (
-                  <TouchableOpacity
-                    key={index}
-                    style={[styles.suggestionChip, { borderColor: textColor }]}
-                    onPress={() => handleChat(q)}
-                    accessibilityLabel={`Ask: ${q}`}
-                    accessibilityRole="button"
-                  >
-                    <ThemedText style={styles.suggestionText}>{q}</ThemedText>
-                  </TouchableOpacity>
-                ))}
+        {!isModelDownloaded ? (
+          <View style={styles.setupContainer}>
+            <ThemedText style={styles.setupText}>
+              To use the offline AI assistant, you need to download the model (~800MB). This only needs to be done once.
+            </ThemedText>
+            {isDownloading ? (
+              <View>
+                <ActivityIndicator size="large" color="#E63946" />
+                <ThemedText style={styles.progressText}>
+                  Downloading... {Math.round(downloadProgress * 100)}%
+                </ThemedText>
               </View>
+            ) : (
+              <TouchableOpacity style={styles.button} onPress={downloadModel}>
+                <ThemedText style={styles.buttonText}>Download Model</ThemedText>
+              </TouchableOpacity>
+            )}
+          </View>
+        ) : !isReady ? (
+           <View style={styles.setupContainer}>
+            <ThemedText style={styles.setupText}>
+              Model downloaded. Load it to start chatting.
+            </ThemedText>
+             {isInitializing ? (
+               <ActivityIndicator size="large" color="#E63946" />
+             ) : (
+              <TouchableOpacity style={styles.button} onPress={initializeLlama}>
+                <ThemedText style={styles.buttonText}>Load AI</ThemedText>
+              </TouchableOpacity>
+             )}
+           </View>
+        ) : (
+          <>
+            <ScrollView
+              style={[styles.responseContainer, { backgroundColor: responseBackgroundColor }]}
+              accessibilityLiveRegion="polite"
+            >
+              {isLoading ? (
+                <View style={styles.loadingContainer}>
+                  <ActivityIndicator size="large" color={textColor} />
+                  <ThemedText style={styles.loadingText}>Generating response...</ThemedText>
+                </View>
+              ) : response ? (
+                <ThemedText style={styles.response}>{response}</ThemedText>
+              ) : (
+                <View>
+                  <ThemedText style={styles.placeholder}>AI assistant ready. Ask me anything!</ThemedText>
+                  <View style={styles.suggestionsContainer}>
+                    {suggestedQuestions.map((q, index) => (
+                      <TouchableOpacity
+                        key={index}
+                        style={[styles.suggestionChip, { borderColor: textColor }]}
+                        onPress={() => handleChat(q)}
+                        accessibilityLabel={`Ask: ${q}`}
+                        accessibilityRole="button"
+                      >
+                        <ThemedText style={styles.suggestionText}>{q}</ThemedText>
+                      </TouchableOpacity>
+                    ))}
+                  </View>
+                </View>
+              )}
+            </ScrollView>
+
+            <View style={styles.inputContainer}>
+              <TextInput
+                style={[styles.input, { color: textColor }]}
+                placeholder="Ask a menstrual health question..."
+                placeholderTextColor={placeholderTextColor + '90'}
+                value={question}
+                onChangeText={setQuestion}
+                editable={!isLoading}
+                accessibilityLabel="Ask a menstrual health question"
+                returnKeyType="send"
+                onSubmitEditing={() => handleChat()}
+              />
+              <TouchableOpacity
+                style={styles.button}
+                onPress={() => handleChat()}
+                disabled={isLoading}
+                accessibilityLabel="Send question to AI assistant"
+                accessibilityRole="button"
+                accessibilityState={{ disabled: isLoading, busy: isLoading }}
+              >
+                {isLoading ? <ActivityIndicator color="#F1FAEE" /> : <ThemedText style={styles.buttonText}>Ask 🔍</ThemedText>}
+              </TouchableOpacity>
             </View>
-          )}
-        </ScrollView>
-        
-        <View style={styles.inputContainer}>
-          <TextInput
-            style={[styles.input, { color: textColor }]}
-            placeholder="Ask a menstrual health question..."
-            placeholderTextColor={placeholderTextColor + '90'}
-            value={question}
-            onChangeText={setQuestion}
-            editable={!isLoading}
-            accessibilityLabel="Ask a menstrual health question"
-            returnKeyType="send"
-            onSubmitEditing={() => handleChat()}
-          />
-          <TouchableOpacity
-            style={styles.button}
-            onPress={() => handleChat()}
-            disabled={isLoading}
-            accessibilityLabel="Send question to AI assistant"
-            accessibilityRole="button"
-            accessibilityState={{ disabled: isLoading, busy: isLoading }}
-          >
-            {isLoading ? <ActivityIndicator color="#F1FAEE" /> : <ThemedText style={styles.buttonText}>Ask 🔍</ThemedText>}
-          </TouchableOpacity>
-        </View>
+          </>
+        )}
       </ThemedView>
     </ParallaxScrollView>
   );
@@ -145,6 +141,22 @@ const styles = StyleSheet.create({
   title: {
     textAlign: 'center',
     marginBottom: 20,
+  },
+  setupContainer: {
+    padding: 20,
+    alignItems: 'center',
+    justifyContent: 'center',
+    backgroundColor: 'rgba(230, 57, 70, 0.1)',
+    borderRadius: 10,
+    gap: 15,
+  },
+  setupText: {
+    textAlign: 'center',
+    marginBottom: 10,
+  },
+  progressText: {
+    textAlign: 'center',
+    marginTop: 5,
   },
   suggestionsContainer: {
     flexDirection: 'row',

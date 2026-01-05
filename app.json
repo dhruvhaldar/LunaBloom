@@ -26,6 +26,19 @@
     },
     "plugins": [
       "expo-router",
+      "llama.rn",
+      [
+        "expo-build-properties",
+        {
+          "android": {
+            "packagingOptions": {
+              "pickFirst": [
+                "**/libc++_shared.so"
+              ]
+            }
+          }
+        }
+      ],
       [
         "expo-splash-screen",
         {
