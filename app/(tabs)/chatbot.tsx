@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useCallback, useMemo } from 'react';
 import { StyleSheet, View, Image, useColorScheme, TextInput, TouchableOpacity, ScrollView, ActivityIndicator } from 'react-native';
 import { ThemedText } from '@/components/ThemedText';
 import { ThemedView } from '@/components/ThemedView';
@@ -7,6 +7,14 @@ import axios from 'axios';
 
 const baseurl = process.env.EXPO_PUBLIC_API_URL;
 const apikey = process.env.EXPO_PUBLIC_API_KEY;
+
+// ⚡ Bolt: Move static data outside component to avoid recreation on every render
+const suggestedQuestions = [
+  'Explain the menstrual cycle',
+  'How to relieve cramps?',
+  'Signs of ovulation',
+  'What is PMS?'
+];
 
 export default function MenstruationScreen() {
   
@@ -23,15 +31,8 @@ export default function MenstruationScreen() {
   const textColor = colorScheme === 'dark' ? '#F1FAEE' : '#1D3557';
   const placeholderTextColor = colorScheme === 'dark' ? '#F1FAEE' : '#1D3557';
 
-  const handleChat = async (questionText?: string) => {
-    const textToAsk = typeof questionText === 'string' ? questionText : question;
-    if (!textToAsk.trim()) return;
-    
-    // Update input if a chip was clicked
-    if (typeof questionText === 'string') {
-      setQuestion(questionText);
-    }
-
+  // ⚡ Bolt: Extract API logic to stable callback
+  const submitQuestion = useCallback(async (textToAsk: string) => {
     setIsLoading(true);
     setResponse(''); // Clear previous response
     try {
@@ -63,14 +64,31 @@ export default function MenstruationScreen() {
     } finally {
       setIsLoading(false);
     }
-  };  
+  }, [API_URL, API_KEY]);
 
-  const suggestedQuestions = [
-    'Explain the menstrual cycle',
-    'How to relieve cramps?',
-    'Signs of ovulation',
-    'What is PMS?'
-  ];
+  const handleChat = async () => {
+    if (!question.trim()) return;
+    submitQuestion(question);
+  };
+
+  // ⚡ Bolt: Stable handler for chips
+  const onSuggestionPress = useCallback((q: string) => {
+    setQuestion(q);
+    submitQuestion(q);
+  }, [submitQuestion]);
+
+  // ⚡ Bolt: Memoize suggestions list to prevent re-renders while typing
+  const suggestionsList = useMemo(() => suggestedQuestions.map((q, index) => (
+    <TouchableOpacity
+      key={index}
+      style={[styles.suggestionChip, { borderColor: textColor }]}
+      onPress={() => onSuggestionPress(q)}
+      accessibilityLabel={`Ask: ${q}`}
+      accessibilityRole="button"
+    >
+      <ThemedText style={styles.suggestionText}>{q}</ThemedText>
+    </TouchableOpacity>
+  )), [textColor, onSuggestionPress]);
 
   return (
     <ParallaxScrollView headerBackgroundColor={{ light: '#ffdde2', dark: '#151718' }} headerImage={<Image source={require('@/assets/images/history2.png')} style={styles.reactLogo} resizeMode="contain"/>}>
@@ -85,17 +103,7 @@ export default function MenstruationScreen() {
             <View>
               <ThemedText style={styles.placeholder}>AI assistant will respond here...</ThemedText>
               <View style={styles.suggestionsContainer}>
-                {suggestedQuestions.map((q, index) => (
-                  <TouchableOpacity
-                    key={index}
-                    style={[styles.suggestionChip, { borderColor: textColor }]}
-                    onPress={() => handleChat(q)}
-                    accessibilityLabel={`Ask: ${q}`}
-                    accessibilityRole="button"
-                  >
-                    <ThemedText style={styles.suggestionText}>{q}</ThemedText>
-                  </TouchableOpacity>
-                ))}
+                {suggestionsList}
               </View>
             </View>
           )}
@@ -111,11 +119,11 @@ export default function MenstruationScreen() {
             editable={!isLoading}
             accessibilityLabel="Ask a menstrual health question"
             returnKeyType="send"
-            onSubmitEditing={() => handleChat()}
+            onSubmitEditing={handleChat}
           />
           <TouchableOpacity
             style={styles.button}
-            onPress={() => handleChat()}
+            onPress={handleChat}
             disabled={isLoading}
             accessibilityLabel="Send question to AI assistant"
             accessibilityRole="button"
