@@ -1,136 +1,31 @@
-import React, { useState, useEffect } from 'react';
-import { StyleSheet, View, Image, useColorScheme, TextInput, TouchableOpacity, ScrollView, ActivityIndicator, Keyboard, Alert } from 'react-native';
+import React from 'react';
+import { StyleSheet, View, Image, useColorScheme, TextInput, TouchableOpacity, ScrollView, ActivityIndicator, Platform } from 'react-native';
 import { ThemedText } from '@/components/ThemedText';
 import { ThemedView } from '@/components/ThemedView';
 import ParallaxScrollView from '@/components/ParallaxScrollView';
-import { initLlama, LlamaContext } from 'llama.rn';
-import * as FileSystem from 'expo-file-system';
-
-const MODEL_URL = 'https://huggingface.co/hugging-quants/Llama-3.2-1B-Instruct-Q4_K_M-GGUF/resolve/main/llama-3.2-1b-instruct-q4_k_m.gguf';
-const MODEL_FILENAME = 'llama-3.2-1b-instruct-q4_k_m.gguf';
-const MODEL_PATH = `${FileSystem.documentDirectory}${MODEL_FILENAME}`;
+import { useChatbot } from '@/hooks/useChatbot'; // Expo automatically resolves .web.ts or .native.ts
 
 export default function MenstruationScreen() {
-  
-  const [question, setQuestion] = useState('');
-  const [response, setResponse] = useState('');
-  const [isLoading, setIsLoading] = useState(false);
-
-  // Local Model State
-  const [isModelDownloaded, setIsModelDownloaded] = useState(false);
-  const [isDownloading, setIsDownloading] = useState(false);
-  const [downloadProgress, setDownloadProgress] = useState(0);
-  const [llamaContext, setLlamaContext] = useState<LlamaContext | null>(null);
-  const [isInitializing, setIsInitializing] = useState(false);
+  const {
+    question,
+    setQuestion,
+    response,
+    isLoading,
+    isModelDownloaded,
+    isDownloading,
+    downloadProgress,
+    downloadModel,
+    isInitializing,
+    initializeLlama,
+    isReady,
+    handleChat
+  } = useChatbot();
 
   // Color Scheme
   const colorScheme = useColorScheme();
   const responseBackgroundColor = colorScheme === 'dark' ? '#457B9D' : '#A8DADC';
   const textColor = colorScheme === 'dark' ? '#F1FAEE' : '#1D3557';
   const placeholderTextColor = colorScheme === 'dark' ? '#F1FAEE' : '#1D3557';
-
-  useEffect(() => {
-    checkModelExists();
-  }, []);
-
-  const checkModelExists = async () => {
-    try {
-      const fileInfo = await FileSystem.getInfoAsync(MODEL_PATH);
-      if (fileInfo.exists) {
-        setIsModelDownloaded(true);
-      }
-    } catch (error) {
-      console.error('Error checking model existence:', error instanceof Error ? error.message : String(error));
-    }
-  };
-
-  const downloadModel = async () => {
-    setIsDownloading(true);
-    setDownloadProgress(0);
-    try {
-      const callback = (downloadProgress: FileSystem.DownloadProgressData) => {
-        const progress = downloadProgress.totalBytesWritten / downloadProgress.totalBytesExpectedToWrite;
-        setDownloadProgress(progress);
-      };
-
-      const downloadResumable = FileSystem.createDownloadResumable(
-        MODEL_URL,
-        MODEL_PATH,
-        {},
-        callback
-      );
-
-      const result = await downloadResumable.downloadAsync();
-      if (result?.uri) {
-        setIsModelDownloaded(true);
-        Alert.alert("Success", "Model downloaded successfully!");
-      }
-    } catch (error) {
-      console.error('Error downloading model:', error instanceof Error ? error.message : String(error));
-      Alert.alert("Error", "Failed to download the model. Please check your internet connection.");
-    } finally {
-      setIsDownloading(false);
-    }
-  };
-
-  const initializeLlama = async () => {
-    if (!isModelDownloaded) return;
-    setIsInitializing(true);
-    try {
-      const context = await initLlama({
-        model: MODEL_PATH,
-        use_mlock: true,
-        n_gpu_layers: 0, // Set to 0 for maximum compatibility, adjust if needed
-      });
-      setLlamaContext(context);
-    } catch (error) {
-      console.error('Error initializing Llama:', error instanceof Error ? error.message : String(error));
-      Alert.alert("Error", "Failed to initialize the AI model.");
-    } finally {
-      setIsInitializing(false);
-    }
-  };
-
-  const handleChat = async (questionText?: string) => {
-    Keyboard.dismiss();
-    const textToAsk = typeof questionText === 'string' ? questionText : question;
-    if (!textToAsk.trim()) return;
-    
-    if (typeof questionText === 'string') {
-      setQuestion(questionText);
-    }
-
-    if (!llamaContext) {
-      Alert.alert("AI Not Ready", "Please load the AI model first.");
-      return;
-    }
-
-    setIsLoading(true);
-    setResponse('');
-
-    try {
-      const systemPrompt = "System: You are a helpful women's health expert assistant. Answer concisely in 3 lines or less. Focus on period-based advice.";
-      const prompt = `${systemPrompt}\nUser: ${textToAsk}\nAssistant:`;
-
-      const result = await llamaContext.completion(
-        {
-          prompt,
-          n_predict: 100, // Limit tokens for speed
-          stop: ["User:", "System:"],
-        },
-        (data) => {
-          // Real-time streaming callback could go here if we wanted to stream
-        }
-      );
-
-      setResponse(result.text.trim());
-    } catch (error) {
-      console.error('Llama Error:', error instanceof Error ? error.message : String(error));
-      setResponse('Error generating response.');
-    } finally {
-      setIsLoading(false);
-    }
-  };
 
   const suggestedQuestions = [
     'Explain the menstrual cycle',
@@ -142,7 +37,7 @@ export default function MenstruationScreen() {
   return (
     <ParallaxScrollView headerBackgroundColor={{ light: '#ffdde2', dark: '#151718' }} headerImage={<Image source={require('@/assets/images/history2.png')} style={styles.reactLogo} resizeMode="contain"/>}>
       <ThemedView style={styles.container}>
-        <ThemedText type="title" style={styles.title}>MenstruAI 🩸 (Local)</ThemedText>
+        <ThemedText type="title" style={styles.title}>MenstruAI 🩸 {Platform.OS === 'web' ? '(Web Lite)' : '(Local)'}</ThemedText>
 
         {!isModelDownloaded ? (
           <View style={styles.setupContainer}>
@@ -162,7 +57,7 @@ export default function MenstruationScreen() {
               </TouchableOpacity>
             )}
           </View>
-        ) : !llamaContext ? (
+        ) : !isReady ? (
            <View style={styles.setupContainer}>
             <ThemedText style={styles.setupText}>
               Model downloaded. Load it to start chatting.
@@ -190,7 +85,7 @@ export default function MenstruationScreen() {
                 <ThemedText style={styles.response}>{response}</ThemedText>
               ) : (
                 <View>
-                  <ThemedText style={styles.placeholder}>AI assistant ready (Offline). Ask me anything!</ThemedText>
+                  <ThemedText style={styles.placeholder}>AI assistant ready. Ask me anything!</ThemedText>
                   <View style={styles.suggestionsContainer}>
                     {suggestedQuestions.map((q, index) => (
                       <TouchableOpacity

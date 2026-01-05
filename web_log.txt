@@ -1,0 +1,97 @@
+Starting project at /app
+Starting Metro Bundler
+Waiting on http://localhost:8081
+Logs for your project will appear below.
+Web node_modules/.pnpm/expo-router@4.0.17_4ac4db59f81c99dbed58bb7f7ca8960b/node_modules/expo-router/entry.js ░░░░░░░░░░░░░░░░  0.0% (0/1)
+Web node_modules/.pnpm/expo-router@4.0.17_4ac4db59f81c99dbed58bb7f7ca8960b/node_modules/expo-router/entry.js ▓▓▓░░░░░░░░░░░░░ 24.0% ( 92/219)
+λ node_modules/.pnpm/expo-router@4.0.17_4ac4db59f81c99dbed58bb7f7ca8960b/node_modules/expo-router/node/render.js ░░░░░░░░░░░░░░░░  0.0% (1/1)
+Web node_modules/.pnpm/expo-router@4.0.17_4ac4db59f81c99dbed58bb7f7ca8960b/node_modules/expo-router/entry.js ▓▓▓▓▓▓▓░░░░░░░░░ 46.0% (329/486)
+λ node_modules/.pnpm/expo-router@4.0.17_4ac4db59f81c99dbed58bb7f7ca8960b/node_modules/expo-router/node/render.js ░░░░░░░░░░░░░░░░  4.8% ( 33/151)
+Web node_modules/.pnpm/expo-router@4.0.17_4ac4db59f81c99dbed58bb7f7ca8960b/node_modules/expo-router/entry.js ▓▓▓▓▓▓▓▓░░░░░░░░ 53.3% (474/649)
+λ node_modules/.pnpm/expo-router@4.0.17_4ac4db59f81c99dbed58bb7f7ca8960b/node_modules/expo-router/node/render.js ▓▓░░░░░░░░░░░░░░ 15.7% (105/265)
+Web node_modules/.pnpm/expo-router@4.0.17_4ac4db59f81c99dbed58bb7f7ca8960b/node_modules/expo-router/entry.js ▓▓▓▓▓▓▓▓▓▓▓▓░░░░ 77.1% (647/737)
+λ node_modules/.pnpm/expo-router@4.0.17_4ac4db59f81c99dbed58bb7f7ca8960b/node_modules/expo-router/node/render.js ▓▓▓▓▓▓░░░░░░░░░░ 42.2% (302/465)
+Web node_modules/.pnpm/expo-router@4.0.17_4ac4db59f81c99dbed58bb7f7ca8960b/node_modules/expo-router/entry.js ▓▓▓▓▓▓▓▓▓▓▓▓▓▓░░ 91.7% (810/859)
+λ node_modules/.pnpm/expo-router@4.0.17_4ac4db59f81c99dbed58bb7f7ca8960b/node_modules/expo-router/node/render.js ▓▓▓▓▓▓▓▓▓▓░░░░░░ 67.9% (580/720)
+Web node_modules/.pnpm/expo-router@4.0.17_4ac4db59f81c99dbed58bb7f7ca8960b/node_modules/expo-router/entry.js ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓░ 98.4% (887/894)
+λ node_modules/.pnpm/expo-router@4.0.17_4ac4db59f81c99dbed58bb7f7ca8960b/node_modules/expo-router/node/render.js ▓▓▓▓▓▓▓▓▓▓▓░░░░░ 69.8% ( 944/1146)
+Web Bundling failed 22223ms node_modules/.pnpm/expo-router@4.0.17_4ac4db59f81c99dbed58bb7f7ca8960b/node_modules/expo-router/entry.js (894 modules)
+
+Metro error: Unable to resolve module @babel/runtime/helpers/interopRequireDefault from /app/app/(tabs)/history.tsx: @babel/runtime/helpers/interopRequireDefault could not be found within the project or in these directories:
+  node_modules
+[0m[31m[1m>[22m[39m[90m 1 |[39m [36mimport[39m [33mReact[39m[33m,[39m { useState[33m,[39m useEffect[33m,[39m useCallback } [36mfrom[39m [32m'react'[39m[33m;[39m
+ [90m   |[39m [31m[1m^[22m[39m
+ [90m 2 |[39m [36mimport[39m { [33mStyleSheet[39m[33m,[39m [33mView[39m[33m,[39m [33mAlert[39m[33m,[39m [33mButton[39m[33m,[39m useColorScheme[33m,[39m [33mPlatform[39m[33m,[39m [33mUIManager[39m[33m,[39m [33mVibration[39m[33m,[39m [33mLayoutAnimation[39m } [36mfrom[39m [32m'react-native'[39m[33m;[39m
+ [90m 3 |[39m [36mimport[39m [33mAsyncStorage[39m [36mfrom[39m [32m'@react-native-async-storage/async-storage'[39m[33m;[39m
+ [90m 4 |[39m [36mimport[39m { [33mThemedText[39m } [36mfrom[39m [32m'@/components/ThemedText'[39m[33m;[39m[0m
+
+[0m [90m 1 |[39m [36mimport[39m [33mReact[39m[33m,[39m { useState[33m,[39m useEffect[33m,[39m useCallback } [36mfrom[39m [32m'react'[39m[33m;[39m
+ [90m 2 |[39m [36mimport[39m { [33mStyleSheet[39m[33m,[39m [33mView[39m[33m,[39m [33mAlert[39m[33m,[39m [33mButton[39m[33m,[39m useColorScheme[33m,[39m [33mPlatform[39m[33m,[39m [33mUIManager[39m[33m,[39m [33mVibration[39m[33m,[39m [33mLayoutAnimation[39m } [36mfrom[39m [32m'react-native'[39m[33m;[39m
+ [90m 3 |[39m [36mimport[39m [33mAsyncStorage[39m [36mfrom[39m [32m'@react-native-async-storage/async-storage'[39m[33m;[39m[0m
+
+Call Stack
+  <unknown> (app/(tabs)/history.tsx:0)
+λ node_modules/.pnpm/expo-router@4.0.17_4ac4db59f81c99dbed58bb7f7ca8960b/node_modules/expo-router/node/render.js ▓▓▓▓▓▓▓▓▓▓▓░░░░░ 72.0% (1004/1183)
+Web Bundling failed 837ms node_modules/.pnpm/expo-router@4.0.17_4ac4db59f81c99dbed58bb7f7ca8960b/node_modules/expo-router/entry.js (766 modules)
+
+Metro error: Unable to resolve module @babel/runtime/helpers/interopRequireDefault from /app/app/(tabs)/_layout.tsx: @babel/runtime/helpers/interopRequireDefault could not be found within the project or in these directories:
+  node_modules
+[0m[31m[1m>[22m[39m[90m 1 |[39m [36mimport[39m { [33mTabs[39m } [36mfrom[39m [32m'expo-router'[39m[33m;[39m
+ [90m   |[39m [31m[1m^[22m[39m
+ [90m 2 |[39m [36mimport[39m [33mReact[39m[33m,[39m { useRef } [36mfrom[39m [32m'react'[39m[33m;[39m
+ [90m 3 |[39m [36mimport[39m { [33mStyleSheet[39m[33m,[39m [33mTouchableOpacity[39m[33m,[39m [33mViewStyle[39m[33m,[39m [33mAnimated[39m[33m,[39m [33mView[39m } [36mfrom[39m [32m'react-native'[39m[33m;[39m
+ [90m 4 |[39m[0m
+
+[0m [90m 1 |[39m [36mimport[39m { [33mTabs[39m } [36mfrom[39m [32m'expo-router'[39m[33m;[39m
+ [90m 2 |[39m [36mimport[39m [33mReact[39m[33m,[39m { useRef } [36mfrom[39m [32m'react'[39m[33m;[39m
+ [90m 3 |[39m [36mimport[39m { [33mStyleSheet[39m[33m,[39m [33mTouchableOpacity[39m[33m,[39m [33mViewStyle[39m[33m,[39m [33mAnimated[39m[33m,[39m [33mView[39m } [36mfrom[39m [32m'react-native'[39m[33m;[39m[0m
+
+Call Stack
+  <unknown> (app/(tabs)/_layout.tsx:0)
+λ node_modules/.pnpm/expo-router@4.0.17_4ac4db59f81c99dbed58bb7f7ca8960b/node_modules/expo-router/node/render.js ▓▓▓▓▓▓▓▓▓▓▓▓▓░░░ 86.3% (1451/1571)
+λ node_modules/.pnpm/expo-router@4.0.17_4ac4db59f81c99dbed58bb7f7ca8960b/node_modules/expo-router/node/render.js ░░░░░░░░░░░░░░░░  0.0% (0/1)
+λ Bundled 25938ms node_modules/.pnpm/expo-router@4.0.17_4ac4db59f81c99dbed58bb7f7ca8960b/node_modules/expo-router/node/render.js (1646 modules)
+λ Bundled 1852ms node_modules/.pnpm/expo-router@4.0.17_4ac4db59f81c99dbed58bb7f7ca8960b/node_modules/expo-router/node/render.js (1 module)
+
+Metro error: Cannot read properties of undefined (reading 'get')
+
+[0m [90m 4 |[39m [36mimport[39m { [33mThemedView[39m } [36mfrom[39m [32m'@/components/ThemedView'[39m[33m;[39m
+ [90m 5 |[39m [36mimport[39m [33mParallaxScrollView[39m [36mfrom[39m [32m'@/components/ParallaxScrollView'[39m[33m;[39m
+[31m[1m>[22m[39m[90m 6 |[39m [36mimport[39m { initLlama[33m,[39m [33mLlamaContext[39m } [36mfrom[39m [32m'llama.rn'[39m[33m;[39m
+ [90m   |[39m [31m[1m^[22m[39m
+ [90m 7 |[39m [36mimport[39m [33m*[39m [36mas[39m [33mFileSystem[39m [36mfrom[39m [32m'expo-file-system'[39m[33m;[39m
+ [90m 8 |[39m
+ [90m 9 |[39m [36mconst[39m [33mMODEL_URL[39m [33m=[39m [32m'https://huggingface.co/hugging-quants/Llama-3.2-1B-Instruct-Q4_K_M-GGUF/resolve/main/llama-3.2-1b-instruct-q4_k_m.gguf'[39m[33m;[39m[0m
+
+Call Stack
+  factory (app/(tabs)/chatbot.tsx:6)
+λ Bundled 30ms node_modules/.pnpm/expo-router@4.0.17_4ac4db59f81c99dbed58bb7f7ca8960b/node_modules/expo-router/node/render.js (1 module)
+
+Metro error: Cannot read properties of undefined (reading 'get')
+
+[0m [90m 4 |[39m [36mimport[39m { [33mThemedView[39m } [36mfrom[39m [32m'@/components/ThemedView'[39m[33m;[39m
+ [90m 5 |[39m [36mimport[39m [33mParallaxScrollView[39m [36mfrom[39m [32m'@/components/ParallaxScrollView'[39m[33m;[39m
+[31m[1m>[22m[39m[90m 6 |[39m [36mimport[39m { initLlama[33m,[39m [33mLlamaContext[39m } [36mfrom[39m [32m'llama.rn'[39m[33m;[39m
+ [90m   |[39m [31m[1m^[22m[39m
+ [90m 7 |[39m [36mimport[39m [33m*[39m [36mas[39m [33mFileSystem[39m [36mfrom[39m [32m'expo-file-system'[39m[33m;[39m
+ [90m 8 |[39m
+ [90m 9 |[39m [36mconst[39m [33mMODEL_URL[39m [33m=[39m [32m'https://huggingface.co/hugging-quants/Llama-3.2-1B-Instruct-Q4_K_M-GGUF/resolve/main/llama-3.2-1b-instruct-q4_k_m.gguf'[39m[33m;[39m[0m
+
+Call Stack
+  factory (app/(tabs)/chatbot.tsx:6)
+Web node_modules/.pnpm/expo-router@4.0.17_4ac4db59f81c99dbed58bb7f7ca8960b/node_modules/expo-router/entry.js ░░░░░░░░░░░░░░░░  0.0% (0/1)
+
+Metro error: Cannot read properties of undefined (reading 'get')
+
+[0m [90m 4 |[39m [36mimport[39m { [33mThemedView[39m } [36mfrom[39m [32m'@/components/ThemedView'[39m[33m;[39m
+ [90m 5 |[39m [36mimport[39m [33mParallaxScrollView[39m [36mfrom[39m [32m'@/components/ParallaxScrollView'[39m[33m;[39m
+[31m[1m>[22m[39m[90m 6 |[39m [36mimport[39m { initLlama[33m,[39m [33mLlamaContext[39m } [36mfrom[39m [32m'llama.rn'[39m[33m;[39m
+ [90m   |[39m [31m[1m^[22m[39m
+ [90m 7 |[39m [36mimport[39m [33m*[39m [36mas[39m [33mFileSystem[39m [36mfrom[39m [32m'expo-file-system'[39m[33m;[39m
+ [90m 8 |[39m
+ [90m 9 |[39m [36mconst[39m [33mMODEL_URL[39m [33m=[39m [32m'https://huggingface.co/hugging-quants/Llama-3.2-1B-Instruct-Q4_K_M-GGUF/resolve/main/llama-3.2-1b-instruct-q4_k_m.gguf'[39m[33m;[39m[0m
+
+Call Stack
+  factory (app/(tabs)/chatbot.tsx:6)
+Web node_modules/.pnpm/expo-router@4.0.17_4ac4db59f81c99dbed58bb7f7ca8960b/node_modules/expo-router/entry.js ░░░░░░░░░░░░░░░░  0.0% (0/1)
+Web Bundling failed 1659ms node_modules/.pnpm/expo-router@4.0.17_4ac4db59f81c99dbed58bb7f7ca8960b/node_modules/expo-router/entry.js (842 modules)
