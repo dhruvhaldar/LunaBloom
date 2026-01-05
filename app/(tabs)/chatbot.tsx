@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { StyleSheet, View, Image, useColorScheme, TextInput, TouchableOpacity, ScrollView, ActivityIndicator } from 'react-native';
+import { StyleSheet, View, Image, useColorScheme, TextInput, TouchableOpacity, ScrollView, ActivityIndicator, Keyboard } from 'react-native';
 import { ThemedText } from '@/components/ThemedText';
 import { ThemedView } from '@/components/ThemedView';
 import ParallaxScrollView from '@/components/ParallaxScrollView';
@@ -24,6 +24,7 @@ export default function MenstruationScreen() {
   const placeholderTextColor = colorScheme === 'dark' ? '#F1FAEE' : '#1D3557';
 
   const handleChat = async (questionText?: string) => {
+    Keyboard.dismiss();
     const textToAsk = typeof questionText === 'string' ? questionText : question;
     if (!textToAsk.trim()) return;
     
@@ -81,7 +82,14 @@ export default function MenstruationScreen() {
           style={[styles.responseContainer, { backgroundColor: responseBackgroundColor }]}
           accessibilityLiveRegion="polite"
         >
-          {response ? (<ThemedText style={styles.response}>{response}</ThemedText>) : (
+          {isLoading ? (
+            <View style={styles.loadingContainer}>
+              <ActivityIndicator size="large" color={textColor} />
+              <ThemedText style={styles.loadingText}>Generating response...</ThemedText>
+            </View>
+          ) : response ? (
+            <ThemedText style={styles.response}>{response}</ThemedText>
+          ) : (
             <View>
               <ThemedText style={styles.placeholder}>AI assistant will respond here...</ThemedText>
               <View style={styles.suggestionsContainer}>
@@ -200,6 +208,18 @@ const styles = StyleSheet.create({
   placeholder: {
     fontSize: 16,
     lineHeight: 24,
+    textAlign: 'center',
+  },
+  loadingContainer: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    minHeight: 100,
+    gap: 10,
+  },
+  loadingText: {
+    fontSize: 16,
+    fontStyle: 'italic',
     textAlign: 'center',
   },
 });
