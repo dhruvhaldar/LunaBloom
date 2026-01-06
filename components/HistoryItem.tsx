@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useMemo } from 'react';
 import { StyleSheet, View, Text, TouchableOpacity } from 'react-native';
 import { IconSymbol } from '@/components/ui/IconSymbol';
 
@@ -21,8 +21,18 @@ interface HistoryItemProps {
 
 const HistoryItem = React.memo(function HistoryItem({ item, onDelete, textColor, deleteIconColor }: HistoryItemProps) {
   // Format dates once per render
-  const lastPeriodDate = new Date(item.lastPeriod).toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' });
-  const logDate = new Date(item.date).toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' });
+  // Optimization: useMemo derived values to prevent expensive Date parsing and string formatting on every render
+  const lastPeriodDate = useMemo(() => {
+    return new Date(item.lastPeriod).toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' });
+  }, [item.lastPeriod]);
+
+  const logDate = useMemo(() => {
+    return new Date(item.date).toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' });
+  }, [item.date]);
+
+  const symptomsString = useMemo(() => {
+    return item.selectedSymptoms.join(', ');
+  }, [item.selectedSymptoms]);
 
   return (
     <View style={styles.entry}>
@@ -30,7 +40,7 @@ const HistoryItem = React.memo(function HistoryItem({ item, onDelete, textColor,
         <View style={styles.entryTextContainer}>
           <Text style={{ color: textColor }}>Last Period: {lastPeriodDate}</Text>
           <Text style={{ color: textColor }}>Cycle Length: {item.cycleLength} days</Text>
-          <Text style={{ color: textColor }}>Symptoms: {item.selectedSymptoms.join(', ')}</Text>
+          <Text style={{ color: textColor }}>Symptoms: {symptomsString}</Text>
           <Text style={{ color: textColor }}>Flow: {item.selectedFlow || 'Not logged'}</Text>
           <Text style={{ color: textColor }}>Notes: {item.notes}</Text>
           <Text style={{ color: textColor }}>Log Date: {logDate}</Text>
