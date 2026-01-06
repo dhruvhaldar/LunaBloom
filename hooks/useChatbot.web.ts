@@ -1,5 +1,6 @@
 import { useState } from 'react';
-import { Keyboard } from 'react-native';
+import { Keyboard, Alert } from 'react-native';
+import { validateInputLength, sanitizeInput, containsSuspiciousPatterns, MAX_INPUT_LENGTH } from '@/utils/validation';
 
 // Web implementation using a simple heuristic or placeholder
 // Real local LLM on web (transformers.js) requires significant build config changes in Expo (metro/webpack) for WASM/Workers.
@@ -26,11 +27,25 @@ export function useChatbot() {
         Keyboard.dismiss();
     } catch (e) {}
 
-    const textToAsk = typeof questionText === 'string' ? questionText : question;
-    if (!textToAsk.trim()) return;
+    let textToAsk = typeof questionText === 'string' ? questionText : question;
+
+    // Security Validation
+    textToAsk = sanitizeInput(textToAsk);
+
+    if (!textToAsk) return;
+
+    if (!validateInputLength(textToAsk, MAX_INPUT_LENGTH)) {
+      if (typeof window !== 'undefined') window.alert(`Please limit your question to ${MAX_INPUT_LENGTH} characters.`);
+      return;
+    }
+
+    if (containsSuspiciousPatterns(textToAsk)) {
+      if (typeof window !== 'undefined') window.alert("Your input contains invalid characters or patterns.");
+      return;
+    }
 
     if (typeof questionText === 'string') {
-      setQuestion(questionText);
+      setQuestion(textToAsk);
     }
 
     setIsLoading(true);

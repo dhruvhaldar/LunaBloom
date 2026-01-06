@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import { Keyboard, Alert } from 'react-native';
 import { initLlama, LlamaContext } from 'llama.rn';
 import * as FileSystem from 'expo-file-system';
+import { validateInputLength, sanitizeInput, containsSuspiciousPatterns, MAX_INPUT_LENGTH } from '@/utils/validation';
 
 const MODEL_URL = 'https://huggingface.co/hugging-quants/Llama-3.2-1B-Instruct-Q4_K_M-GGUF/resolve/main/llama-3.2-1b-instruct-q4_k_m.gguf';
 const MODEL_FILENAME = 'llama-3.2-1b-instruct-q4_k_m.gguf';
@@ -82,11 +83,25 @@ export function useChatbot() {
 
   const handleChat = async (questionText?: string) => {
     Keyboard.dismiss();
-    const textToAsk = typeof questionText === 'string' ? questionText : question;
-    if (!textToAsk.trim()) return;
+    let textToAsk = typeof questionText === 'string' ? questionText : question;
+
+    // Security Validation
+    textToAsk = sanitizeInput(textToAsk);
+
+    if (!textToAsk) return;
+
+    if (!validateInputLength(textToAsk, MAX_INPUT_LENGTH)) {
+      Alert.alert("Input too long", `Please limit your question to ${MAX_INPUT_LENGTH} characters.`);
+      return;
+    }
+
+    if (containsSuspiciousPatterns(textToAsk)) {
+      Alert.alert("Invalid Input", "Your input contains invalid characters or patterns.");
+      return;
+    }
 
     if (typeof questionText === 'string') {
-      setQuestion(questionText);
+      setQuestion(textToAsk);
     }
 
     if (!llamaContext) {
