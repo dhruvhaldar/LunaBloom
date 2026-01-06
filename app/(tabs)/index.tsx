@@ -2,6 +2,7 @@ import React, { useState, useEffect, useMemo, useCallback } from 'react';
 import { StyleSheet, TouchableOpacity, TextInput, Alert, useColorScheme, View, Button, ActivityIndicator } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import DateTimePicker from '@react-native-community/datetimepicker';
+import { validateInputLength, sanitizeInput, MAX_NOTES_LENGTH } from '@/utils/validation';
 import { ThemedText } from '@/components/ThemedText';
 import { ThemedView } from '@/components/ThemedView';
 import ParallaxScrollView from '@/components/ParallaxScrollView';
@@ -85,6 +86,13 @@ export default function HomeScreen() {
   }, []);
 
   // Input Validation Functions
+  const handleNotesChange = (text: string) => {
+    if (!validateInputLength(text, MAX_NOTES_LENGTH)) {
+        return;
+    }
+    setNotes(text);
+  };
+
   const handlePeriodDurationChange = useCallback((text: string) => {
     const filteredText = text.replace(/[^0-9]/g, '');
     let number = parseInt(filteredText, 10);
@@ -368,11 +376,15 @@ export default function HomeScreen() {
             style={[styles.notesInput, { color: textColor, borderColor: textColor }]}
             multiline
             value={notes}
-            onChangeText={setNotes}
+            onChangeText={handleNotesChange}
             placeholder="Record any additional notes..."
             placeholderTextColor={colorScheme === 'dark' ? '#AAAAAA' : '#888'}
             accessibilityLabel="Notes"
+            maxLength={MAX_NOTES_LENGTH}
           />
+          <ThemedText style={{ color: textColor, fontSize: 10, textAlign: 'right' }}>
+            {notes.length}/{MAX_NOTES_LENGTH}
+          </ThemedText>
         </ThemedView>
 
         {/* Log Period Button */}
