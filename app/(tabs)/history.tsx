@@ -1,5 +1,5 @@
-import React, { useState, useEffect, useCallback } from 'react';
-import { StyleSheet, View, Alert, Button, useColorScheme, Platform, UIManager, Vibration, LayoutAnimation } from 'react-native';
+import React, { useState, useCallback, useRef } from 'react';
+import { StyleSheet, View, Alert, useColorScheme, Platform, UIManager, Vibration, LayoutAnimation } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { ThemedText } from '@/components/ThemedText';
 import { ThemedView } from '@/components/ThemedView';
@@ -10,6 +10,7 @@ import HistoryItem, { HistoryEntry } from '@/components/HistoryItem';
 
 export default function TabTwoScreen() {
   const [entries, setEntries] = useState<HistoryEntry[]>([]);
+  const lastFetchedEntriesRef = useRef<string | null>(null);
   
   // Color Scheme
   const colorScheme = useColorScheme();
@@ -29,6 +30,12 @@ export default function TabTwoScreen() {
   const fetchEntries = async () => {
     try {
       const storedEntries = await AsyncStorage.getItem('periodEntries');
+
+      // Optimization: Avoid parsing and state update if data hasn't changed
+      if (storedEntries === lastFetchedEntriesRef.current) {
+        return;
+      }
+      lastFetchedEntriesRef.current = storedEntries;
       
       if (storedEntries !== null) {
         try {
