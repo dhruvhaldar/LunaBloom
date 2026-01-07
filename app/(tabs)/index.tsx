@@ -2,7 +2,7 @@ import React, { useState, useEffect, useMemo, useCallback } from 'react';
 import { StyleSheet, TouchableOpacity, TextInput, Alert, useColorScheme, View, Button, ActivityIndicator } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import DateTimePicker from '@react-native-community/datetimepicker';
-import { validateInputLength, sanitizeInput, MAX_NOTES_LENGTH } from '@/utils/validation';
+import { validateInputLength, sanitizeInput, containsSuspiciousPatterns, MAX_NOTES_LENGTH } from '@/utils/validation';
 import { ThemedText } from '@/components/ThemedText';
 import { ThemedView } from '@/components/ThemedView';
 import ParallaxScrollView from '@/components/ParallaxScrollView';
@@ -170,6 +170,18 @@ export default function HomeScreen() {
   const logPeriod = useCallback(async () => {
     setIsLogging(true);
     try {
+      // SECURITY: Sanitize and validate notes to prevent script injection/storage of malicious data
+      const sanitizedNotes = sanitizeInput(notes);
+
+      if (containsSuspiciousPatterns(sanitizedNotes)) {
+        Alert.alert(
+          "⚠️ Security Warning",
+          "Your notes contain invalid characters or patterns (like <script> tags). Please remove them to save.",
+          [{ text: "OK" }]
+        );
+        return;
+      }
+
       const entry = {
         date: new Date().toISOString(),
         lastPeriod,
@@ -177,7 +189,7 @@ export default function HomeScreen() {
         periodDuration,
         selectedFlow,
         selectedSymptoms,
-        notes,
+        notes: sanitizedNotes,
         predictedNextPeriod: predictedPeriods[0]?.toISOString() || null,
         predictedNextOvulation: predictedOvulations[0]?.toISOString() || null,
       };
