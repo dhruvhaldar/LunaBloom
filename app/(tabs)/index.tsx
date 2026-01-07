@@ -7,6 +7,7 @@ import { ThemedText } from '@/components/ThemedText';
 import { ThemedView } from '@/components/ThemedView';
 import ParallaxScrollView from '@/components/ParallaxScrollView';
 import { Image } from 'react-native';
+import { IconSymbol } from '@/components/ui/IconSymbol';
 
 
 export default function HomeScreen() {
@@ -316,14 +317,24 @@ export default function HomeScreen() {
                 accessibilityState={{ checked: selectedFlow === flow }}
                 accessibilityLabel={`Select ${flow} flow`}
               >
-                <ThemedText
-                  style={[
-                    { color: symptomtextColor },
-                    selectedFlow === flow && styles.selectedSymptom,
-                  ]}
-                >
-                  {flow}
-                </ThemedText>
+                <View style={styles.symptomContent}>
+                  {selectedFlow === flow && (
+                    <IconSymbol
+                      name="checkmark"
+                      size={16}
+                      color={symptomtextColor}
+                      style={{ marginRight: 4 }}
+                    />
+                  )}
+                  <ThemedText
+                    style={[
+                      { color: symptomtextColor },
+                      selectedFlow === flow && styles.selectedSymptom,
+                    ]}
+                  >
+                    {flow}
+                  </ThemedText>
+                </View>
               </TouchableOpacity>
             ))}
           </ThemedView>
@@ -356,12 +367,22 @@ export default function HomeScreen() {
                 accessibilityState={{ checked: selectedSymptoms.includes(symptom) }}
                 accessibilityLabel={`Select ${symptom} symptom`}
               >
-                <ThemedText style={[
-                  { color: symptomtextColor },
-                  selectedSymptoms.includes(symptom) && styles.selectedSymptom
-                ]}>
-                  {symptom}
-                </ThemedText>
+                <View style={styles.symptomContent}>
+                  {selectedSymptoms.includes(symptom) && (
+                    <IconSymbol
+                      name="checkmark"
+                      size={16}
+                      color={symptomtextColor}
+                      style={{ marginRight: 4 }}
+                    />
+                  )}
+                  <ThemedText style={[
+                    { color: symptomtextColor },
+                    selectedSymptoms.includes(symptom) && styles.selectedSymptom
+                  ]}>
+                    {symptom}
+                  </ThemedText>
+                </View>
               </TouchableOpacity>
             ))}
           </ThemedView>
@@ -563,7 +584,11 @@ const styles = StyleSheet.create({
     borderRadius: 20,
     borderWidth: 1,
   },
-
+  symptomContent: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
   selectedSymptom: {
     fontWeight: 'bold',
   },
