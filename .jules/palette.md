@@ -13,3 +13,7 @@
 ## 2024-06-03 - [Visual Indicators for Selection]
 **Learning:** Relying solely on background color changes to indicate selection state (in chips/toggles) is insufficient for accessibility, particularly for users with color vision deficiencies. Adding a distinct icon (like a checkmark) provides a necessary secondary visual cue.
 **Action:** Always include an icon or shape change alongside color changes for selection states in custom UI components.
+
+## 2025-06-04 - [Validation Timing and Haptic Feedback]
+**Learning:** Validating text inputs on every keystroke (`onChangeText`) causes premature and annoying warnings (e.g., flagging "2" as too small when the user intends to type "28"). Deferring validation to `onEndEditing` creates a much smoother experience. Additionally, adding haptic feedback to form interactions (selection, submission) significantly enhances the perceived responsiveness and "delight" of the app.
+**Action:** Use `onEndEditing` for logic-heavy validation warnings while keeping `onChangeText` for character masking. Integrate `expo-haptics` for meaningful state changes.

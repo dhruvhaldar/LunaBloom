@@ -1,8 +1,9 @@
 import React, { useState, useEffect, useMemo, useCallback } from 'react';
-import { StyleSheet, TouchableOpacity, TextInput, Alert, useColorScheme, View, Button, ActivityIndicator } from 'react-native';
+import { StyleSheet, TouchableOpacity, TextInput, Alert, useColorScheme, View, Button, ActivityIndicator, Keyboard } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import DateTimePicker from '@react-native-community/datetimepicker';
-import { validateInputLength, sanitizeInput, MAX_NOTES_LENGTH } from '@/utils/validation';
+import * as Haptics from 'expo-haptics';
+import { validateInputLength, MAX_NOTES_LENGTH } from '@/utils/validation';
 import { ThemedText } from '@/components/ThemedText';
 import { ThemedView } from '@/components/ThemedView';
 import ParallaxScrollView from '@/components/ParallaxScrollView';
@@ -67,6 +68,13 @@ export default function HomeScreen() {
       return;
     }
 
+    setCycleLength(number.toString());
+  }, []);
+
+  const validateCycleLength = useCallback(() => {
+    const number = parseInt(cycleLength, 10);
+    if (isNaN(number)) return;
+
     if (number < 21) {
       Alert.alert(
         "⚠️ Short Cycle Length",
@@ -81,10 +89,8 @@ export default function HomeScreen() {
         "Your cycle length is over 35 days. This could be linked to conditions like PCOS. 🏥 Consider medical advice. 💙",
         [{ text: "Understood! 👍" }]
       );
-    }    
-
-    setCycleLength(number.toString());
-  }, []);
+    }
+  }, [cycleLength]);
 
   // Input Validation Functions
   const handleNotesChange = (text: string) => {
@@ -103,6 +109,12 @@ export default function HomeScreen() {
       setPeriodDuration('');
       return;
     }
+    setPeriodDuration(number.toString());
+  }, []);
+
+  const validatePeriodDuration = useCallback(() => {
+    const number = parseInt(periodDuration, 10);
+    if (isNaN(number)) return;
 
     if (number > 7) {
       Alert.alert(
@@ -111,8 +123,7 @@ export default function HomeScreen() {
         [{ text: "Got it! ✅" }]
       );
     }
-    setPeriodDuration(number.toString());
-  }, []);
+  }, [periodDuration]);
 
   // Load luteal phase setting
   useEffect(() => {
@@ -168,6 +179,7 @@ export default function HomeScreen() {
 
   // Save Period Data
   const logPeriod = useCallback(async () => {
+    Keyboard.dismiss();
     setIsLogging(true);
     try {
       const entry = {
@@ -200,6 +212,8 @@ export default function HomeScreen() {
         setSelectedSymptoms([]);
         setNotes('');
         
+        await Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
+
         Alert.alert(
           "✅ Entry Logged!",
           "Your period start has been successfully recorded. 🩸💖",
@@ -279,6 +293,8 @@ export default function HomeScreen() {
               keyboardType="numeric"
               value={cycleLength}
               onChangeText={handleCycleLengthChange}
+              onEndEditing={validateCycleLength}
+              returnKeyType="done"
               accessibilityLabel="Cycle length in days"
             />
           </ThemedView>
@@ -291,6 +307,8 @@ export default function HomeScreen() {
               keyboardType="numeric"
               value={periodDuration}
               onChangeText={handlePeriodDurationChange}
+              onEndEditing={validatePeriodDuration}
+              returnKeyType="done"
               accessibilityLabel="Period duration in days"
             />
           </ThemedView>
@@ -311,6 +329,7 @@ export default function HomeScreen() {
                   selectedFlow === flow && { backgroundColor: selectedSymptomBackgroundColor },
                 ]}
                 onPress={() => {
+                  Haptics.selectionAsync();
                   setSelectedFlow((prev) => (prev === flow ? null : flow));
                 }}
                 accessibilityRole="radio"
@@ -357,6 +376,7 @@ export default function HomeScreen() {
                   }
                 ]}
                 onPress={() => {
+                  Haptics.selectionAsync();
                   setSelectedSymptoms(prev =>
                     prev.includes(symptom)
                       ? prev.filter(s => s !== symptom)
