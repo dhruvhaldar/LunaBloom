@@ -5,6 +5,7 @@ import * as DocumentPicker from 'expo-document-picker';
 import * as FileSystem from 'expo-file-system';
 import * as Sharing from 'expo-sharing';
 import * as ScreenCapture from 'expo-screen-capture';
+import { isValidBackupEntry } from '@/utils/validation';
 import { ThemedText } from '@/components/ThemedText';
 import { ThemedView } from '@/components/ThemedView';
 import ParallaxScrollView from '@/components/ParallaxScrollView';
@@ -132,13 +133,24 @@ export default function SettingsScreen() {
 
               const backupJson = JSON.stringify(backup, null, 2);
 
-              // Show options dialog
+              // Show options dialog with Security Warning
               Alert.alert(
-                'Save Backup',
-                'Would you like to save your data backup?',
+                '⚠️ Security Warning',
+                'The backup file contains your personal health data in plain text. Please ensure you save it to a secure location (e.g., encrypted drive). Do you want to proceed?',
                 [
                   {
-                    text: 'Save',
+                    text: 'Cancel',
+                    style: 'cancel',
+                    onPress: () => {
+                      Alert.alert(
+                        '❌ Backup Canceled',
+                        'Backup was canceled.'
+                      );
+                    }
+                  },
+                  {
+                    text: 'Proceed & Save',
+                    style: 'destructive',
                     onPress: async () => {
                       try {
                         // Create a temporary file
@@ -173,16 +185,6 @@ export default function SettingsScreen() {
                           'There was an error saving your backup. Please try again.'
                         );
                       }
-                    }
-                  },
-                  {
-                    text: 'Cancel',
-                    style: 'cancel',
-                    onPress: () => {
-                      Alert.alert(
-                        '❌ Backup Failed',
-                        'Backup was canceled.'
-                      );
                     }
                   }
                 ]
@@ -222,12 +224,31 @@ export default function SettingsScreen() {
                 return;
             }
 
+            // Security: Validate each entry against schema
+            const validEntries = backupData.entries.filter((entry: any) => isValidBackupEntry(entry));
+            const invalidCount = backupData.entries.length - validEntries.length;
+
+            if (invalidCount > 0) {
+                 Alert.alert(
+                    '⚠️ Warning',
+                    `${invalidCount} entries were skipped because they were invalid or contained suspicious data.`
+                );
+            }
+
+            if (validEntries.length === 0) {
+                 Alert.alert(
+                    '❌ Restore Failed',
+                    'No valid entries found in the backup file.'
+                );
+                return;
+            }
+
             // Store the entries in AsyncStorage
-            await AsyncStorage.setItem('periodEntries', JSON.stringify(backupData.entries));
+            await AsyncStorage.setItem('periodEntries', JSON.stringify(validEntries));
             
             Alert.alert(
                 '✅ Restore Successful',
-                `Successfully restored ${backupData.entries.length} entries!`
+                `Successfully restored ${validEntries.length} entries!`
             );
         } catch (error: any) {
             console.error('❌ Restore failed with error:', error instanceof Error ? error.message : String(error));

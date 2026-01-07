@@ -48,3 +48,37 @@ export const containsSuspiciousPatterns = (text: string): boolean => {
 
     return suspiciousPatterns.some(pattern => pattern.test(text));
 };
+
+/**
+ * Validates a backup entry object against the expected schema.
+ * @param entry The entry object to validate.
+ * @returns True if the entry is valid and safe.
+ */
+export const isValidBackupEntry = (entry: any): boolean => {
+  if (typeof entry !== 'object' || entry === null) return false;
+
+  // Required fields must exist and be of correct type
+  if (typeof entry.date !== 'string') return false;
+
+  // lastPeriod could be ISO string
+  if (typeof entry.lastPeriod !== 'string') return false;
+
+  // cycleLength can be string or number (based on legacy data)
+  if (typeof entry.cycleLength !== 'string' && typeof entry.cycleLength !== 'number') return false;
+
+  // selectedSymptoms must be array of strings
+  if (!Array.isArray(entry.selectedSymptoms)) return false;
+  if (!entry.selectedSymptoms.every((s: any) => typeof s === 'string')) return false;
+
+  // notes must be string
+  if (typeof entry.notes !== 'string') return false;
+
+  // Security checks on content
+  if (entry.notes.length > MAX_NOTES_LENGTH) return false;
+  if (containsSuspiciousPatterns(entry.notes)) return false;
+
+  // Optional: Check other fields if critical, but these are the core ones
+  // If we wanted to be strict, we'd check everything, but backward compatibility is important.
+
+  return true;
+};

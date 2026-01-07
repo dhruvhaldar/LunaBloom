@@ -1,4 +1,4 @@
-import { validateInputLength, sanitizeInput, containsSuspiciousPatterns, MAX_INPUT_LENGTH } from '../validation';
+import { validateInputLength, sanitizeInput, containsSuspiciousPatterns, isValidBackupEntry, MAX_INPUT_LENGTH, MAX_NOTES_LENGTH } from '../validation';
 
 describe('Validation Utils', () => {
   describe('validateInputLength', () => {
@@ -43,6 +43,60 @@ describe('Validation Utils', () => {
 
     it('should return false for safe text', () => {
       expect(containsSuspiciousPatterns('Hello world')).toBe(false);
+    });
+  });
+
+  describe('isValidBackupEntry', () => {
+    const validEntry = {
+      date: '2023-01-01T00:00:00.000Z',
+      lastPeriod: '2023-01-01T00:00:00.000Z',
+      cycleLength: 28,
+      selectedSymptoms: ['Cramps'],
+      notes: 'Some notes'
+    };
+
+    it('should return true for a valid entry', () => {
+      expect(isValidBackupEntry(validEntry)).toBe(true);
+    });
+
+    it('should allow cycleLength as string', () => {
+      const entry = { ...validEntry, cycleLength: '28' };
+      expect(isValidBackupEntry(entry)).toBe(true);
+    });
+
+    it('should return false if date is missing', () => {
+      const { date, ...invalidEntry } = validEntry;
+      expect(isValidBackupEntry(invalidEntry)).toBe(false);
+    });
+
+    it('should return false if lastPeriod is not string', () => {
+      const entry = { ...validEntry, lastPeriod: 123 };
+      expect(isValidBackupEntry(entry)).toBe(false);
+    });
+
+    it('should return false if selectedSymptoms is not array', () => {
+      const entry = { ...validEntry, selectedSymptoms: 'Cramps' };
+      expect(isValidBackupEntry(entry)).toBe(false);
+    });
+
+    it('should return false if notes is not string', () => {
+      const entry = { ...validEntry, notes: null };
+      expect(isValidBackupEntry(entry)).toBe(false);
+    });
+
+    it('should return false if notes contains suspicious patterns', () => {
+      const entry = { ...validEntry, notes: 'Hello <script>alert(1)</script>' };
+      expect(isValidBackupEntry(entry)).toBe(false);
+    });
+
+    it('should return false if notes is too long', () => {
+      const entry = { ...validEntry, notes: 'a'.repeat(MAX_NOTES_LENGTH + 1) };
+      expect(isValidBackupEntry(entry)).toBe(false);
+    });
+
+    it('should return false for non-object input', () => {
+      expect(isValidBackupEntry(null)).toBe(false);
+      expect(isValidBackupEntry('string')).toBe(false);
     });
   });
 });
