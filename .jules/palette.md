@@ -9,3 +9,7 @@
 ## 2024-05-26 - [Feedback during Async Operations]
 **Learning:** In chat interfaces, disappearing content (clearing the previous response) without an immediate replacement creates a "flash of empty content" that confuses users, especially if the keyboard remains open. A dedicated, centered "Thinking..." state provides reassurance that the system is working, unlike a small spinner on a button which might be obscured.
 **Action:** For AI interactions, replace the content area with a friendly loading state rather than showing the empty state again.
+
+## 2024-06-03 - [Visual Indicators for Selection]
+**Learning:** Relying solely on background color changes to indicate selection state (in chips/toggles) is insufficient for accessibility, particularly for users with color vision deficiencies. Adding a distinct icon (like a checkmark) provides a necessary secondary visual cue.
+**Action:** Always include an icon or shape change alongside color changes for selection states in custom UI components.
