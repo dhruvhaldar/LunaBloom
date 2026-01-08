@@ -9,3 +9,7 @@
 ## 2026-01-06 - Memoization in Render Props
 **Learning:** `React.memo` only prevents re-renders if props are shallowly equal. Even with `React.memo`, if a component re-renders (e.g. due to a prop change like theme color), expensive calculations inside the body (like `Date` parsing or string joining) still run.
 **Action:** Use `useMemo` for derived values inside components, especially for list items, to ensure expensive operations are skipped during re-renders where the underlying data hasn't changed.
+
+## 2026-01-14 - AsyncStorage Fetch Optimization
+**Learning:** Repeatedly fetching and parsing the same JSON data from `AsyncStorage` (e.g., on screen focus) causes unnecessary object re-creation and re-renders, even if the data hasn't changed.
+**Action:** Use a `useRef` to store the last fetched raw string. Compare the new fetch result with the ref; if they are identical, skip `JSON.parse` and state updates.
