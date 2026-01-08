@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useCallback } from 'react';
+import React, { useState, useCallback, useRef } from 'react';
 import { StyleSheet, View, Alert, Button, useColorScheme, Platform, UIManager, Vibration, LayoutAnimation } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { ThemedText } from '@/components/ThemedText';
@@ -10,6 +10,8 @@ import HistoryItem, { HistoryEntry } from '@/components/HistoryItem';
 
 export default function TabTwoScreen() {
   const [entries, setEntries] = useState<HistoryEntry[]>([]);
+  // Ref to store the raw string of the last fetched entries to avoid unnecessary re-parsing and re-renders
+  const lastFetchedEntriesRef = useRef<string | null>(null);
   
   // Color Scheme
   const colorScheme = useColorScheme();
@@ -30,6 +32,12 @@ export default function TabTwoScreen() {
     try {
       const storedEntries = await AsyncStorage.getItem('periodEntries');
       
+      // Optimization: Only parse and update state if the data has actually changed
+      if (storedEntries === lastFetchedEntriesRef.current) {
+        return;
+      }
+      lastFetchedEntriesRef.current = storedEntries;
+
       if (storedEntries !== null) {
         try {
           const parsedEntries = JSON.parse(storedEntries);
@@ -78,7 +86,11 @@ export default function TabTwoScreen() {
                 // Async storage update should happen here or be triggered by state change
                 // But setState is sync-ish in batching.
                 // We'll update storage immediately using the computed new array
-                AsyncStorage.setItem('periodEntries', JSON.stringify(updatedEntries)).catch(err =>
+                const newEntriesString = JSON.stringify(updatedEntries);
+                AsyncStorage.setItem('periodEntries', newEntriesString).then(() => {
+                  // Update the ref to prevent the next fetch (e.g. on focus) from re-rendering if it matches
+                  lastFetchedEntriesRef.current = newEntriesString;
+                }).catch(err =>
                   console.error('Failed to persist deletion', err)
                 );
                 return updatedEntries;
