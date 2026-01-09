@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { StyleSheet, View, Alert, useColorScheme, TouchableOpacity, Image, Share,} from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import { IconSymbol } from '@/components/ui/IconSymbol';
 import * as DocumentPicker from 'expo-document-picker';
 import * as FileSystem from 'expo-file-system';
 import * as Sharing from 'expo-sharing';
@@ -25,7 +26,15 @@ const ToggleSwitch: React.FC<ToggleSwitchProps> = ({ value, onValueChange, acces
             accessibilityState={{ checked: value }}
             accessibilityLabel={accessibilityLabel}
         >
-            <View style={[styles.toggleCircle, value ? styles.toggleCircleActive : styles.toggleCircleInactive]} />
+            <View style={[styles.toggleCircle, value ? styles.toggleCircleActive : styles.toggleCircleInactive]}>
+                {value && (
+                    <IconSymbol
+                        name="checkmark"
+                        size={16}
+                        color="#457B9D"
+                    />
+                )}
+            </View>
         </TouchableOpacity>
     );
 };
@@ -418,6 +427,8 @@ const styles = StyleSheet.create({
         height: 26,
         borderRadius: 13,
         position: 'absolute',
+        justifyContent: 'center',
+        alignItems: 'center',
     },
     toggleCircleActive: {
         backgroundColor: '#ffffff',
