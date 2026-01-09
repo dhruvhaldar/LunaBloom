@@ -1,4 +1,4 @@
-import React, { useState, useCallback, useMemo } from 'react';
+import React, { useState, useCallback, useMemo, useRef } from 'react';
 import { 
   StyleSheet, 
   View, 
@@ -17,6 +17,7 @@ const screenWidth = Dimensions.get('window').width;
 
 export default function InsightsScreen() {
   const [entries, setEntries] = useState([]);
+  const lastFetchedEntriesRef = useRef<string | null>(null);
 
   // Color Scheme
   const colorScheme = useColorScheme();
@@ -32,6 +33,13 @@ export default function InsightsScreen() {
   const fetchEntries = async () => {
     try {
       const storedEntries = await AsyncStorage.getItem('periodEntries');
+
+      // Optimization: Only parse and update state if the data has actually changed
+      if (storedEntries === lastFetchedEntriesRef.current) {
+        return;
+      }
+      lastFetchedEntriesRef.current = storedEntries;
+
       if (storedEntries) {
         const parsedEntries = JSON.parse(storedEntries);
         // Note: We're just setting entries here. Sorting and derivation happen in useMemo.
@@ -67,7 +75,8 @@ export default function InsightsScreen() {
     }
 
     // Sort entries by date descending (newest first) for predictions and consistent processing
-    const sortedEntries = [...entries].sort((a, b) => new Date(b.lastPeriod).getTime() - new Date(a.lastPeriod).getTime());
+    // Optimization: Use string comparison for ISO dates to avoid expensive Date object creation
+    const sortedEntries = [...entries].sort((a, b) => b.lastPeriod.localeCompare(a.lastPeriod));
 
     // Calculate averages
     const periodDurations = sortedEntries.map((entry) => Number(entry.periodDuration) || 5);
