@@ -7,3 +7,8 @@
 **Vulnerability:** Personal Health Information (PHI) such as menstruation cycle dates, symptoms, and notes were being explicitly logged to the console in `app/(tabs)/index.tsx` via `console.log('Logging entry:', entry)`.
 **Learning:** Debugging logs that print full data objects can inadvertently expose sensitive user data, which is a critical privacy violation, especially for health apps.
 **Prevention:** Strictly enforce a "no console.log" policy for production code. Use a logging service that scrubs sensitive data or ensure logs are stripped during the build process.
+
+## 2026-01-10 - Unverified Model Download Integrity
+**Vulnerability:** The AI model (800MB) was downloaded from a remote URL without any integrity verification (checksum or file size). This exposed the app to corrupted downloads (causing crashes) or potential man-in-the-middle attacks replacing the model.
+**Learning:** Relying on HTTPS alone is insufficient for large binary assets, especially when the file can be partially downloaded (network interruption) and appear "exists" to the filesystem check.
+**Prevention:** Always verify the integrity of downloaded binaries using a checksum (SHA256/MD5) or at least an exact file size check before loading them.
