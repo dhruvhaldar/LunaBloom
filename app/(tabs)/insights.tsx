@@ -11,11 +11,13 @@ import { ThemedText } from '@/components/ThemedText';
 import { ThemedView } from '@/components/ThemedView';
 import ParallaxScrollView from '@/components/ParallaxScrollView';
 import { VictoryBar, VictoryLabel } from 'victory-native';
-import { useFocusEffect } from '@react-navigation/native';
+import { useFocusEffect, useRouter } from 'expo-router';
+import { EmptyState } from '@/components/ui/EmptyState';
 
 const screenWidth = Dimensions.get('window').width;
 
 export default function InsightsScreen() {
+  const router = useRouter();
   const [entries, setEntries] = useState([]);
   const lastFetchedEntriesRef = useRef<string | null>(null);
 
@@ -196,7 +198,16 @@ export default function InsightsScreen() {
             width={screenWidth - 150} // Width of bar - 150 pixels
             padding={{ top: 20, left: 5, right: 110, bottom: 20 }}
           />
-          ) : ( <ThemedText style={styles.noDataText}>Not enough data</ThemedText>)}
+          ) : (
+            <EmptyState
+              title="No Insights Yet"
+              message="Log more periods to unlock trends and insights."
+              icon="bar-chart.fill"
+              actionLabel="Log Now"
+              onAction={() => router.push('/')}
+              style={{ marginTop: 10, padding: 20 }}
+            />
+          )}
         </ThemedView>
 
         

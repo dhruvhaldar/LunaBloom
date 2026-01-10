@@ -4,11 +4,13 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import { ThemedText } from '@/components/ThemedText';
 import { ThemedView } from '@/components/ThemedView';
 import ParallaxScrollView from '@/components/ParallaxScrollView';
-import { useFocusEffect } from '@react-navigation/native';
+import { useFocusEffect, useRouter } from 'expo-router';
 import { Image } from 'react-native';
 import HistoryItem, { HistoryEntry } from '@/components/HistoryItem';
+import { EmptyState } from '@/components/ui/EmptyState';
 
 export default function TabTwoScreen() {
+  const router = useRouter();
   const [entries, setEntries] = useState<HistoryEntry[]>([]);
   // Ref to store the raw string of the last fetched entries to avoid unnecessary re-parsing and re-renders
   const lastFetchedEntriesRef = useRef<string | null>(null);
@@ -129,15 +131,25 @@ export default function TabTwoScreen() {
             Logged Entries 📝
           </ThemedText>
           
-          {entries.map((item) => (
-            <HistoryItem
-              key={item.date}
-              item={item}
-              onDelete={handleDelete}
-              textColor={textColor}
-              deleteIconColor={deleteIconColor}
+          {entries.length === 0 ? (
+            <EmptyState
+              title="No Entries Yet"
+              message="Track your first period to start seeing your history here."
+              icon="history.fill"
+              actionLabel="Log Period"
+              onAction={() => router.push('/')}
             />
-          ))}
+          ) : (
+            entries.map((item) => (
+              <HistoryItem
+                key={item.date}
+                item={item}
+                onDelete={handleDelete}
+                textColor={textColor}
+                deleteIconColor={deleteIconColor}
+              />
+            ))
+          )}
         </View>
       </ThemedView>
     </ParallaxScrollView>
