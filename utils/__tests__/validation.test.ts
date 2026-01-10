@@ -41,8 +41,38 @@ describe('Validation Utils', () => {
       expect(containsSuspiciousPatterns('javascript:alert(1)')).toBe(true);
     });
 
+    it('should detect event handlers', () => {
+        expect(containsSuspiciousPatterns('<div onclick="alert(1)">')).toBe(true);
+        expect(containsSuspiciousPatterns('onload=alert(1)')).toBe(true);
+        expect(containsSuspiciousPatterns('ONMOUSEOVER=alert(1)')).toBe(true); // Case insensitive
+    });
+
+    it('should detect iframes', () => {
+        expect(containsSuspiciousPatterns('<iframe src="http://evil.com"></iframe>')).toBe(true);
+        expect(containsSuspiciousPatterns('<IFRAME src="http://evil.com">')).toBe(true);
+    });
+
+    it('should detect object and embed', () => {
+        expect(containsSuspiciousPatterns('<object data="malicious.swf"></object>')).toBe(true);
+        expect(containsSuspiciousPatterns('<embed src="malicious.swf">')).toBe(true);
+    });
+
+    it('should detect meta refresh', () => {
+        expect(containsSuspiciousPatterns('<meta http-equiv="refresh" content="0;url=http://evil.com">')).toBe(true);
+    });
+
     it('should return false for safe text', () => {
       expect(containsSuspiciousPatterns('Hello world')).toBe(false);
+      expect(containsSuspiciousPatterns('This is a test note.')).toBe(false);
+      expect(containsSuspiciousPatterns('Dates: 2023-01-01')).toBe(false);
+    });
+
+    it('should not flag innocent text containing "on"', () => {
+        expect(containsSuspiciousPatterns('json data')).toBe(false);
+        expect(containsSuspiciousPatterns('one day')).toBe(false);
+        expect(containsSuspiciousPatterns('done deal')).toBe(false);
+        expect(containsSuspiciousPatterns('phone call')).toBe(false);
+        expect(containsSuspiciousPatterns('Only you')).toBe(false);
     });
   });
 
