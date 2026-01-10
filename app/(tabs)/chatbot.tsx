@@ -5,6 +5,14 @@ import { ThemedView } from '@/components/ThemedView';
 import ParallaxScrollView from '@/components/ParallaxScrollView';
 import { useChatbot } from '@/hooks/useChatbot'; // Expo automatically resolves .web.ts or .native.ts
 
+// Optimization: Move static data outside component to prevent re-allocation on every render
+const suggestedQuestions = [
+  'Explain the menstrual cycle',
+  'How to relieve cramps?',
+  'Signs of ovulation',
+  'What is PMS?'
+];
+
 export default function MenstruationScreen() {
   const {
     question,
@@ -26,13 +34,6 @@ export default function MenstruationScreen() {
   const responseBackgroundColor = colorScheme === 'dark' ? '#457B9D' : '#A8DADC';
   const textColor = colorScheme === 'dark' ? '#F1FAEE' : '#1D3557';
   const placeholderTextColor = colorScheme === 'dark' ? '#F1FAEE' : '#1D3557';
-
-  const suggestedQuestions = [
-    'Explain the menstrual cycle',
-    'How to relieve cramps?',
-    'Signs of ovulation',
-    'What is PMS?'
-  ];
 
   return (
     <ParallaxScrollView headerBackgroundColor={{ light: '#ffdde2', dark: '#151718' }} headerImage={<Image source={require('@/assets/images/history2.png')} style={styles.reactLogo} resizeMode="contain"/>}>
