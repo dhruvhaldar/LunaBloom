@@ -36,14 +36,27 @@ export const sanitizeInput = (text: string): string => {
  * @returns True if the text contains suspicious patterns.
  */
 export const containsSuspiciousPatterns = (text: string): boolean => {
-    // Basic check for script tags or common SQL injection patterns (though we don't use SQL)
-    // This is a defense-in-depth measure.
+    // Defense-in-depth: Check for common XSS vectors and malicious patterns.
+    // Note: This is not a complete XSS filter but catches common attempts.
     const suspiciousPatterns = [
         /<script\b[^>]*>([\s\S]*?)<\/script>/gim,
         /javascript:/gim,
         /vbscript:/gim,
-        /onload=/gim,
-        /onerror=/gim
+        /data:text\/html/gim,
+        // Common dangerous event handlers (using word boundaries to avoid false positives)
+        /\bonload\s*=/gim,
+        /\bonerror\s*=/gim,
+        /\bonclick\s*=/gim,
+        /\bonmouseover\s*=/gim,
+        /\bonfocus\s*=/gim,
+        /\bonblur\s*=/gim,
+        /\bonsubmit\s*=/gim,
+        // HTML tags that can execute code or load external resources
+        /<\/?iframe\b[^>]*>/gim,
+        /<\/?object\b[^>]*>/gim,
+        /<\/?embed\b[^>]*>/gim,
+        /<\/?applet\b[^>]*>/gim,
+        /<\/?meta\b[^>]*>/gim
     ];
 
     return suspiciousPatterns.some(pattern => pattern.test(text));
