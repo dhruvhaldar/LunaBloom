@@ -94,12 +94,12 @@ export default function HomeScreen() {
   }, [cycleLength]);
 
   // Input Validation Functions
-  const handleNotesChange = (text: string) => {
+  const handleNotesChange = useCallback((text: string) => {
     if (!validateInputLength(text, MAX_NOTES_LENGTH)) {
         return;
     }
     setNotes(text);
-  };
+  }, []);
 
   const handlePeriodDurationChange = useCallback((text: string) => {
     const filteredText = text.replace(/[^0-9]/g, '');
@@ -239,7 +239,104 @@ export default function HomeScreen() {
       setIsLogging(false);
     }
   }, [lastPeriod, cycleLength, periodDuration, selectedFlow, selectedSymptoms, notes, predictedPeriods, predictedOvulations]);
-     
+
+  // Optimized: Memoize flow section to prevent re-renders when notes/date change
+  const flowSection = useMemo(() => (
+    <ThemedView style={styles.section}>
+      <ThemedText type="subtitle" style={{ color: sectionHeadingtextColor, marginBottom: 10 }}>
+        Period Flow 🩸
+      </ThemedText>
+      <ThemedView style={styles.symptomsGrid}>
+        {flowTypes.map((flow) => (
+          <TouchableOpacity
+            key={flow}
+            style={[
+              styles.symptomButton,
+              { borderColor: symptomButtonBorderColor },
+              selectedFlow === flow && { backgroundColor: selectedSymptomBackgroundColor },
+            ]}
+            onPress={() => {
+              Haptics.selectionAsync();
+              setSelectedFlow((prev) => (prev === flow ? null : flow));
+            }}
+            accessibilityRole="radio"
+            accessibilityState={{ checked: selectedFlow === flow }}
+            accessibilityLabel={`Select ${flow} flow`}
+          >
+            <View style={styles.symptomContent}>
+              {selectedFlow === flow && (
+                <IconSymbol
+                  name="checkmark"
+                  size={16}
+                  color={symptomtextColor}
+                  style={{ marginRight: 4 }}
+                />
+              )}
+              <ThemedText
+                style={[
+                  { color: symptomtextColor },
+                  selectedFlow === flow && styles.selectedSymptom,
+                ]}
+              >
+                {flow}
+              </ThemedText>
+            </View>
+          </TouchableOpacity>
+        ))}
+      </ThemedView>
+    </ThemedView>
+  ), [selectedFlow, sectionHeadingtextColor, symptomButtonBorderColor, selectedSymptomBackgroundColor, symptomtextColor]);
+
+  // Optimized: Memoize symptoms section
+  const symptomsSection = useMemo(() => (
+    <ThemedView style={styles.section}>
+      <ThemedText type="subtitle" style={{ color: sectionHeadingtextColor, marginBottom: 10 }}>
+        Today's Symptoms 😟
+      </ThemedText>
+      <ThemedView style={styles.symptomsGrid}>
+        {symptomsList.map((symptom) => (
+          <TouchableOpacity
+            key={symptom}
+            style={[
+              styles.symptomButton,
+              { borderColor: symptomButtonBorderColor },
+              selectedSymptoms.includes(symptom) && {
+                backgroundColor: selectedSymptomBackgroundColor
+              }
+            ]}
+            onPress={() => {
+              Haptics.selectionAsync();
+              setSelectedSymptoms(prev =>
+                prev.includes(symptom)
+                  ? prev.filter(s => s !== symptom)
+                  : [...prev, symptom]
+              );
+            }}
+            accessibilityRole="checkbox"
+            accessibilityState={{ checked: selectedSymptoms.includes(symptom) }}
+            accessibilityLabel={`Select ${symptom} symptom`}
+          >
+            <View style={styles.symptomContent}>
+              {selectedSymptoms.includes(symptom) && (
+                <IconSymbol
+                  name="checkmark"
+                  size={16}
+                  color={symptomtextColor}
+                  style={{ marginRight: 4 }}
+                />
+              )}
+              <ThemedText style={[
+                { color: symptomtextColor },
+                selectedSymptoms.includes(symptom) && styles.selectedSymptom
+              ]}>
+                {symptom}
+              </ThemedText>
+            </View>
+          </TouchableOpacity>
+        ))}
+      </ThemedView>
+    </ThemedView>
+  ), [selectedSymptoms, sectionHeadingtextColor, symptomButtonBorderColor, selectedSymptomBackgroundColor, symptomtextColor]);
 
   return (
     <ParallaxScrollView headerBackgroundColor={{ light: Parallaxheaderlightcolor, dark: Parallaxheaderdarkcolor }}
@@ -316,98 +413,10 @@ export default function HomeScreen() {
         </ThemedView>
 
         {/* Period Flow Section */}
-        <ThemedView style={styles.section}>
-          <ThemedText type="subtitle" style={{ color: sectionHeadingtextColor, marginBottom: 10 }}>
-            Period Flow 🩸
-          </ThemedText>
-          <ThemedView style={styles.symptomsGrid}>
-            {flowTypes.map((flow) => (
-              <TouchableOpacity
-                key={flow}
-                style={[
-                  styles.symptomButton,
-                  { borderColor: symptomButtonBorderColor },
-                  selectedFlow === flow && { backgroundColor: selectedSymptomBackgroundColor },
-                ]}
-                onPress={() => {
-                  Haptics.selectionAsync();
-                  setSelectedFlow((prev) => (prev === flow ? null : flow));
-                }}
-                accessibilityRole="radio"
-                accessibilityState={{ checked: selectedFlow === flow }}
-                accessibilityLabel={`Select ${flow} flow`}
-              >
-                <View style={styles.symptomContent}>
-                  {selectedFlow === flow && (
-                    <IconSymbol
-                      name="checkmark"
-                      size={16}
-                      color={symptomtextColor}
-                      style={{ marginRight: 4 }}
-                    />
-                  )}
-                  <ThemedText
-                    style={[
-                      { color: symptomtextColor },
-                      selectedFlow === flow && styles.selectedSymptom,
-                    ]}
-                  >
-                    {flow}
-                  </ThemedText>
-                </View>
-              </TouchableOpacity>
-            ))}
-          </ThemedView>
-        </ThemedView>
+        {flowSection}
 
         {/* Symptom Tracker */}
-        <ThemedView style={styles.section}>
-          <ThemedText type="subtitle" style={{ color: sectionHeadingtextColor, marginBottom: 10 }}>
-            Today's Symptoms 😟
-          </ThemedText>
-          <ThemedView style={styles.symptomsGrid}>
-            {symptomsList.map((symptom) => (
-              <TouchableOpacity
-                key={symptom}
-                style={[
-                  styles.symptomButton,
-                  { borderColor: symptomButtonBorderColor },
-                  selectedSymptoms.includes(symptom) && { 
-                    backgroundColor: selectedSymptomBackgroundColor 
-                  }
-                ]}
-                onPress={() => {
-                  Haptics.selectionAsync();
-                  setSelectedSymptoms(prev =>
-                    prev.includes(symptom)
-                      ? prev.filter(s => s !== symptom)
-                      : [...prev, symptom]
-                  );
-                }}
-                accessibilityRole="checkbox"
-                accessibilityState={{ checked: selectedSymptoms.includes(symptom) }}
-                accessibilityLabel={`Select ${symptom} symptom`}
-              >
-                <View style={styles.symptomContent}>
-                  {selectedSymptoms.includes(symptom) && (
-                    <IconSymbol
-                      name="checkmark"
-                      size={16}
-                      color={symptomtextColor}
-                      style={{ marginRight: 4 }}
-                    />
-                  )}
-                  <ThemedText style={[
-                    { color: symptomtextColor },
-                    selectedSymptoms.includes(symptom) && styles.selectedSymptom
-                  ]}>
-                    {symptom}
-                  </ThemedText>
-                </View>
-              </TouchableOpacity>
-            ))}
-          </ThemedView>
-        </ThemedView>
+        {symptomsSection}
 
         {/* Notes */}
         <ThemedView style={styles.section}>

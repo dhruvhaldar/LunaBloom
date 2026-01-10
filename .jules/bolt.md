@@ -13,3 +13,7 @@
 ## 2026-01-14 - AsyncStorage Fetch Optimization
 **Learning:** Repeatedly fetching and parsing the same JSON data from `AsyncStorage` (e.g., on screen focus) causes unnecessary object re-creation and re-renders, even if the data hasn't changed.
 **Action:** Use a `useRef` to store the last fetched raw string. Compare the new fetch result with the ref; if they are identical, skip `JSON.parse` and state updates.
+
+## 2026-01-25 - Inline Component Memoization
+**Learning:** Extracting sub-components to separate files isn't always necessary for performance. Wrapping expensive JSX (like mapped lists) in `useMemo` within the parent component achieves the same re-render prevention (skipping reconciliation) when other state (like text input) changes, while keeping related code co-located.
+**Action:** Use `useMemo` for static or semi-static UI sections (like option lists) inside complex screens to prevent them from re-rendering during high-frequency updates (e.g. typing).
