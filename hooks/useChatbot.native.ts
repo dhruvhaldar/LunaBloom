@@ -7,6 +7,7 @@ import { validateInputLength, sanitizeInput, containsSuspiciousPatterns, MAX_INP
 const MODEL_URL = 'https://huggingface.co/hugging-quants/Llama-3.2-1B-Instruct-Q4_K_M-GGUF/resolve/main/llama-3.2-1b-instruct-q4_k_m.gguf';
 const MODEL_FILENAME = 'llama-3.2-1b-instruct-q4_k_m.gguf';
 const MODEL_PATH = `${FileSystem.documentDirectory}${MODEL_FILENAME}`;
+const MODEL_SIZE_BYTES = 807690656; // Expected size from HF (exact bytes)
 
 export function useChatbot() {
   const [question, setQuestion] = useState('');
@@ -27,7 +28,15 @@ export function useChatbot() {
     try {
       const fileInfo = await FileSystem.getInfoAsync(MODEL_PATH);
       if (fileInfo.exists) {
-        setIsModelDownloaded(true);
+        // Security/Integrity Check: Verify file size
+        if (fileInfo.size !== MODEL_SIZE_BYTES) {
+          console.error(`Model size mismatch: expected ${MODEL_SIZE_BYTES}, got ${fileInfo.size}. Deleting corrupted file.`);
+          await FileSystem.deleteAsync(MODEL_PATH, { idempotent: true });
+          setIsModelDownloaded(false);
+          Alert.alert("Integrity Check Failed", "The downloaded model was corrupted and has been deleted. Please download it again.");
+        } else {
+          setIsModelDownloaded(true);
+        }
       }
     } catch (error) {
       console.error('Error checking model existence:', error instanceof Error ? error.message : String(error));
