@@ -17,3 +17,7 @@
 ## 2026-01-25 - Inline Component Memoization
 **Learning:** Extracting sub-components to separate files isn't always necessary for performance. Wrapping expensive JSX (like mapped lists) in `useMemo` within the parent component achieves the same re-render prevention (skipping reconciliation) when other state (like text input) changes, while keeping related code co-located.
 **Action:** Use `useMemo` for static or semi-static UI sections (like option lists) inside complex screens to prevent them from re-rendering during high-frequency updates (e.g. typing).
+
+## 2026-02-04 - Stabilizing Callbacks with State Refs
+**Learning:** When a callback depends on a frequently changing state (e.g., a text input), adding that state to the dependency array causes the callback to be recreated on every keystroke. This invalidates any `React.memo` or `useMemo` in child components that receive this callback.
+**Action:** Use a `useRef` to track the current state value inside the hook/component. The callback can then read from `ref.current` and remain stable (empty dependency array), allowing child components to successfully skip re-renders.

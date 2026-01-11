@@ -1,5 +1,5 @@
-import { useState } from 'react';
-import { Keyboard, Alert } from 'react-native';
+import { useState, useCallback, useRef, useEffect } from 'react';
+import { Keyboard } from 'react-native';
 import { validateInputLength, sanitizeInput, containsSuspiciousPatterns, MAX_INPUT_LENGTH } from '@/utils/validation';
 
 // Web implementation using a simple heuristic or placeholder
@@ -11,6 +11,12 @@ export function useChatbot() {
   const [response, setResponse] = useState('');
   const [isLoading, setIsLoading] = useState(false);
 
+  // Ref to track question state for stable handleChat callback
+  const questionRef = useRef(question);
+  useEffect(() => {
+    questionRef.current = question;
+  }, [question]);
+
   // Web is always "ready" but has limited capability
   const isModelDownloaded = true;
   const isDownloading = false;
@@ -21,13 +27,14 @@ export function useChatbot() {
   const downloadModel = async () => {};
   const initializeLlama = async () => {};
 
-  const handleChat = async (questionText?: string) => {
+  const handleChat = useCallback(async (questionText?: string) => {
     // Web implementation does not use Keyboard.dismiss() the same way, but it's safe to call if using react-native-web
     try {
         Keyboard.dismiss();
-    } catch (e) {}
+    } catch {}
 
-    let textToAsk = typeof questionText === 'string' ? questionText : question;
+    // Use ref to access latest state without adding it to dependency array
+    let textToAsk = typeof questionText === 'string' ? questionText : questionRef.current;
 
     // Security Validation
     textToAsk = sanitizeInput(textToAsk);
@@ -56,7 +63,7 @@ export function useChatbot() {
         setResponse("Web support for Local AI is currently limited. Please use the mobile app for the full offline AI experience.\n\nHowever, generalized advice: For cramps, try heat and hydration. For cycle tracking, consistency is key.");
         setIsLoading(false);
     }, 1500);
-  };
+  }, []); // Stable callback with no dependencies
 
   return {
     question,
