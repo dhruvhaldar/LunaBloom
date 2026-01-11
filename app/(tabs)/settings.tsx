@@ -161,11 +161,11 @@ export default function SettingsScreen() {
                     text: 'Proceed & Save',
                     style: 'destructive',
                     onPress: async () => {
+                      // Create a temporary file path
+                      const fileName = `period_tracker_backup_${new Date().toISOString().split('T')[0]}.json`;
+                      const fileUri = `${FileSystem.cacheDirectory}${fileName}`;
+
                       try {
-                        // Create a temporary file
-                        const fileName = `period_tracker_backup_${new Date().toISOString().split('T')[0]}.json`;
-                        const fileUri = `${FileSystem.cacheDirectory}${fileName}`;
-                        
                         // Write the backup data to the temporary file
                         await FileSystem.writeAsStringAsync(fileUri, backupJson);
                         
@@ -180,19 +180,21 @@ export default function SettingsScreen() {
                           mimeType: 'application/json',
                           dialogTitle: 'Save Period Tracker Backup',
                           UTI: 'public.json' // iOS only
-                        }).catch((error: any) => {
-                          console.error('❌ Share failed with error:', error instanceof Error ? error.message : String(error));
-                          Alert.alert(
-                            '❌ Backup Failed',
-                            'There was an error sharing your backup. Please try again.'
-                          );
                         });
                       } catch (error: any) {
-                        console.error('❌ Save failed with error:', error instanceof Error ? error.message : String(error));
+                        console.error('❌ Save/Share failed:', error instanceof Error ? error.message : String(error));
                         Alert.alert(
-                          '❌ Save Failed',
+                          '❌ Backup Failed',
                           'There was an error saving your backup. Please try again.'
                         );
+                      } finally {
+                        // Security Cleanup: Delete the temporary file containing PHI
+                        try {
+                          await FileSystem.deleteAsync(fileUri, { idempotent: true });
+                        } catch (deleteError) {
+                          // Log error but don't alert user as the main task might have succeeded
+                          console.error('⚠️ Failed to clean up temporary backup file:', deleteError instanceof Error ? deleteError.message : String(deleteError));
+                        }
                       }
                     }
                   }
