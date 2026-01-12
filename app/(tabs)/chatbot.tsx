@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useMemo } from 'react';
 import { StyleSheet, View, Image, useColorScheme, TextInput, TouchableOpacity, ScrollView, ActivityIndicator, Platform } from 'react-native';
 import { ThemedText } from '@/components/ThemedText';
 import { ThemedView } from '@/components/ThemedView';
@@ -34,6 +34,24 @@ export default function MenstruationScreen() {
   const responseBackgroundColor = colorScheme === 'dark' ? '#457B9D' : '#A8DADC';
   const textColor = colorScheme === 'dark' ? '#F1FAEE' : '#1D3557';
   const placeholderTextColor = colorScheme === 'dark' ? '#F1FAEE' : '#1D3557';
+
+  // Optimization: Memoize suggestions list to prevent re-rendering chips on every keystroke
+  // handleChat is now stable from the hook, so this will only re-render if theme colors change
+  const suggestionsList = useMemo(() => (
+    <View style={styles.suggestionsContainer}>
+      {suggestedQuestions.map((q, index) => (
+        <TouchableOpacity
+          key={index}
+          style={[styles.suggestionChip, { borderColor: textColor }]}
+          onPress={() => handleChat(q)}
+          accessibilityLabel={`Ask: ${q}`}
+          accessibilityRole="button"
+        >
+          <ThemedText style={styles.suggestionText}>{q}</ThemedText>
+        </TouchableOpacity>
+      ))}
+    </View>
+  ), [textColor, handleChat]);
 
   return (
     <ParallaxScrollView headerBackgroundColor={{ light: '#ffdde2', dark: '#151718' }} headerImage={<Image source={require('@/assets/images/history2.png')} style={styles.reactLogo} resizeMode="contain"/>}>
@@ -87,19 +105,7 @@ export default function MenstruationScreen() {
               ) : (
                 <View>
                   <ThemedText style={styles.placeholder}>AI assistant ready. Ask me anything!</ThemedText>
-                  <View style={styles.suggestionsContainer}>
-                    {suggestedQuestions.map((q, index) => (
-                      <TouchableOpacity
-                        key={index}
-                        style={[styles.suggestionChip, { borderColor: textColor }]}
-                        onPress={() => handleChat(q)}
-                        accessibilityLabel={`Ask: ${q}`}
-                        accessibilityRole="button"
-                      >
-                        <ThemedText style={styles.suggestionText}>{q}</ThemedText>
-                      </TouchableOpacity>
-                    ))}
-                  </View>
+                  {suggestionsList}
                 </View>
               )}
             </ScrollView>
