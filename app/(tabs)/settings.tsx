@@ -211,6 +211,7 @@ export default function SettingsScreen() {
       
 
     const restoreData = async () => {
+        let fileUri: string | null = null;
         try {
             const result = await DocumentPicker.getDocumentAsync({
                 type: 'application/json',
@@ -222,7 +223,9 @@ export default function SettingsScreen() {
             }
 
             const file = result.assets[0];
-            const response = await fetch(file.uri);
+            fileUri = file.uri;
+
+            const response = await fetch(fileUri);
             const backupData = await response.json();
 
             // Validate backup data structure
@@ -267,6 +270,15 @@ export default function SettingsScreen() {
                 '❌ Restore Failed',
                 'There was an error restoring your backup. Please try again.'
             );
+        } finally {
+            // Security Cleanup: Delete the temporary file imported to cache
+            if (fileUri) {
+                try {
+                    await FileSystem.deleteAsync(fileUri, { idempotent: true });
+                } catch (deleteError) {
+                    console.error('⚠️ Failed to clean up temporary import file:', deleteError instanceof Error ? deleteError.message : String(deleteError));
+                }
+            }
         }
     };
 
