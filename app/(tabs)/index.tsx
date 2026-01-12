@@ -29,6 +29,15 @@ export default function HomeScreen() {
   const [, setMode] = useState('date');
   const [show, setShow] = useState(false);
 
+  // Optimization: Memoize formatted date to prevent expensive re-calculation on every render (e.g. typing)
+  const formattedLastPeriod = useMemo(() => {
+    return lastPeriod.toLocaleDateString('en-GB', {
+      day: 'numeric',
+      month: 'short',
+      year: 'numeric'
+    });
+  }, [lastPeriod]);
+
   // Color Scheme
   // https://coolors.co/palette/e63946-f1faee-a8dadc-457b9d-1d3557
   const colorScheme = useColorScheme();
@@ -361,15 +370,11 @@ export default function HomeScreen() {
             <TouchableOpacity
               onPress={showDatepicker}
               style={[styles.dateButton, { borderColor: textColor }]}
-              accessibilityLabel={`Select last period start date. Current: ${lastPeriod.toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' })}`}
+              accessibilityLabel={`Select last period start date. Current: ${formattedLastPeriod}`}
               accessibilityRole="button"
             >
               <ThemedText style={[styles.dateText, { color: textColor }]}>
-                {lastPeriod.toLocaleDateString('en-GB', { 
-                  day: 'numeric', 
-                  month: 'short', 
-                  year: 'numeric'
-                })}
+                {formattedLastPeriod}
               </ThemedText>
             </TouchableOpacity>
             {show && (
