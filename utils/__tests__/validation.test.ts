@@ -128,5 +128,15 @@ describe('Validation Utils', () => {
       expect(isValidBackupEntry(null)).toBe(false);
       expect(isValidBackupEntry('string')).toBe(false);
     });
+
+    it('should return false if date is invalid', () => {
+      const entry = { ...validEntry, date: 'invalid-date' };
+      expect(isValidBackupEntry(entry)).toBe(false);
+    });
+
+    it('should return false if lastPeriod is invalid', () => {
+      const entry = { ...validEntry, lastPeriod: 'invalid-date' };
+      expect(isValidBackupEntry(entry)).toBe(false);
+    });
   });
 });
