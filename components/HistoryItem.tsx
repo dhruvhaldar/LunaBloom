@@ -19,6 +19,37 @@ interface HistoryItemProps {
   deleteIconColor: string;
 }
 
+const arePropsEqual = (prevProps: HistoryItemProps, nextProps: HistoryItemProps) => {
+  // Check stable props
+  if (
+    prevProps.onDelete !== nextProps.onDelete ||
+    prevProps.textColor !== nextProps.textColor ||
+    prevProps.deleteIconColor !== nextProps.deleteIconColor
+  ) {
+    return false;
+  }
+
+  // Check item deep equality
+  const prevItem = prevProps.item;
+  const nextItem = nextProps.item;
+
+  // Optimized check: if references are same, return true immediately
+  if (prevItem === nextItem) return true;
+
+  // Check unique ID first (date is creation timestamp)
+  if (prevItem.date !== nextItem.date) return false;
+
+  return (
+    prevItem.lastPeriod === nextItem.lastPeriod &&
+    prevItem.cycleLength === nextItem.cycleLength &&
+    prevItem.selectedFlow === nextItem.selectedFlow &&
+    prevItem.notes === nextItem.notes &&
+    // Check symptoms array content
+    prevItem.selectedSymptoms.length === nextItem.selectedSymptoms.length &&
+    prevItem.selectedSymptoms.every((symptom, index) => symptom === nextItem.selectedSymptoms[index])
+  );
+};
+
 const HistoryItem = React.memo(function HistoryItem({ item, onDelete, textColor, deleteIconColor }: HistoryItemProps) {
   // Format dates once per render
   // Optimization: useMemo derived values to prevent expensive Date parsing and string formatting on every render
@@ -57,7 +88,7 @@ const HistoryItem = React.memo(function HistoryItem({ item, onDelete, textColor,
       </View>
     </View>
   );
-});
+}, arePropsEqual);
 
 const styles = StyleSheet.create({
   entry: {
