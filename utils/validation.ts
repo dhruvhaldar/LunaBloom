@@ -67,14 +67,25 @@ export const containsSuspiciousPatterns = (text: string): boolean => {
  * @param entry The entry object to validate.
  * @returns True if the entry is valid and safe.
  */
+/**
+ * Helper to validate date strings.
+ * @param dateString The string to check.
+ * @returns True if it's a valid date string.
+ */
+const isValidDate = (dateString: string): boolean => {
+  if (!dateString) return false;
+  const date = new Date(dateString);
+  return !isNaN(date.getTime());
+};
+
 export const isValidBackupEntry = (entry: any): boolean => {
   if (typeof entry !== 'object' || entry === null) return false;
 
   // Required fields must exist and be of correct type
-  if (typeof entry.date !== 'string') return false;
+  if (typeof entry.date !== 'string' || !isValidDate(entry.date)) return false;
 
   // lastPeriod could be ISO string
-  if (typeof entry.lastPeriod !== 'string') return false;
+  if (typeof entry.lastPeriod !== 'string' || !isValidDate(entry.lastPeriod)) return false;
 
   // cycleLength can be string or number (based on legacy data)
   if (typeof entry.cycleLength !== 'string' && typeof entry.cycleLength !== 'number') return false;
