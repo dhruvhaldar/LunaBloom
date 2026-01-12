@@ -431,9 +431,13 @@ export default function HomeScreen() {
             placeholder="Record any additional notes..."
             placeholderTextColor={colorScheme === 'dark' ? '#AAAAAA' : '#888'}
             accessibilityLabel="Notes"
+            accessibilityHint={`Maximum ${MAX_NOTES_LENGTH} characters`}
             maxLength={MAX_NOTES_LENGTH}
           />
-          <ThemedText style={{ color: textColor, fontSize: 10, textAlign: 'right' }}>
+          <ThemedText
+            style={{ color: textColor, fontSize: 10, textAlign: 'right' }}
+            accessibilityLabel={`${notes.length} characters used out of ${MAX_NOTES_LENGTH}`}
+          >
             {notes.length}/{MAX_NOTES_LENGTH}
           </ThemedText>
         </ThemedView>
