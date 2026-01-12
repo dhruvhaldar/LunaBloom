@@ -1,11 +1,12 @@
 import React, { useState, useEffect } from 'react';
-import { StyleSheet, View, Alert, useColorScheme, TouchableOpacity, Image, Share,} from 'react-native';
+import { StyleSheet, View, Alert, useColorScheme, TouchableOpacity, Image, Platform } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { IconSymbol } from '@/components/ui/IconSymbol';
 import * as DocumentPicker from 'expo-document-picker';
 import * as FileSystem from 'expo-file-system';
 import * as Sharing from 'expo-sharing';
 import * as ScreenCapture from 'expo-screen-capture';
+import * as Haptics from 'expo-haptics';
 import { isValidBackupEntry } from '@/utils/validation';
 import { ThemedText } from '@/components/ThemedText';
 import { ThemedView } from '@/components/ThemedView';
@@ -20,7 +21,12 @@ interface ToggleSwitchProps {
 const ToggleSwitch: React.FC<ToggleSwitchProps> = ({ value, onValueChange, accessibilityLabel }) => {
     return (
         <TouchableOpacity 
-            onPress={() => onValueChange(!value)} 
+            onPress={() => {
+                if (Platform.OS !== 'web') {
+                    Haptics.selectionAsync();
+                }
+                onValueChange(!value);
+            }}
             style={[styles.toggleContainer, value ? styles.toggleContainerActive : styles.toggleContainerInactive]}
             accessibilityRole="switch"
             accessibilityState={{ checked: value }}
@@ -42,7 +48,6 @@ const ToggleSwitch: React.FC<ToggleSwitchProps> = ({ value, onValueChange, acces
 export default function SettingsScreen() {
     const colorScheme = useColorScheme();
     const textColor = colorScheme === 'dark' ? '#f0f0f0' : '#413c58';
-    const sectionHeadingtextColor = colorScheme === 'dark' ? '#E63946' : '#1D3557';
     
     // Add state for the two toggles
     const [lutealPhase, setLutealPhase] = useState(false);
