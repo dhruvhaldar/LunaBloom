@@ -12,3 +12,8 @@
 **Vulnerability:** The AI model (800MB) was downloaded from a remote URL without any integrity verification (checksum or file size). This exposed the app to corrupted downloads (causing crashes) or potential man-in-the-middle attacks replacing the model.
 **Learning:** Relying on HTTPS alone is insufficient for large binary assets, especially when the file can be partially downloaded (network interruption) and appear "exists" to the filesystem check.
 **Prevention:** Always verify the integrity of downloaded binaries using a checksum (SHA256/MD5) or at least an exact file size check before loading them.
+
+## 2026-01-16 - PHI Remanence in Cache
+**Vulnerability:** When importing a backup file, `DocumentPicker` with `copyToCacheDirectory: true` created a temporary copy of the file containing sensitive PHI. This file was not deleted after processing, leaving plain text health data in the cache directory indefinitely.
+**Learning:** Utilities like `DocumentPicker` often cache files by default. If these files contain sensitive data, relying on the OS to eventually clear the cache is insufficient for privacy compliance (like HIPAA/GDPR).
+**Prevention:** Always wrap file operations involving sensitive data in a `try...finally` block that explicitly deletes the temporary file using `FileSystem.deleteAsync`, regardless of success or failure.
