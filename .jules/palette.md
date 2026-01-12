@@ -17,3 +17,7 @@
 ## 2025-06-04 - [Validation Timing and Haptic Feedback]
 **Learning:** Validating text inputs on every keystroke (`onChangeText`) causes premature and annoying warnings (e.g., flagging "2" as too small when the user intends to type "28"). Deferring validation to `onEndEditing` creates a much smoother experience. Additionally, adding haptic feedback to form interactions (selection, submission) significantly enhances the perceived responsiveness and "delight" of the app.
 **Action:** Use `onEndEditing` for logic-heavy validation warnings while keeping `onChangeText` for character masking. Integrate `expo-haptics` for meaningful state changes.
+
+## 2025-06-05 - [Accessibility of Character Counts]
+**Learning:** Simple text elements displaying "X/Y" for character counts are often ignored or read literally (e.g., "five slash one hundred") by screen readers, failing to convey context. Providing a descriptive `accessibilityLabel` (e.g., "5 characters used out of 100") on the text and an `accessibilityHint` on the input significantly improves the experience for non-visual users.
+**Action:** Always augment raw status text with descriptive accessibility labels and hint at constraints on the input itself.
