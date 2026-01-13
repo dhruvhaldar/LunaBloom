@@ -1,5 +1,5 @@
 import React, { useState, useCallback, useRef } from 'react';
-import { StyleSheet, View, Alert, Button, useColorScheme, Platform, UIManager, Vibration, LayoutAnimation } from 'react-native';
+import { StyleSheet, View, Alert, useColorScheme, Platform, UIManager, Vibration, LayoutAnimation } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { ThemedText } from '@/components/ThemedText';
 import { ThemedView } from '@/components/ThemedView';
@@ -93,7 +93,7 @@ export default function TabTwoScreen() {
                   // Update the ref to prevent the next fetch (e.g. on focus) from re-rendering if it matches
                   lastFetchedEntriesRef.current = newEntriesString;
                 }).catch(err =>
-                  console.error('Failed to persist deletion', err)
+                  console.error('Failed to persist deletion', err instanceof Error ? err.message : String(err))
                 );
                 return updatedEntries;
               });
