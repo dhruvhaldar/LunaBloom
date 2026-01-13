@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { StyleSheet, View, Alert, useColorScheme, TouchableOpacity, Image, Share,} from 'react-native';
+import { StyleSheet, View, Alert, useColorScheme, TouchableOpacity, Image } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { IconSymbol } from '@/components/ui/IconSymbol';
 import * as DocumentPicker from 'expo-document-picker';
@@ -42,7 +42,6 @@ const ToggleSwitch: React.FC<ToggleSwitchProps> = ({ value, onValueChange, acces
 export default function SettingsScreen() {
     const colorScheme = useColorScheme();
     const textColor = colorScheme === 'dark' ? '#f0f0f0' : '#413c58';
-    const sectionHeadingtextColor = colorScheme === 'dark' ? '#E63946' : '#1D3557';
     
     // Add state for the two toggles
     const [lutealPhase, setLutealPhase] = useState(false);
@@ -327,14 +326,26 @@ export default function SettingsScreen() {
                 {/* Backup Section */}
                 <View style={styles.section}>
                     <ThemedText style={[styles.sectionTitle, { color: textColor }]}>Backup</ThemedText>
-                    <View style={styles.settingRow}>
+                    <View style={[styles.settingRow, styles.backupRow]}>
                         <ThemedText style={[styles.settingText, { color: textColor }]}>Period Entries</ThemedText>
                         <View style={styles.actionButtons}>
-                            <TouchableOpacity onPress={restoreData}>
+                            <TouchableOpacity
+                                onPress={restoreData}
+                                style={styles.iconButton}
+                                accessibilityRole="button"
+                                accessibilityLabel="Import backup file"
+                            >
+                                <IconSymbol name="arrow.down.doc.fill" size={20} color="#457B9D" />
                                 <ThemedText style={styles.actionButtonText}>Import</ThemedText>
                             </TouchableOpacity>
-                            <ThemedText style={styles.separator}>|</ThemedText>
-                            <TouchableOpacity onPress={backupData}>
+                            <View style={styles.buttonSpacer} />
+                            <TouchableOpacity
+                                onPress={backupData}
+                                style={styles.iconButton}
+                                accessibilityRole="button"
+                                accessibilityLabel="Export data to file"
+                            >
+                                <IconSymbol name="arrow.up.doc.fill" size={20} color="#457B9D" />
                                 <ThemedText style={styles.actionButtonText}>Export</ThemedText>
                             </TouchableOpacity>
                         </View>
@@ -379,6 +390,11 @@ const styles = StyleSheet.create({
         alignItems: 'center',
         paddingVertical: 12,
     },
+    backupRow: {
+        flexDirection: 'column',
+        alignItems: 'flex-start',
+        gap: 12,
+    },
     settingText: {
         fontSize: 17,
         color: '#ffffff',
@@ -390,17 +406,25 @@ const styles = StyleSheet.create({
     actionButtons: {
         flexDirection: 'row',
         alignItems: 'center',
+        marginTop: 4,
+    },
+    iconButton: {
+        flexDirection: 'row',
+        alignItems: 'center',
+        backgroundColor: 'rgba(69, 123, 157, 0.1)',
+        paddingVertical: 8,
+        paddingHorizontal: 16,
+        borderRadius: 20,
+        minHeight: 44,
+    },
+    buttonSpacer: {
+        width: 12,
     },
     actionButtonText: {
-        fontSize: 17,
+        fontSize: 16,
         color: '#457B9D',
-        paddingHorizontal: 10,
-    },
-    separator: {
-        fontSize: 17,
-        color: '#457B9D',
-        opacity: 0.5,
-        marginHorizontal: 5,
+        marginLeft: 8,
+        fontWeight: '600',
     },
     aboutSection: {
         marginTop: 40,
