@@ -30,36 +30,38 @@ export const sanitizeInput = (text: string): string => {
   return text.replace(/[\x00-\x09\x0B\x0C\x0E-\x1F]/g, '').trim();
 };
 
+// Defense-in-depth: Check for common XSS vectors and malicious patterns.
+// Note: This is not a complete XSS filter but catches common attempts.
+// Optimization: Define patterns once to avoid recreation on every validation call.
+// Global flag 'g' is removed to keep regexes stateless for shared use.
+const SUSPICIOUS_PATTERNS = [
+    /<script\b[^>]*>([\s\S]*?)<\/script>/im,
+    /javascript:/im,
+    /vbscript:/im,
+    /data:text\/html/im,
+    // Common dangerous event handlers (using word boundaries to avoid false positives)
+    /\bonload\s*=/im,
+    /\bonerror\s*=/im,
+    /\bonclick\s*=/im,
+    /\bonmouseover\s*=/im,
+    /\bonfocus\s*=/im,
+    /\bonblur\s*=/im,
+    /\bonsubmit\s*=/im,
+    // HTML tags that can execute code or load external resources
+    /<\/?iframe\b[^>]*>/im,
+    /<\/?object\b[^>]*>/im,
+    /<\/?embed\b[^>]*>/im,
+    /<\/?applet\b[^>]*>/im,
+    /<\/?meta\b[^>]*>/im
+];
+
 /**
  * Checks if the text contains potentially dangerous patterns (basic check).
  * @param text The text to check.
  * @returns True if the text contains suspicious patterns.
  */
 export const containsSuspiciousPatterns = (text: string): boolean => {
-    // Defense-in-depth: Check for common XSS vectors and malicious patterns.
-    // Note: This is not a complete XSS filter but catches common attempts.
-    const suspiciousPatterns = [
-        /<script\b[^>]*>([\s\S]*?)<\/script>/gim,
-        /javascript:/gim,
-        /vbscript:/gim,
-        /data:text\/html/gim,
-        // Common dangerous event handlers (using word boundaries to avoid false positives)
-        /\bonload\s*=/gim,
-        /\bonerror\s*=/gim,
-        /\bonclick\s*=/gim,
-        /\bonmouseover\s*=/gim,
-        /\bonfocus\s*=/gim,
-        /\bonblur\s*=/gim,
-        /\bonsubmit\s*=/gim,
-        // HTML tags that can execute code or load external resources
-        /<\/?iframe\b[^>]*>/gim,
-        /<\/?object\b[^>]*>/gim,
-        /<\/?embed\b[^>]*>/gim,
-        /<\/?applet\b[^>]*>/gim,
-        /<\/?meta\b[^>]*>/gim
-    ];
-
-    return suspiciousPatterns.some(pattern => pattern.test(text));
+    return SUSPICIOUS_PATTERNS.some(pattern => pattern.test(text));
 };
 
 /**
