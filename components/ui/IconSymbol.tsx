@@ -21,6 +21,8 @@ const MAPPING = {
   'chat.fill': 'chat',
   'settings.fill':'settings',
   'checkmark': 'check',
+  'plus': 'add',
+  'minus': 'remove',
 } as Partial<
   Record<
     import('expo-symbols').SymbolViewProps['name'],

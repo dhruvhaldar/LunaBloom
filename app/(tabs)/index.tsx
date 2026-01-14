@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useMemo, useCallback } from 'react';
-import { StyleSheet, TouchableOpacity, TextInput, Alert, useColorScheme, View, Button, ActivityIndicator, Keyboard } from 'react-native';
+import { StyleSheet, TouchableOpacity, TextInput, Alert, useColorScheme, View, ActivityIndicator, Keyboard } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import DateTimePicker from '@react-native-community/datetimepicker';
 import * as Haptics from 'expo-haptics';
@@ -10,6 +10,7 @@ import ParallaxScrollView from '@/components/ParallaxScrollView';
 import { Image } from 'react-native';
 import { IconSymbol } from '@/components/ui/IconSymbol';
 import PredictionSummary from '@/components/PredictionSummary';
+import { StepperInput } from '@/components/ui/StepperInput';
 
 
 export default function HomeScreen() {
@@ -391,28 +392,26 @@ export default function HomeScreen() {
           {/* Cycle Length */}
           <ThemedView style={styles.inputGroup}>
             <ThemedText style={{ color: textColor }}>Cycle Length (days)</ThemedText>
-            <TextInput
-              style={[styles.input, { color: textColor, borderColor: textColor }]}
-              keyboardType="numeric"
+            <StepperInput
               value={cycleLength}
-              onChangeText={handleCycleLengthChange}
+              onChange={handleCycleLengthChange}
               onEndEditing={validateCycleLength}
-              returnKeyType="done"
-              accessibilityLabel="Cycle length in days"
+              min={21}
+              max={120}
+              label="Cycle length in days"
             />
           </ThemedView>
 
           {/* Period Duration */}
           <ThemedView style={styles.inputGroup}>
             <ThemedText style={{ color: textColor }}>Period Duration (days)</ThemedText>
-            <TextInput
-              style={[styles.input, { color: textColor, borderColor: textColor }]}
-              keyboardType="numeric"
+            <StepperInput
               value={periodDuration}
-              onChangeText={handlePeriodDurationChange}
+              onChange={handlePeriodDurationChange}
               onEndEditing={validatePeriodDuration}
-              returnKeyType="done"
-              accessibilityLabel="Period duration in days"
+              min={1}
+              max={14}
+              label="Period duration in days"
             />
           </ThemedView>
         </ThemedView>
