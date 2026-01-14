@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { StyleSheet, View, Alert, useColorScheme, TouchableOpacity, Image, Share,} from 'react-native';
+import { StyleSheet, View, Alert, useColorScheme, TouchableOpacity, Image } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { IconSymbol } from '@/components/ui/IconSymbol';
 import * as DocumentPicker from 'expo-document-picker';
@@ -42,7 +42,6 @@ const ToggleSwitch: React.FC<ToggleSwitchProps> = ({ value, onValueChange, acces
 export default function SettingsScreen() {
     const colorScheme = useColorScheme();
     const textColor = colorScheme === 'dark' ? '#f0f0f0' : '#413c58';
-    const sectionHeadingtextColor = colorScheme === 'dark' ? '#E63946' : '#1D3557';
     
     // Add state for the two toggles
     const [lutealPhase, setLutealPhase] = useState(false);
@@ -326,24 +325,41 @@ export default function SettingsScreen() {
 
                 {/* Backup Section */}
                 <View style={styles.section}>
-                    <ThemedText style={[styles.sectionTitle, { color: textColor }]}>Backup</ThemedText>
-                    <View style={styles.settingRow}>
-                        <ThemedText style={[styles.settingText, { color: textColor }]}>Period Entries</ThemedText>
-                        <View style={styles.actionButtons}>
-                            <TouchableOpacity onPress={restoreData}>
-                                <ThemedText style={styles.actionButtonText}>Import</ThemedText>
-                            </TouchableOpacity>
-                            <ThemedText style={styles.separator}>|</ThemedText>
-                            <TouchableOpacity onPress={backupData}>
-                                <ThemedText style={styles.actionButtonText}>Export</ThemedText>
-                            </TouchableOpacity>
-                        </View>
+                    <ThemedText style={[styles.sectionTitle, { color: textColor }]}>Data Management</ThemedText>
+                    <View style={styles.actionButtonsContainer}>
+                        <TouchableOpacity
+                            onPress={restoreData}
+                            style={[styles.actionButton, { backgroundColor: '#457B9D' }]}
+                            accessibilityRole="button"
+                            accessibilityLabel="Import data from file"
+                            accessibilityHint="Restores your period history from a backup file"
+                        >
+                            <IconSymbol name="square.and.arrow.down" size={20} color="#FFFFFF" style={{ marginRight: 8 }} />
+                            <ThemedText style={styles.actionButtonText}>Import</ThemedText>
+                        </TouchableOpacity>
+
+                        <TouchableOpacity
+                            onPress={backupData}
+                            style={[styles.actionButton, { backgroundColor: '#E63946' }]}
+                            accessibilityRole="button"
+                            accessibilityLabel="Export data to file"
+                            accessibilityHint="Creates a backup file of your period history"
+                        >
+                            <IconSymbol name="square.and.arrow.up" size={20} color="#FFFFFF" style={{ marginRight: 8 }} />
+                            <ThemedText style={styles.actionButtonText}>Export</ThemedText>
+                        </TouchableOpacity>
                     </View>
                 </View>
 
                 {/* About Section */}
                 <View style={styles.aboutSection}>
-                    <TouchableOpacity onPress={aboutOption}>
+                    <TouchableOpacity
+                        onPress={aboutOption}
+                        style={styles.aboutButton}
+                        accessibilityRole="button"
+                        accessibilityLabel="About the app"
+                    >
+                         <IconSymbol name="info.circle" size={20} color="#457B9D" style={{ marginRight: 6 }} />
                         <ThemedText style={styles.aboutAppText}>About</ThemedText>
                     </TouchableOpacity>
                     <ThemedText style={[styles.versionText, { color: textColor }]}>
@@ -387,34 +403,48 @@ const styles = StyleSheet.create({
     switch: {
         transform: [{ scaleX: 0.9 }, { scaleY: 0.9 }],
     },
-    actionButtons: {
+    actionButtonsContainer: {
+        flexDirection: 'row',
+        justifyContent: 'space-between',
+        gap: 12,
+        marginTop: 8,
+    },
+    actionButton: {
+        flex: 1,
         flexDirection: 'row',
         alignItems: 'center',
+        justifyContent: 'center',
+        paddingVertical: 12,
+        borderRadius: 12,
+        elevation: 2,
+        shadowColor: '#000',
+        shadowOffset: { width: 0, height: 2 },
+        shadowOpacity: 0.1,
+        shadowRadius: 4,
     },
     actionButtonText: {
-        fontSize: 17,
-        color: '#457B9D',
-        paddingHorizontal: 10,
-    },
-    separator: {
-        fontSize: 17,
-        color: '#457B9D',
-        opacity: 0.5,
-        marginHorizontal: 5,
+        fontSize: 16,
+        color: '#FFFFFF',
+        fontWeight: '600',
     },
     aboutSection: {
         marginTop: 40,
         alignItems: 'center',
     },
+    aboutButton: {
+        flexDirection: 'row',
+        alignItems: 'center',
+        padding: 10,
+    },
     aboutAppText: {
         fontSize: 17,
         color: '#457B9D',
-        marginBottom: 10,
     },
     versionText: {
         fontSize: 14,
         color: '#ffffff',
         opacity: 0.5,
+        marginTop: 4,
     },
     reactLogo: {
         height: 290,
