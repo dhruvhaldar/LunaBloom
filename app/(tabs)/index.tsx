@@ -3,7 +3,7 @@ import { StyleSheet, TouchableOpacity, TextInput, Alert, useColorScheme, View, B
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import DateTimePicker from '@react-native-community/datetimepicker';
 import * as Haptics from 'expo-haptics';
-import { validateInputLength, MAX_NOTES_LENGTH } from '@/utils/validation';
+import { validateInputLength, MAX_NOTES_LENGTH, sanitizeInput, containsSuspiciousPatterns } from '@/utils/validation';
 import { ThemedText } from '@/components/ThemedText';
 import { ThemedView } from '@/components/ThemedView';
 import ParallaxScrollView from '@/components/ParallaxScrollView';
@@ -190,6 +190,18 @@ export default function HomeScreen() {
   // Save Period Data
   const logPeriod = useCallback(async () => {
     Keyboard.dismiss();
+
+    // Security: Validate notes before saving to prevent Stored XSS and future backup corruption
+    const sanitizedNotes = sanitizeInput(notes);
+    if (containsSuspiciousPatterns(sanitizedNotes)) {
+      Alert.alert(
+        "⚠️ Invalid Input",
+        "Your notes contain characters or patterns that are not allowed for security reasons. Please remove any scripts or HTML tags.",
+        [{ text: "OK" }]
+      );
+      return;
+    }
+
     setIsLogging(true);
     try {
       const entry = {
@@ -199,7 +211,7 @@ export default function HomeScreen() {
         periodDuration,
         selectedFlow,
         selectedSymptoms,
-        notes,
+        notes: sanitizedNotes,
         predictedNextPeriod: predictedPeriods[0]?.toISOString() || null,
         predictedNextOvulation: predictedOvulations[0]?.toISOString() || null,
       };
