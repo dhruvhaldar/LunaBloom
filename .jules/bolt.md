@@ -21,3 +21,7 @@
 ## 2026-02-04 - Stabilizing Callbacks with State Refs
 **Learning:** When a callback depends on a frequently changing state (e.g., a text input), adding that state to the dependency array causes the callback to be recreated on every keystroke. This invalidates any `React.memo` or `useMemo` in child components that receive this callback.
 **Action:** Use a `useRef` to track the current state value inside the hook/component. The callback can then read from `ref.current` and remain stable (empty dependency array), allowing child components to successfully skip re-renders.
+
+## 2026-01-14 - Stateless Regex Optimization
+**Learning:** Defining RegExp objects with the global (`g`) flag inside a shared constant makes them stateful (`lastIndex` persists), which causes incorrect behavior when reused across multiple `test()` calls. Re-creating them in a function is safe but inefficient.
+**Action:** When hoisting regex patterns to module constants for performance, remove the `g` flag to ensure they remain stateless and safe for shared use in validation logic.
