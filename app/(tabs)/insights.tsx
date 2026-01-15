@@ -13,6 +13,7 @@ import ParallaxScrollView from '@/components/ParallaxScrollView';
 import { VictoryBar, VictoryLabel } from 'victory-native';
 import { useFocusEffect, useRouter } from 'expo-router';
 import { EmptyState } from '@/components/ui/EmptyState';
+import { formatDate, DateFormats } from '@/utils/dateFormatter';
 
 const screenWidth = Dimensions.get('window').width;
 
@@ -80,47 +81,57 @@ export default function InsightsScreen() {
     // Optimization: Use string comparison for ISO dates to avoid expensive Date object creation
     const sortedEntries = [...entries].sort((a, b) => b.lastPeriod.localeCompare(a.lastPeriod));
 
-    // Calculate averages
-    const periodDurations = sortedEntries.map((entry) => Number(entry.periodDuration) || 5);
-    const avgPeriodDuration = periodDurations.reduce((sum, duration) => sum + duration, 0) / periodDurations.length;
+    // Bolt Optimization: Calculate stats and format data in a single pass using reduce.
+    // This avoids iterating over the array multiple times (map + reduce + map + map + map)
+    // and uses cached DateFormatters to prevent expensive string formatting in loops.
 
-    const cycleLengths = sortedEntries.map((entry) => Number(entry.cycleLength) || 28);
-    const avgCycleLength = cycleLengths.reduce((sum, length) => sum + length, 0) / cycleLengths.length;
+    interface Accumulator {
+      formattedData: any[];
+      sumPeriodDuration: number;
+      sumCycleLength: number;
+      sumOvulationDay: number;
+    }
 
-    // Calculate formatted data for VictoryBar
-    // VictoryBar expects x and y. x should be sequential or date.
-    // Original logic: map entries, then sort descending by date (so newest first), then assign x based on index.
-    // Wait, original logic:
-    // 1. Map entries (unsorted in original fetch)
-    // 2. Sort by date descending
-    // 3. Map again to assign x: formattedData.length - sortedIndex (so x=1 is oldest, x=N is newest)
+    const { formattedData, sumPeriodDuration, sumCycleLength, sumOvulationDay } = sortedEntries.reduce<Accumulator>((acc, entry, index) => {
+      const cycleLength = Number(entry.cycleLength) || 28;
+      const periodDuration = Number(entry.periodDuration) || 5;
 
-    let formattedData = sortedEntries.map((entry) => ({
-      y: Number(entry.cycleLength) || 28,
-      dateRange: `${new Date(entry.lastPeriod).toLocaleDateString('en-GB', { day: 'numeric', month: 'short' })} - ${entry.predictedNextPeriod ? new Date(entry.predictedNextPeriod).toLocaleDateString('en-GB', { day: 'numeric', month: 'short' }) : 'N/A'}`,
-      date: new Date(entry.lastPeriod),
-      ovulationDay: entry.predictedNextOvulation 
-        ? Math.floor((new Date(entry.predictedNextOvulation).getTime() - new Date(entry.lastPeriod).getTime()) / (1000 * 60 * 60 * 24)) 
-        : 14
-    }));
+      // Calculate Stats
+      acc.sumCycleLength += cycleLength;
+      acc.sumPeriodDuration += periodDuration;
 
-    // Since we already sorted sortedEntries descending, formattedData is already sorted descending.
-    // Assign x so that oldest is on left (x=1) or right?
-    // Original: x: formattedData.length - sortedIndex.
-    // Index 0 (newest) -> x = length - 0 = length (Right side)
-    // Index last (oldest) -> x = length - (length-1) = 1 (Left side)
-    // So graph goes Old -> New from Left -> Right.
-    formattedData = formattedData.map((item, index) => ({
-      ...item,
-      x: formattedData.length - index
-    }));
+      const lastPeriodDate = new Date(entry.lastPeriod);
 
-    const ovulationDays = sortedEntries.map((entry) =>
-      entry.predictedNextOvulation 
-        ? Math.floor((new Date(entry.predictedNextOvulation).getTime() - new Date(entry.lastPeriod).getTime()) / (1000 * 60 * 60 * 24)) 
-        : 14
-    );
-    const avgOvulationDay = ovulationDays.reduce((sum, day) => sum + day, 0) / ovulationDays.length;
+      // Calculate Ovulation Day
+      let ovDay = 14;
+      if (entry.predictedNextOvulation) {
+        const predictedOvulationDate = new Date(entry.predictedNextOvulation);
+        ovDay = Math.floor((predictedOvulationDate.getTime() - lastPeriodDate.getTime()) / (1000 * 60 * 60 * 24));
+      }
+      acc.sumOvulationDay += ovDay;
+
+      // Format Data for Chart
+      const lastPeriodStr = formatDate(lastPeriodDate, DateFormats.MonthDay);
+      let predictedNextPeriodStr = 'N/A';
+      if (entry.predictedNextPeriod) {
+         predictedNextPeriodStr = formatDate(entry.predictedNextPeriod, DateFormats.MonthDay);
+      }
+
+      acc.formattedData.push({
+        y: cycleLength,
+        dateRange: `${lastPeriodStr} - ${predictedNextPeriodStr}`,
+        date: lastPeriodDate,
+        ovulationDay: ovDay,
+        x: sortedEntries.length - index // Calculate x directly: oldest (1) to newest (length)
+      });
+
+      return acc;
+    }, { formattedData: [], sumPeriodDuration: 0, sumCycleLength: 0, sumOvulationDay: 0 });
+
+    const count = sortedEntries.length;
+    const avgPeriodDuration = sumPeriodDuration / count;
+    const avgCycleLength = sumCycleLength / count;
+    const avgOvulationDay = sumOvulationDay / count;
 
     // Predictions using the most recent entry (which is sortedEntries[0])
     const lastEntry = sortedEntries[0];
@@ -130,26 +141,26 @@ export default function InsightsScreen() {
     // Predict Period
     let periodPrediction = 'N/A';
     if (lastEntry.predictedNextPeriod) {
-      periodPrediction = new Date(lastEntry.predictedNextPeriod).toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' });
+      periodPrediction = formatDate(lastEntry.predictedNextPeriod, DateFormats.ShortDate);
     } else {
       const lastPeriodDate = new Date(lastEntry.lastPeriod);
       const predictedDate = new Date(lastPeriodDate);
       const cycleLen = calculatedAvgCycleLength > 0 ? calculatedAvgCycleLength : (Number(lastEntry.cycleLength) || 28);
       predictedDate.setDate(lastPeriodDate.getDate() + cycleLen);
-      periodPrediction = predictedDate.toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' });
+      periodPrediction = formatDate(predictedDate, DateFormats.ShortDate);
     }
 
     // Predict Ovulation
     let ovulationPrediction = 'N/A';
     if (lastEntry.predictedNextOvulation) {
-      ovulationPrediction = new Date(lastEntry.predictedNextOvulation).toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' });
+      ovulationPrediction = formatDate(lastEntry.predictedNextOvulation, DateFormats.ShortDate);
     } else {
       const lastPeriodDate = new Date(lastEntry.lastPeriod);
       const predictedDate = new Date(lastPeriodDate);
       const cycleLen = calculatedAvgCycleLength > 0 ? calculatedAvgCycleLength : (Number(lastEntry.cycleLength) || 28);
       const ovDay = calculatedAvgOvulationDay > 0 ? calculatedAvgOvulationDay : 14;
       predictedDate.setDate(lastPeriodDate.getDate() + cycleLen - ovDay);
-      ovulationPrediction = predictedDate.toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' });
+      ovulationPrediction = formatDate(predictedDate, DateFormats.ShortDate);
     }
 
     return {
