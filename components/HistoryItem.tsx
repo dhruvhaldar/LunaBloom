@@ -1,6 +1,7 @@
 import React, { useMemo } from 'react';
 import { StyleSheet, View, Text, TouchableOpacity } from 'react-native';
 import { IconSymbol } from '@/components/ui/IconSymbol';
+import { formatDate } from '@/utils/dateFormatter';
 
 // Define the shape of an entry based on usage in history.tsx
 export interface HistoryEntry {
@@ -54,11 +55,11 @@ const HistoryItem = React.memo(function HistoryItem({ item, onDelete, textColor,
   // Format dates once per render
   // Optimization: useMemo derived values to prevent expensive Date parsing and string formatting on every render
   const lastPeriodDate = useMemo(() => {
-    return new Date(item.lastPeriod).toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' });
+    return formatDate(item.lastPeriod);
   }, [item.lastPeriod]);
 
   const logDate = useMemo(() => {
-    return new Date(item.date).toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' });
+    return formatDate(item.date);
   }, [item.date]);
 
   const symptomsString = useMemo(() => {

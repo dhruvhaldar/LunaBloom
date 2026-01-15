@@ -2,6 +2,7 @@ import React, { useMemo } from 'react';
 import { StyleSheet } from 'react-native';
 import { ThemedText } from '@/components/ThemedText';
 import { ThemedView } from '@/components/ThemedView';
+import { formatDate, DateFormats } from '@/utils/dateFormatter';
 
 interface PredictionSummaryProps {
   predictedPeriods: Date[];
@@ -46,10 +47,7 @@ const PredictionSummary = React.memo(function PredictionSummary({
             ]}
           >
             <ThemedText style={{ color: textColor }}>
-              {date.toLocaleDateString('en-GB', {
-                day: 'numeric',
-                month: 'short'
-              })}
+              {formatDate(date, DateFormats.MonthDay)}
             </ThemedText>
             <ThemedText
               style={{
@@ -58,13 +56,7 @@ const PredictionSummary = React.memo(function PredictionSummary({
                 marginTop: 5
               }}
             >
-              {periodStartDate.toLocaleDateString('en-GB', {
-                day: 'numeric',
-                month: 'short'
-              })} - {periodEndDate.toLocaleDateString('en-GB', {
-                day: 'numeric',
-                month: 'short'
-              })}
+              {formatDate(periodStartDate, DateFormats.MonthDay)} - {formatDate(periodEndDate, DateFormats.MonthDay)}
             </ThemedText>
           </ThemedView>
         );
@@ -97,10 +89,7 @@ const PredictionSummary = React.memo(function PredictionSummary({
             ]}
           >
             <ThemedText style={{ color: textColor }}>
-              Ovulation: {date.toLocaleDateString('en-GB', {
-                day: 'numeric',
-                month: 'short'
-              })}
+              Ovulation: {formatDate(date, DateFormats.MonthDay)}
             </ThemedText>
             <ThemedText
               style={{
@@ -109,13 +98,7 @@ const PredictionSummary = React.memo(function PredictionSummary({
                 marginTop: 5
               }}
             >
-              Fertile Window: {fertileWindowStart.toLocaleDateString('en-GB', {
-                day: 'numeric',
-                month: 'short'
-              })} - {fertileWindowEnd.toLocaleDateString('en-GB', {
-                day: 'numeric',
-                month: 'short'
-              })}
+              Fertile Window: {formatDate(fertileWindowStart, DateFormats.MonthDay)} - {formatDate(fertileWindowEnd, DateFormats.MonthDay)}
             </ThemedText>
           </ThemedView>
         );
