@@ -7,3 +7,8 @@
 **Vulnerability:** Personal Health Information (PHI) such as menstruation cycle dates, symptoms, and notes were being explicitly logged to the console in `app/(tabs)/index.tsx` via `console.log('Logging entry:', entry)`.
 **Learning:** Debugging logs that print full data objects can inadvertently expose sensitive user data, which is a critical privacy violation, especially for health apps.
 **Prevention:** Strictly enforce a "no console.log" policy for production code. Use a logging service that scrubs sensitive data or ensure logs are stripped during the build process.
+
+## 2025-05-01 - Client-Side API Key Exposure
+**Vulnerability:** The application was calling the OpenAI API directly from the client using `EXPO_PUBLIC_API_KEY`. This exposed the secret key to anyone capable of inspecting the app's bundle or network traffic.
+**Learning:** Client-side apps cannot keep secrets. Any key stored in the frontend code is considered public.
+**Prevention:** Transitioned to a Local LLM (`llama.rn`) running on-device. This removes the need for API keys entirely and ensures user data (prompts) never leaves the device, providing superior privacy and security.

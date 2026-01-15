@@ -9,3 +9,7 @@
 ## 2024-05-26 - [Feedback during Async Operations]
 **Learning:** In chat interfaces, disappearing content (clearing the previous response) without an immediate replacement creates a "flash of empty content" that confuses users, especially if the keyboard remains open. A dedicated, centered "Thinking..." state provides reassurance that the system is working, unlike a small spinner on a button which might be obscured.
 **Action:** For AI interactions, replace the content area with a friendly loading state rather than showing the empty state again.
+
+## 2025-05-01 - [Large Asset Downloads in UI]
+**Learning:** Requiring a large initial download (e.g., 800MB AI model) blocks the user from the core feature. Users need clear context ("Why do I need to download this?"), progress feedback (percentage), and the ability to continue using other parts of the app while the download (conceptually) happens or checks state.
+**Action:** Implemented a dedicated "Setup" state in the UI with a clear call-to-action and progress indicator, separating the "infrastructure setup" from the "chat interaction" to manage user expectations.
