@@ -1,6 +1,6 @@
 import { useState, useCallback, useRef, useEffect } from 'react';
 import { Keyboard } from 'react-native';
-import { validateInputLength, sanitizeInput, containsSuspiciousPatterns, MAX_INPUT_LENGTH } from '@/utils/validation';
+import { validateInputLength, sanitizeInput, sanitizePromptInput, containsSuspiciousPatterns, MAX_INPUT_LENGTH } from '@/utils/validation';
 
 // Web implementation using a simple heuristic or placeholder
 // Real local LLM on web (transformers.js) requires significant build config changes in Expo (metro/webpack) for WASM/Workers.
@@ -38,6 +38,8 @@ export function useChatbot() {
 
     // Security Validation
     textToAsk = sanitizeInput(textToAsk);
+    // Prevent prompt injection by removing role markers
+    textToAsk = sanitizePromptInput(textToAsk);
 
     if (!textToAsk) return;
 
