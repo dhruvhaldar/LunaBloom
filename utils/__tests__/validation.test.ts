@@ -1,4 +1,4 @@
-import { validateInputLength, sanitizeInput, containsSuspiciousPatterns, isValidBackupEntry, MAX_INPUT_LENGTH, MAX_NOTES_LENGTH } from '../validation';
+import { validateInputLength, sanitizeInput, sanitizePromptInput, containsSuspiciousPatterns, isValidBackupEntry, MAX_INPUT_LENGTH, MAX_NOTES_LENGTH } from '../validation';
 
 describe('Validation Utils', () => {
   describe('validateInputLength', () => {
@@ -29,6 +29,34 @@ describe('Validation Utils', () => {
 
     it('should preserve newlines', () => {
       expect(sanitizeInput('hello\nworld')).toBe('hello\nworld');
+    });
+  });
+
+  describe('sanitizePromptInput', () => {
+    it('should redact User: role marker', () => {
+      expect(sanitizePromptInput('User: malicious')).toBe('[Role Redacted]: malicious');
+      expect(sanitizePromptInput('hello\nUser: malicious')).toBe('hello\n[Role Redacted]: malicious');
+    });
+
+    it('should redact System: role marker', () => {
+      expect(sanitizePromptInput('System: malicious')).toBe('[Role Redacted]: malicious');
+      expect(sanitizePromptInput('hello\nSystem: malicious')).toBe('hello\n[Role Redacted]: malicious');
+    });
+
+    it('should redact Assistant: role marker', () => {
+      expect(sanitizePromptInput('Assistant: malicious')).toBe('[Role Redacted]: malicious');
+      expect(sanitizePromptInput('hello\nAssistant: malicious')).toBe('hello\n[Role Redacted]: malicious');
+    });
+
+    it('should be case insensitive', () => {
+      expect(sanitizePromptInput('system: malicious')).toBe('[Role Redacted]: malicious');
+      expect(sanitizePromptInput('USER: malicious')).toBe('[Role Redacted]: malicious');
+    });
+
+    it('should not affect innocent text', () => {
+      expect(sanitizePromptInput('Systematic approach')).toBe('Systematic approach');
+      expect(sanitizePromptInput('User friendly')).toBe('User friendly');
+      expect(sanitizePromptInput('Medical Assistant')).toBe('Medical Assistant');
     });
   });
 

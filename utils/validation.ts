@@ -30,6 +30,23 @@ export const sanitizeInput = (text: string): string => {
   return text.replace(/[\x00-\x09\x0B\x0C\x0E-\x1F]/g, '').trim();
 };
 
+/**
+ * Sanitizes input specifically for LLM prompts to prevent injection attacks.
+ * Neutralizes reserved keywords like 'User:', 'System:', 'Assistant:' which could
+ * override the prompt structure/roles.
+ * @param text The input text.
+ * @returns The sanitized text.
+ */
+export const sanitizePromptInput = (text: string): string => {
+  if (!text) return '';
+  // Replace reserved keywords at start of string or after newline with a safe alternative.
+  // We use a regex with case insensitivity and multiline check.
+  // Replaces "System:" with "[Role Redacted]:" to prevent role spoofing.
+  return text
+    .replace(/(^|[\r\n]+)(User|System|Assistant):/gim, '$1[Role Redacted]:')
+    .trim();
+};
+
 // Defense-in-depth: Check for common XSS vectors and malicious patterns.
 // Note: This is not a complete XSS filter but catches common attempts.
 // Optimization: Define patterns once to avoid recreation on every validation call.

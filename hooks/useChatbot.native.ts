@@ -2,7 +2,7 @@ import { useState, useEffect, useCallback, useRef } from 'react';
 import { Keyboard, Alert } from 'react-native';
 import { initLlama, LlamaContext } from 'llama.rn';
 import * as FileSystem from 'expo-file-system';
-import { validateInputLength, sanitizeInput, containsSuspiciousPatterns, MAX_INPUT_LENGTH } from '@/utils/validation';
+import { validateInputLength, sanitizeInput, sanitizePromptInput, containsSuspiciousPatterns, MAX_INPUT_LENGTH } from '@/utils/validation';
 
 const MODEL_URL = 'https://huggingface.co/hugging-quants/Llama-3.2-1B-Instruct-Q4_K_M-GGUF/resolve/main/llama-3.2-1b-instruct-q4_k_m.gguf';
 const MODEL_FILENAME = 'llama-3.2-1b-instruct-q4_k_m.gguf';
@@ -103,6 +103,8 @@ export function useChatbot() {
 
     // Security Validation
     textToAsk = sanitizeInput(textToAsk);
+    // Prevent prompt injection by removing role markers
+    textToAsk = sanitizePromptInput(textToAsk);
 
     if (!textToAsk) return;
 
