@@ -2,8 +2,7 @@ import React, { useState, useCallback, useRef } from 'react';
 import { StyleSheet, View, Alert, useColorScheme, Platform, UIManager, Vibration, LayoutAnimation } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { ThemedText } from '@/components/ThemedText';
-import { ThemedView } from '@/components/ThemedView';
-import ParallaxScrollView from '@/components/ParallaxScrollView';
+import ParallaxFlatList from '@/components/ParallaxFlatList';
 import { useFocusEffect, useRouter } from 'expo-router';
 import { Image } from 'react-native';
 import HistoryItem, { HistoryEntry } from '@/components/HistoryItem';
@@ -108,9 +107,31 @@ export default function TabTwoScreen() {
       ]
     );
   }, []); // useCallback dependency array is empty because we use functional state update
+
+  const renderItem = useCallback(({ item }: { item: HistoryEntry }) => (
+    <HistoryItem
+      item={item}
+      onDelete={handleDelete}
+      textColor={textColor}
+      deleteIconColor={deleteIconColor}
+    />
+  ), [handleDelete, textColor, deleteIconColor]);
  
+  const listHeader = (
+    <View style={styles.entriesContainer}>
+      <ThemedText type="title" style={[styles.header, { color: textColor }]}>History</ThemedText>
+
+      <ThemedText
+        type="subtitle"
+        style={{ color: sectionHeadingtextColor , marginBottom: 10}}
+      >
+        Logged Entries 📝
+      </ThemedText>
+    </View>
+  );
+
   return (
-    <ParallaxScrollView
+    <ParallaxFlatList
       headerBackgroundColor={{ light: Parallaxheaderlightcolor, dark: Parallaxheaderdarkcolor }}
       headerImage={
         <Image 
@@ -119,40 +140,21 @@ export default function TabTwoScreen() {
           resizeMode="contain"
         />
       }
-    >
-      <ThemedView style={styles.container}>
-        <View style={styles.entriesContainer}>
-          <ThemedText type="title" style={[styles.header, { color: textColor }]}>History</ThemedText>
-          
-          <ThemedText
-            type="subtitle"
-            style={{ color: sectionHeadingtextColor , marginBottom: 10}}
-          >
-            Logged Entries 📝
-          </ThemedText>
-          
-          {entries.length === 0 ? (
-            <EmptyState
-              title="No Entries Yet"
-              message="Track your first period to start seeing your history here."
-              icon="history.fill"
-              actionLabel="Log Period"
-              onAction={() => router.push('/')}
-            />
-          ) : (
-            entries.map((item) => (
-              <HistoryItem
-                key={item.date}
-                item={item}
-                onDelete={handleDelete}
-                textColor={textColor}
-                deleteIconColor={deleteIconColor}
-              />
-            ))
-          )}
-        </View>
-      </ThemedView>
-    </ParallaxScrollView>
+      data={entries}
+      renderItem={renderItem}
+      keyExtractor={(item) => item.date}
+      ListHeaderComponent={listHeader}
+      ListEmptyComponent={
+        <EmptyState
+          title="No Entries Yet"
+          message="Track your first period to start seeing your history here."
+          icon="history.fill"
+          actionLabel="Log Period"
+          onAction={() => router.push('/')}
+        />
+      }
+      contentContainerStyle={{ paddingHorizontal: 32, paddingBottom: 120 }}
+    />
   );
 }
 
