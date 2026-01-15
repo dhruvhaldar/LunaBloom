@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
-import { StyleSheet, View, Alert, useColorScheme, TouchableOpacity, Image } from 'react-native';
+import { StyleSheet, View, Alert, useColorScheme, TouchableOpacity, Image, Platform } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import * as Haptics from 'expo-haptics';
 import { IconSymbol } from '@/components/ui/IconSymbol';
 import * as DocumentPicker from 'expo-document-picker';
 import * as FileSystem from 'expo-file-system';
@@ -20,7 +21,12 @@ interface ToggleSwitchProps {
 const ToggleSwitch: React.FC<ToggleSwitchProps> = ({ value, onValueChange, accessibilityLabel }) => {
     return (
         <TouchableOpacity 
-            onPress={() => onValueChange(!value)} 
+            onPress={() => {
+                if (Platform.OS !== 'web') {
+                    Haptics.selectionAsync();
+                }
+                onValueChange(!value);
+            }}
             style={[styles.toggleContainer, value ? styles.toggleContainerActive : styles.toggleContainerInactive]}
             accessibilityRole="switch"
             accessibilityState={{ checked: value }}
