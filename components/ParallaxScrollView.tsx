@@ -1,5 +1,5 @@
 import type { PropsWithChildren, ReactElement } from 'react';
-import { StyleSheet } from 'react-native';
+import { StyleSheet, FlatListProps } from 'react-native';
 import Animated, {
   interpolate,
   useAnimatedRef,
@@ -13,18 +13,21 @@ import { useColorScheme } from '@/hooks/useColorScheme';
 
 const HEADER_HEIGHT = 150;
 
-type Props = PropsWithChildren<{
+type Props<T = any> = PropsWithChildren<{
   headerImage: ReactElement;
   headerBackgroundColor: { dark: string; light: string };
+  flatListProps?: FlatListProps<T>;
 }>;
 
-export default function ParallaxScrollView({
+export default function ParallaxScrollView<T>({
   children,
   headerImage,
   headerBackgroundColor,
-}: Props) {
+  flatListProps,
+}: Props<T>) {
   const colorScheme = useColorScheme() ?? 'light';
-  const scrollRef = useAnimatedRef<Animated.ScrollView>();
+  // Use generic generic ref that works for both ScrollView and FlatList for useScrollViewOffset
+  const scrollRef = useAnimatedRef<any>();
   const scrollOffset = useScrollViewOffset(scrollRef);
   const bottom = useBottomTabOverflow();
   const headerAnimatedStyle = useAnimatedStyle(() => {
@@ -44,23 +47,44 @@ export default function ParallaxScrollView({
     };
   });
 
+  const headerElement = (
+    <>
+      <Animated.View
+        style={[
+          styles.header,
+          { backgroundColor: headerBackgroundColor[colorScheme] },
+          headerAnimatedStyle,
+        ]}>
+        {headerImage}
+      </Animated.View>
+      <ThemedView style={styles.content}>{children}</ThemedView>
+    </>
+  );
+
   return (
     <ThemedView style={styles.container}>
-      <Animated.ScrollView
-        ref={scrollRef}
-        scrollEventThrottle={16}
-        scrollIndicatorInsets={{ bottom }}
-        contentContainerStyle={{ paddingBottom: bottom }}>
-        <Animated.View
-          style={[
-            styles.header,
-            { backgroundColor: headerBackgroundColor[colorScheme] },
-            headerAnimatedStyle,
-          ]}>
-          {headerImage}
-        </Animated.View>
-        <ThemedView style={styles.content}>{children}</ThemedView>
-      </Animated.ScrollView>
+      {flatListProps ? (
+        <Animated.FlatList
+          ref={scrollRef}
+          scrollEventThrottle={16}
+          scrollIndicatorInsets={{ bottom }}
+          ListHeaderComponent={headerElement}
+          {...flatListProps}
+          contentContainerStyle={[
+             // Ensure safe area padding is applied, but allow overrides
+             { paddingBottom: bottom },
+             flatListProps.contentContainerStyle
+          ]}
+        />
+      ) : (
+        <Animated.ScrollView
+          ref={scrollRef}
+          scrollEventThrottle={16}
+          scrollIndicatorInsets={{ bottom }}
+          contentContainerStyle={{ paddingBottom: bottom }}>
+          {headerElement}
+        </Animated.ScrollView>
+      )}
     </ThemedView>
   );
 }

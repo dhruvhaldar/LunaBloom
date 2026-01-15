@@ -109,6 +109,25 @@ export default function TabTwoScreen() {
     );
   }, []); // useCallback dependency array is empty because we use functional state update
  
+  const renderItem = useCallback(({ item }: { item: HistoryEntry }) => (
+    <HistoryItem
+      item={item}
+      onDelete={handleDelete}
+      textColor={textColor}
+      deleteIconColor={deleteIconColor}
+    />
+  ), [handleDelete, textColor, deleteIconColor]);
+
+  const renderEmptyComponent = useCallback(() => (
+    <EmptyState
+      title="No Entries Yet"
+      message="Track your first period to start seeing your history here."
+      icon="history.fill"
+      actionLabel="Log Period"
+      onAction={() => router.push('/')}
+    />
+  ), [router]);
+
   return (
     <ParallaxScrollView
       headerBackgroundColor={{ light: Parallaxheaderlightcolor, dark: Parallaxheaderdarkcolor }}
@@ -119,6 +138,13 @@ export default function TabTwoScreen() {
           resizeMode="contain"
         />
       }
+      flatListProps={{
+        data: entries,
+        renderItem: renderItem,
+        keyExtractor: (item) => item.date,
+        ListEmptyComponent: renderEmptyComponent,
+        // Removed contentContainerStyle since ParallaxScrollView handles it now
+      }}
     >
       <ThemedView style={styles.container}>
         <View style={styles.entriesContainer}>
@@ -130,26 +156,6 @@ export default function TabTwoScreen() {
           >
             Logged Entries 📝
           </ThemedText>
-          
-          {entries.length === 0 ? (
-            <EmptyState
-              title="No Entries Yet"
-              message="Track your first period to start seeing your history here."
-              icon="history.fill"
-              actionLabel="Log Period"
-              onAction={() => router.push('/')}
-            />
-          ) : (
-            entries.map((item) => (
-              <HistoryItem
-                key={item.date}
-                item={item}
-                onDelete={handleDelete}
-                textColor={textColor}
-                deleteIconColor={deleteIconColor}
-              />
-            ))
-          )}
         </View>
       </ThemedView>
     </ParallaxScrollView>
@@ -159,7 +165,7 @@ export default function TabTwoScreen() {
 const styles = StyleSheet.create({
   container: {
     padding: 0,
-    paddingBottom: 90, // Add enough padding to prevent overlap with the tab bar
+    // removed paddingBottom since it's handled by FlatList contentContainerStyle or safe area
   },
   header: {
     marginTop: -30,
