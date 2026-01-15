@@ -7,7 +7,7 @@ import * as DocumentPicker from 'expo-document-picker';
 import * as FileSystem from 'expo-file-system';
 import * as Sharing from 'expo-sharing';
 import * as ScreenCapture from 'expo-screen-capture';
-import { isValidBackupEntry } from '@/utils/validation';
+import { isValidBackupEntry, sanitizeInput } from '@/utils/validation';
 import { ThemedText } from '@/components/ThemedText';
 import { ThemedView } from '@/components/ThemedView';
 import ParallaxScrollView from '@/components/ParallaxScrollView';
@@ -247,6 +247,13 @@ export default function SettingsScreen() {
             const validEntries = backupData.entries.filter((entry: any) => isValidBackupEntry(entry));
             const invalidCount = backupData.entries.length - validEntries.length;
 
+            // Security: Sanitize data to ensure consistency with input validation rules
+            // This prevents bypassing filters (like control characters) via backup restore
+            const sanitizedEntries = validEntries.map((entry: any) => ({
+                ...entry,
+                notes: sanitizeInput(entry.notes)
+            }));
+
             if (invalidCount > 0) {
                  Alert.alert(
                     '⚠️ Warning',
@@ -254,7 +261,7 @@ export default function SettingsScreen() {
                 );
             }
 
-            if (validEntries.length === 0) {
+            if (sanitizedEntries.length === 0) {
                  Alert.alert(
                     '❌ Restore Failed',
                     'No valid entries found in the backup file.'
@@ -263,7 +270,7 @@ export default function SettingsScreen() {
             }
 
             // Store the entries in AsyncStorage
-            await AsyncStorage.setItem('periodEntries', JSON.stringify(validEntries));
+            await AsyncStorage.setItem('periodEntries', JSON.stringify(sanitizedEntries));
             
             Alert.alert(
                 '✅ Restore Successful',
