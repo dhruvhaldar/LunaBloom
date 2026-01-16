@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useMemo, useCallback } from 'react';
+import React, { useState, useEffect, useMemo, useCallback, useRef } from 'react';
 import { StyleSheet, TouchableOpacity, TextInput, Alert, useColorScheme, View, Button, ActivityIndicator, Keyboard } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import DateTimePicker from '@react-native-community/datetimepicker';
@@ -23,6 +23,12 @@ export default function HomeScreen() {
   const [lutealPhaseEnabled, setLutealPhaseEnabled] = useState(false);
   const [selectedFlow, setSelectedFlow] = useState<string | null>(null);
   const [isLogging, setIsLogging] = useState(false);
+
+  // Ref to track notes for stable callbacks
+  const notesRef = useRef(notes);
+  useEffect(() => {
+    notesRef.current = notes;
+  }, [notes]);
 
   // Date Picker States
   const [date, setDate] = useState(new Date());
@@ -188,11 +194,13 @@ export default function HomeScreen() {
   }, [lastPeriod, cycleLength, lutealPhaseEnabled]);
 
   // Save Period Data
+  // Optimization: Use ref for notes to keep callback stable during typing
   const logPeriod = useCallback(async () => {
     Keyboard.dismiss();
+    const currentNotes = notesRef.current;
 
     // Security: Validate notes before saving to prevent Stored XSS and future backup corruption
-    const sanitizedNotes = sanitizeInput(notes);
+    const sanitizedNotes = sanitizeInput(currentNotes);
     if (containsSuspiciousPatterns(sanitizedNotes)) {
       Alert.alert(
         "⚠️ Invalid Input",
@@ -259,7 +267,7 @@ export default function HomeScreen() {
     } finally {
       setIsLogging(false);
     }
-  }, [lastPeriod, cycleLength, periodDuration, selectedFlow, selectedSymptoms, notes, predictedPeriods, predictedOvulations]);
+  }, [lastPeriod, cycleLength, periodDuration, selectedFlow, selectedSymptoms, predictedPeriods, predictedOvulations]); // notes removed from dependencies
 
   // Optimized: Memoize flow section to prevent re-renders when notes/date change
   const flowSection = useMemo(() => (
@@ -460,22 +468,24 @@ export default function HomeScreen() {
         </ThemedView>
 
         {/* Log Period Button */}
-        <TouchableOpacity
-          style={[styles.logButton, isLogging && styles.logButtonDisabled]}
-          onPress={logPeriod}
-          disabled={isLogging}
-          accessibilityLabel="Log Period Entry"
-          accessibilityRole="button"
-          accessibilityState={{ disabled: isLogging, busy: isLogging }}
-        >
-          {isLogging ? (
-            <ActivityIndicator color="#ffffff" />
-          ) : (
-            <ThemedText style={styles.logButtonText}>
-              Log Period Entry 📖
-            </ThemedText>
-          )}
-        </TouchableOpacity>
+        {useMemo(() => (
+          <TouchableOpacity
+            style={[styles.logButton, isLogging && styles.logButtonDisabled]}
+            onPress={logPeriod}
+            disabled={isLogging}
+            accessibilityLabel="Log Period Entry"
+            accessibilityRole="button"
+            accessibilityState={{ disabled: isLogging, busy: isLogging }}
+          >
+            {isLogging ? (
+              <ActivityIndicator color="#ffffff" />
+            ) : (
+              <ThemedText style={styles.logButtonText}>
+                Log Period Entry 📖
+              </ThemedText>
+            )}
+          </TouchableOpacity>
+        ), [isLogging, logPeriod])}
 
         {/* Predicted Periods */}
         <PredictionSummary
