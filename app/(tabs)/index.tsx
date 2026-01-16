@@ -16,7 +16,9 @@ export default function HomeScreen() {
   // State Management
   const [lastPeriod, setLastPeriod] = useState(new Date());
   const [cycleLength, setCycleLength] = useState('28');
+  const [cycleWarning, setCycleWarning] = useState<string | null>(null);
   const [periodDuration, setPeriodDuration] = useState('5');
+  const [periodWarning, setPeriodWarning] = useState<string | null>(null);
   // Predictions are now derived via useMemo
   const [selectedSymptoms, setSelectedSymptoms] = useState<string[]>([]);
   const [notes, setNotes] = useState('');
@@ -89,22 +91,17 @@ export default function HomeScreen() {
 
   const validateCycleLength = useCallback(() => {
     const number = parseInt(cycleLength, 10);
-    if (isNaN(number)) return;
+    if (isNaN(number)) {
+      setCycleWarning(null);
+      return;
+    }
 
     if (number < 21) {
-      Alert.alert(
-        "⚠️ Short Cycle Length",
-        "Your cycle length is less than 21 days. This may indicate hormonal imbalances. 💡 Consider consulting a doctor. 🩺",
-        [{ text: "Got it! ✅" }]
-      );
-    }
-    
-    if (number > 35) {
-      Alert.alert(
-        "⚠️ Long Cycle Length",
-        "Your cycle length is over 35 days. This could be linked to conditions like PCOS. 🏥 Consider medical advice. 💙",
-        [{ text: "Understood! 👍" }]
-      );
+      setCycleWarning("Cycle < 21 days may imply hormonal issues 🩺");
+    } else if (number > 35) {
+      setCycleWarning("Cycle > 35 days might be linked to PCOS 🏥");
+    } else {
+      setCycleWarning(null);
     }
   }, [cycleLength]);
 
@@ -130,14 +127,15 @@ export default function HomeScreen() {
 
   const validatePeriodDuration = useCallback(() => {
     const number = parseInt(periodDuration, 10);
-    if (isNaN(number)) return;
+    if (isNaN(number)) {
+      setPeriodWarning(null);
+      return;
+    }
 
     if (number > 7) {
-      Alert.alert(
-        "⚠️ Long Period Duration",
-        "Your period duration is longer than 7 days. This could indicate hormonal imbalances. 🩺 Consider consulting a doctor. 💡",
-        [{ text: "Got it! ✅" }]
-      );
+      setPeriodWarning("Duration > 7 days may imply hormonal issues 🩺");
+    } else {
+      setPeriodWarning(null);
     }
   }, [periodDuration]);
 
@@ -409,32 +407,52 @@ export default function HomeScreen() {
           </ThemedView>
 
           {/* Cycle Length */}
-          <ThemedView style={styles.inputGroup}>
-            <ThemedText style={{ color: textColor }}>Cycle Length (days)</ThemedText>
-            <TextInput
-              style={[styles.input, { color: textColor, borderColor: textColor }]}
-              keyboardType="numeric"
-              value={cycleLength}
-              onChangeText={handleCycleLengthChange}
-              onEndEditing={validateCycleLength}
-              returnKeyType="done"
-              accessibilityLabel="Cycle length in days"
-            />
-          </ThemedView>
+          <View>
+            <ThemedView style={styles.inputGroup}>
+              <ThemedText style={{ color: textColor }}>Cycle Length (days)</ThemedText>
+              <TextInput
+                style={[styles.input, { color: textColor, borderColor: textColor }]}
+                keyboardType="numeric"
+                value={cycleLength}
+                onChangeText={handleCycleLengthChange}
+              onBlur={validateCycleLength}
+                returnKeyType="done"
+                accessibilityLabel="Cycle length in days"
+              />
+            </ThemedView>
+            {cycleWarning && (
+              <ThemedText
+                style={{ color: '#E63946', fontSize: 12, marginTop: -8, marginBottom: 8, textAlign: 'right' }}
+                accessibilityLiveRegion="polite"
+              >
+                ⚠️ {cycleWarning}
+              </ThemedText>
+            )}
+          </View>
 
           {/* Period Duration */}
-          <ThemedView style={styles.inputGroup}>
-            <ThemedText style={{ color: textColor }}>Period Duration (days)</ThemedText>
-            <TextInput
-              style={[styles.input, { color: textColor, borderColor: textColor }]}
-              keyboardType="numeric"
-              value={periodDuration}
-              onChangeText={handlePeriodDurationChange}
-              onEndEditing={validatePeriodDuration}
-              returnKeyType="done"
-              accessibilityLabel="Period duration in days"
-            />
-          </ThemedView>
+          <View>
+            <ThemedView style={styles.inputGroup}>
+              <ThemedText style={{ color: textColor }}>Period Duration (days)</ThemedText>
+              <TextInput
+                style={[styles.input, { color: textColor, borderColor: textColor }]}
+                keyboardType="numeric"
+                value={periodDuration}
+                onChangeText={handlePeriodDurationChange}
+              onBlur={validatePeriodDuration}
+                returnKeyType="done"
+                accessibilityLabel="Period duration in days"
+              />
+            </ThemedView>
+            {periodWarning && (
+              <ThemedText
+                style={{ color: '#E63946', fontSize: 12, marginTop: -8, marginBottom: 8, textAlign: 'right' }}
+                accessibilityLiveRegion="polite"
+              >
+                ⚠️ {periodWarning}
+              </ThemedText>
+            )}
+          </View>
         </ThemedView>
 
         {/* Period Flow Section */}
