@@ -86,8 +86,11 @@ The app is configured with two signing profiles:
    - Default debug credentials
 
 2. Release signing (for production):
-   - Keystore: `lunabloom.keystore`
-   - Configured in `android/app/build.gradle`
+   - Requires setting the following properties in your `~/.gradle/gradle.properties` or passing them as command line arguments (e.g. `-PLUNABLOOM_RELEASE_STORE_FILE=...`):
+     - `LUNABLOOM_RELEASE_STORE_FILE`: Path to the keystore file (e.g. `lunabloom.keystore`)
+     - `LUNABLOOM_RELEASE_STORE_PASSWORD`: Keystore password
+     - `LUNABLOOM_RELEASE_KEY_ALIAS`: Key alias
+     - `LUNABLOOM_RELEASE_KEY_PASSWORD`: Key password
 
 ## Troubleshooting
 
