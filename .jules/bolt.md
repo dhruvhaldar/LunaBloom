@@ -25,3 +25,7 @@
 ## 2026-01-14 - Stateless Regex Optimization
 **Learning:** Defining RegExp objects with the global (`g`) flag inside a shared constant makes them stateful (`lastIndex` persists), which causes incorrect behavior when reused across multiple `test()` calls. Re-creating them in a function is safe but inefficient.
 **Action:** When hoisting regex patterns to module constants for performance, remove the `g` flag to ensure they remain stateless and safe for shared use in validation logic.
+
+## 2026-05-22 - Fragment Props Stability
+**Learning:** Passing an inline Fragment (e.g. `<>...</>`) or an inline element as a prop (like `ListHeaderComponent`) creates a new object reference on every render. For components like `FlatList`, this forces the header to unmount and remount, causing potential state loss and animation glitches.
+**Action:** Memoize the component passed to `ListHeaderComponent` (or similar props) using `useMemo` to ensure referential stability across re-renders.

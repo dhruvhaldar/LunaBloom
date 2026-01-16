@@ -117,7 +117,10 @@ export default function TabTwoScreen() {
     />
   ), [handleDelete, textColor, deleteIconColor]);
  
-  const listHeader = (
+  // Optimization: Memoize the list header to ensure referential stability.
+  // This prevents the ParallaxFlatList (and underlying FlatList) from unmounting/remounting
+  // the header component on every render (e.g. when entries update), avoiding visual glitches.
+  const listHeader = React.useMemo(() => (
     <View style={styles.entriesContainer}>
       <ThemedText type="title" style={[styles.header, { color: textColor }]}>History</ThemedText>
 
@@ -128,7 +131,7 @@ export default function TabTwoScreen() {
         Logged Entries 📝
       </ThemedText>
     </View>
-  );
+  ), [textColor, sectionHeadingtextColor]);
 
   return (
     <ParallaxFlatList
