@@ -230,8 +230,10 @@ export default function SettingsScreen() {
             const file = result.assets[0];
             fileUri = file.uri;
 
-            const response = await fetch(fileUri);
-            const backupData = await response.json();
+            // Security Improvement: Use FileSystem to read the file instead of fetch
+            // fetch on file:// URIs can be inconsistent and FileSystem is safer for local reads
+            const backupContent = await FileSystem.readAsStringAsync(fileUri);
+            const backupData = JSON.parse(backupContent);
 
             // Validate backup data structure
             if (!backupData.version || !backupData.entries || !Array.isArray(backupData.entries)) {
