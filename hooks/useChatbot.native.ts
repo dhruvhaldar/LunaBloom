@@ -67,8 +67,18 @@ export function useChatbot() {
 
       const result = await downloadResumable.downloadAsync();
       if (result?.uri) {
-        setIsModelDownloaded(true);
-        Alert.alert("Success", "Model downloaded successfully!");
+        // Security/Integrity Check: Verify file size immediately after download
+        const fileInfo = await FileSystem.getInfoAsync(MODEL_PATH);
+        if (fileInfo.exists && fileInfo.size === MODEL_SIZE_BYTES) {
+          setIsModelDownloaded(true);
+          Alert.alert("Success", "Model downloaded successfully!");
+        } else {
+          console.error(`Download integrity check failed. Expected ${MODEL_SIZE_BYTES}, got ${fileInfo.exists ? fileInfo.size : 'file not found'}.`);
+          // Clean up corrupted file
+          await FileSystem.deleteAsync(MODEL_PATH, { idempotent: true });
+          setIsModelDownloaded(false);
+          Alert.alert("Error", "Model downloaded but seems corrupted. Please try again.");
+        }
       }
     } catch (error) {
       console.error('Error downloading model:', error instanceof Error ? error.message : String(error));
