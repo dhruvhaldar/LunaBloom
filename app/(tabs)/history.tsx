@@ -1,4 +1,4 @@
-import React, { useState, useCallback, useRef } from 'react';
+import React, { useState, useCallback, useRef, useMemo } from 'react';
 import { StyleSheet, View, Alert, useColorScheme, Platform, UIManager, Vibration, LayoutAnimation } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { ThemedText } from '@/components/ThemedText';
@@ -120,7 +120,7 @@ export default function TabTwoScreen() {
   // Optimization: Memoize the list header to ensure referential stability.
   // This prevents the ParallaxFlatList (and underlying FlatList) from unmounting/remounting
   // the header component on every render (e.g. when entries update), avoiding visual glitches.
-  const listHeader = React.useMemo(() => (
+  const listHeader = useMemo(() => (
     <View style={styles.entriesContainer}>
       <ThemedText type="title" style={[styles.header, { color: textColor }]}>History</ThemedText>
 
@@ -133,16 +133,25 @@ export default function TabTwoScreen() {
     </View>
   ), [textColor, sectionHeadingtextColor]);
 
+  // Optimization: Memoize background color object to avoid referential changes
+  const headerBackgroundColor = useMemo(() => ({
+    light: Parallaxheaderlightcolor,
+    dark: Parallaxheaderdarkcolor
+  }), [Parallaxheaderlightcolor, Parallaxheaderdarkcolor]);
+
+  // Optimization: Memoize header image to prevent unnecessary re-rendering of ParallaxFlatList header
+  const headerImage = useMemo(() => (
+    <Image
+      source={require('@/assets/images/history2.png')}
+      style={styles.reactLogo}
+      resizeMode="contain"
+    />
+  ), []);
+
   return (
     <ParallaxFlatList
-      headerBackgroundColor={{ light: Parallaxheaderlightcolor, dark: Parallaxheaderdarkcolor }}
-      headerImage={
-        <Image 
-          source={require('@/assets/images/history2.png')} 
-          style={styles.reactLogo}
-          resizeMode="contain"
-        />
-      }
+      headerBackgroundColor={headerBackgroundColor}
+      headerImage={headerImage}
       data={entries}
       renderItem={renderItem}
       keyExtractor={(item) => item.date}
