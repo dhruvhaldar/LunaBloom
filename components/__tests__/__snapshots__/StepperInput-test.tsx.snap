@@ -1,0 +1,412 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`StepperInput renders correctly with default props 1`] = `
+<View
+  style={
+    [
+      {
+        "alignItems": "center",
+        "borderRadius": 8,
+        "borderWidth": 1,
+        "flexDirection": "row",
+      },
+      {
+        "borderColor": "gray",
+      },
+      undefined,
+    ]
+  }
+>
+  <View
+    accessibilityLabel="Decrease Test Stepper"
+    accessibilityRole="button"
+    accessibilityState={
+      {
+        "busy": undefined,
+        "checked": undefined,
+        "disabled": false,
+        "expanded": undefined,
+        "selected": undefined,
+      }
+    }
+    accessibilityValue={
+      {
+        "max": undefined,
+        "min": undefined,
+        "now": undefined,
+        "text": undefined,
+      }
+    }
+    accessible={true}
+    collapsable={false}
+    focusable={true}
+    onClick={[Function]}
+    onResponderGrant={[Function]}
+    onResponderMove={[Function]}
+    onResponderRelease={[Function]}
+    onResponderTerminate={[Function]}
+    onResponderTerminationRequest={[Function]}
+    onStartShouldSetResponder={[Function]}
+    style={
+      {
+        "alignItems": "center",
+        "borderRightColor": "gray",
+        "borderRightWidth": 1,
+        "justifyContent": "center",
+        "minWidth": 40,
+        "opacity": 1,
+        "padding": 8,
+      }
+    }
+  >
+    <IconSymbol
+      color="black"
+      name="minus"
+      size={20}
+    />
+  </View>
+  <TextInput
+    accessibilityLabel="Test Stepper"
+    keyboardType="numeric"
+    onChangeText={[Function]}
+    style={
+      [
+        {
+          "flex": 1,
+          "fontSize": 16,
+          "minWidth": 40,
+          "paddingHorizontal": 4,
+          "paddingVertical": 8,
+        },
+        {
+          "color": "black",
+        },
+      ]
+    }
+    textAlign="center"
+    value="28"
+  />
+  <View
+    accessibilityLabel="Increase Test Stepper"
+    accessibilityRole="button"
+    accessibilityState={
+      {
+        "busy": undefined,
+        "checked": undefined,
+        "disabled": false,
+        "expanded": undefined,
+        "selected": undefined,
+      }
+    }
+    accessibilityValue={
+      {
+        "max": undefined,
+        "min": undefined,
+        "now": undefined,
+        "text": undefined,
+      }
+    }
+    accessible={true}
+    collapsable={false}
+    focusable={true}
+    onClick={[Function]}
+    onResponderGrant={[Function]}
+    onResponderMove={[Function]}
+    onResponderRelease={[Function]}
+    onResponderTerminate={[Function]}
+    onResponderTerminationRequest={[Function]}
+    onStartShouldSetResponder={[Function]}
+    style={
+      {
+        "alignItems": "center",
+        "borderLeftColor": "gray",
+        "borderLeftWidth": 1,
+        "justifyContent": "center",
+        "minWidth": 40,
+        "opacity": 1,
+        "padding": 8,
+      }
+    }
+  >
+    <IconSymbol
+      color="black"
+      name="plus"
+      size={20}
+    />
+  </View>
+</View>
+`;
+
+exports[`StepperInput renders disabled decrement button at min value 1`] = `
+<View
+  style={
+    [
+      {
+        "alignItems": "center",
+        "borderRadius": 8,
+        "borderWidth": 1,
+        "flexDirection": "row",
+      },
+      {
+        "borderColor": "gray",
+      },
+      undefined,
+    ]
+  }
+>
+  <View
+    accessibilityLabel="Decrease Test Stepper"
+    accessibilityRole="button"
+    accessibilityState={
+      {
+        "busy": undefined,
+        "checked": undefined,
+        "disabled": true,
+        "expanded": undefined,
+        "selected": undefined,
+      }
+    }
+    accessibilityValue={
+      {
+        "max": undefined,
+        "min": undefined,
+        "now": undefined,
+        "text": undefined,
+      }
+    }
+    accessible={true}
+    collapsable={false}
+    focusable={false}
+    onClick={[Function]}
+    onResponderGrant={[Function]}
+    onResponderMove={[Function]}
+    onResponderRelease={[Function]}
+    onResponderTerminate={[Function]}
+    onResponderTerminationRequest={[Function]}
+    onStartShouldSetResponder={[Function]}
+    style={
+      {
+        "alignItems": "center",
+        "borderRightColor": "gray",
+        "borderRightWidth": 1,
+        "justifyContent": "center",
+        "minWidth": 40,
+        "opacity": 0.3,
+        "padding": 8,
+      }
+    }
+  >
+    <IconSymbol
+      color="black"
+      name="minus"
+      size={20}
+    />
+  </View>
+  <TextInput
+    accessibilityLabel="Test Stepper"
+    keyboardType="numeric"
+    onChangeText={[Function]}
+    style={
+      [
+        {
+          "flex": 1,
+          "fontSize": 16,
+          "minWidth": 40,
+          "paddingHorizontal": 4,
+          "paddingVertical": 8,
+        },
+        {
+          "color": "black",
+        },
+      ]
+    }
+    textAlign="center"
+    value="1"
+  />
+  <View
+    accessibilityLabel="Increase Test Stepper"
+    accessibilityRole="button"
+    accessibilityState={
+      {
+        "busy": undefined,
+        "checked": undefined,
+        "disabled": false,
+        "expanded": undefined,
+        "selected": undefined,
+      }
+    }
+    accessibilityValue={
+      {
+        "max": undefined,
+        "min": undefined,
+        "now": undefined,
+        "text": undefined,
+      }
+    }
+    accessible={true}
+    collapsable={false}
+    focusable={true}
+    onClick={[Function]}
+    onResponderGrant={[Function]}
+    onResponderMove={[Function]}
+    onResponderRelease={[Function]}
+    onResponderTerminate={[Function]}
+    onResponderTerminationRequest={[Function]}
+    onStartShouldSetResponder={[Function]}
+    style={
+      {
+        "alignItems": "center",
+        "borderLeftColor": "gray",
+        "borderLeftWidth": 1,
+        "justifyContent": "center",
+        "minWidth": 40,
+        "opacity": 1,
+        "padding": 8,
+      }
+    }
+  >
+    <IconSymbol
+      color="black"
+      name="plus"
+      size={20}
+    />
+  </View>
+</View>
+`;
+
+exports[`StepperInput renders disabled increment button at max value 1`] = `
+<View
+  style={
+    [
+      {
+        "alignItems": "center",
+        "borderRadius": 8,
+        "borderWidth": 1,
+        "flexDirection": "row",
+      },
+      {
+        "borderColor": "gray",
+      },
+      undefined,
+    ]
+  }
+>
+  <View
+    accessibilityLabel="Decrease Test Stepper"
+    accessibilityRole="button"
+    accessibilityState={
+      {
+        "busy": undefined,
+        "checked": undefined,
+        "disabled": false,
+        "expanded": undefined,
+        "selected": undefined,
+      }
+    }
+    accessibilityValue={
+      {
+        "max": undefined,
+        "min": undefined,
+        "now": undefined,
+        "text": undefined,
+      }
+    }
+    accessible={true}
+    collapsable={false}
+    focusable={true}
+    onClick={[Function]}
+    onResponderGrant={[Function]}
+    onResponderMove={[Function]}
+    onResponderRelease={[Function]}
+    onResponderTerminate={[Function]}
+    onResponderTerminationRequest={[Function]}
+    onStartShouldSetResponder={[Function]}
+    style={
+      {
+        "alignItems": "center",
+        "borderRightColor": "gray",
+        "borderRightWidth": 1,
+        "justifyContent": "center",
+        "minWidth": 40,
+        "opacity": 1,
+        "padding": 8,
+      }
+    }
+  >
+    <IconSymbol
+      color="black"
+      name="minus"
+      size={20}
+    />
+  </View>
+  <TextInput
+    accessibilityLabel="Test Stepper"
+    keyboardType="numeric"
+    onChangeText={[Function]}
+    style={
+      [
+        {
+          "flex": 1,
+          "fontSize": 16,
+          "minWidth": 40,
+          "paddingHorizontal": 4,
+          "paddingVertical": 8,
+        },
+        {
+          "color": "black",
+        },
+      ]
+    }
+    textAlign="center"
+    value="10"
+  />
+  <View
+    accessibilityLabel="Increase Test Stepper"
+    accessibilityRole="button"
+    accessibilityState={
+      {
+        "busy": undefined,
+        "checked": undefined,
+        "disabled": true,
+        "expanded": undefined,
+        "selected": undefined,
+      }
+    }
+    accessibilityValue={
+      {
+        "max": undefined,
+        "min": undefined,
+        "now": undefined,
+        "text": undefined,
+      }
+    }
+    accessible={true}
+    collapsable={false}
+    focusable={false}
+    onClick={[Function]}
+    onResponderGrant={[Function]}
+    onResponderMove={[Function]}
+    onResponderRelease={[Function]}
+    onResponderTerminate={[Function]}
+    onResponderTerminationRequest={[Function]}
+    onStartShouldSetResponder={[Function]}
+    style={
+      {
+        "alignItems": "center",
+        "borderLeftColor": "gray",
+        "borderLeftWidth": 1,
+        "justifyContent": "center",
+        "minWidth": 40,
+        "opacity": 0.3,
+        "padding": 8,
+      }
+    }
+  >
+    <IconSymbol
+      color="black"
+      name="plus"
+      size={20}
+    />
+  </View>
+</View>
+`;

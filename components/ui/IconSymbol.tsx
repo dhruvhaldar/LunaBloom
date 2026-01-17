@@ -24,6 +24,8 @@ const MAPPING = {
   'square.and.arrow.down': 'file-download',
   'square.and.arrow.up': 'file-upload',
   'info.circle': 'info',
+  'plus': 'add',
+  'minus': 'remove',
 } as Partial<
   Record<
     import('expo-symbols').SymbolViewProps['name'],
