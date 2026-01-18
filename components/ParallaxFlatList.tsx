@@ -1,4 +1,4 @@
-import type { ReactElement } from 'react';
+import { useMemo, type ReactElement } from 'react';
 import { StyleSheet, type ListRenderItem, type StyleProp, type ViewStyle } from 'react-native';
 import Animated, {
   interpolate,
@@ -55,6 +55,22 @@ export default function ParallaxFlatList<T>({
     };
   });
 
+  const parallaxHeader = useMemo(() => (
+    <>
+      <Animated.View
+        style={[
+          styles.header,
+          { backgroundColor: headerBackgroundColor[colorScheme] },
+          headerAnimatedStyle,
+        ]}>
+        {headerImage}
+      </Animated.View>
+      <ThemedView style={styles.content}>
+        {ListHeaderComponent}
+      </ThemedView>
+    </>
+  ), [headerBackgroundColor, colorScheme, headerAnimatedStyle, headerImage, ListHeaderComponent]);
+
   return (
     <ThemedView style={styles.container}>
       <Animated.FlatList
@@ -71,21 +87,7 @@ export default function ParallaxFlatList<T>({
            { paddingBottom: bottom },
            contentContainerStyle
         ]}
-        ListHeaderComponent={
-          <>
-            <Animated.View
-              style={[
-                styles.header,
-                { backgroundColor: headerBackgroundColor[colorScheme] },
-                headerAnimatedStyle,
-              ]}>
-              {headerImage}
-            </Animated.View>
-            <ThemedView style={styles.content}>
-              {ListHeaderComponent}
-            </ThemedView>
-          </>
-        }
+        ListHeaderComponent={parallaxHeader}
         ListFooterComponent={
             // If the list is not empty, we might want to ensure the padding/gap logic is consistent.
             // But ThemedView styles.content wraps children in ParallaxScrollView.
