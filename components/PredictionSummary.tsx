@@ -7,7 +7,7 @@ import { formatDate, DateFormats } from '@/utils/dateFormatter';
 interface PredictionSummaryProps {
   predictedPeriods: Date[];
   predictedOvulations: Date[];
-  periodDuration: string;
+  periodDuration: string | number;
   textColor: string;
   predictedHeadingColor: string;
 }

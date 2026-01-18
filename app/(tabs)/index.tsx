@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useMemo, useCallback, useRef } from 'react';
-import { StyleSheet, TouchableOpacity, TextInput, Alert, useColorScheme, View, Button, ActivityIndicator, Keyboard } from 'react-native';
+import { StyleSheet, TouchableOpacity, TextInput, Alert, useColorScheme, View, ActivityIndicator, Keyboard } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import DateTimePicker from '@react-native-community/datetimepicker';
 import * as Haptics from 'expo-haptics';
@@ -10,14 +10,15 @@ import ParallaxScrollView from '@/components/ParallaxScrollView';
 import { Image } from 'react-native';
 import { IconSymbol } from '@/components/ui/IconSymbol';
 import PredictionSummary from '@/components/PredictionSummary';
+import { StepperInput } from '@/components/StepperInput';
 
 
 export default function HomeScreen() {
   // State Management
   const [lastPeriod, setLastPeriod] = useState(new Date());
-  const [cycleLength, setCycleLength] = useState('28');
+  const [cycleLength, setCycleLength] = useState(28);
   const [cycleWarning, setCycleWarning] = useState<string | null>(null);
-  const [periodDuration, setPeriodDuration] = useState('5');
+  const [periodDuration, setPeriodDuration] = useState(5);
   const [periodWarning, setPeriodWarning] = useState<string | null>(null);
   // Predictions are now derived via useMemo
   const [selectedSymptoms, setSelectedSymptoms] = useState<string[]>([]);
@@ -76,29 +77,14 @@ export default function HomeScreen() {
     showMode('date');
   }, [showMode]);
 
-  const handleCycleLengthChange = useCallback((text: string) => {
-    const filteredText = text.replace(/[^0-9]/g, '');
-    let number = parseInt(filteredText, 10);
-
-    if (number > 120) number = 120;
-    if (isNaN(number)) {
-      setCycleLength('');
-      return;
-    }
-
-    setCycleLength(number.toString());
+  const handleCycleLengthChange = useCallback((value: number) => {
+    setCycleLength(value);
   }, []);
 
-  const validateCycleLength = useCallback(() => {
-    const number = parseInt(cycleLength, 10);
-    if (isNaN(number)) {
-      setCycleWarning(null);
-      return;
-    }
-
-    if (number < 21) {
+  useEffect(() => {
+    if (cycleLength < 21) {
       setCycleWarning("Cycle < 21 days may imply hormonal issues 🩺");
-    } else if (number > 35) {
+    } else if (cycleLength > 35) {
       setCycleWarning("Cycle > 35 days might be linked to PCOS 🏥");
     } else {
       setCycleWarning(null);
@@ -113,26 +99,12 @@ export default function HomeScreen() {
     setNotes(text);
   }, []);
 
-  const handlePeriodDurationChange = useCallback((text: string) => {
-    const filteredText = text.replace(/[^0-9]/g, '');
-    let number = parseInt(filteredText, 10);
-
-    if (number > 14) number = 14;
-    if (isNaN(number)) {
-      setPeriodDuration('');
-      return;
-    }
-    setPeriodDuration(number.toString());
+  const handlePeriodDurationChange = useCallback((value: number) => {
+    setPeriodDuration(value);
   }, []);
 
-  const validatePeriodDuration = useCallback(() => {
-    const number = parseInt(periodDuration, 10);
-    if (isNaN(number)) {
-      setPeriodWarning(null);
-      return;
-    }
-
-    if (number > 7) {
+  useEffect(() => {
+    if (periodDuration > 7) {
       setPeriodWarning("Duration > 7 days may imply hormonal issues 🩺");
     } else {
       setPeriodWarning(null);
@@ -159,7 +131,7 @@ export default function HomeScreen() {
     const predictions = [];
     const ovulations = [];
     const baseDate = new Date(lastPeriod);
-    const cycleLengthNum = Number(cycleLength);
+    const cycleLengthNum = cycleLength;
 
     // Calculate ovulation based on luteal phase
     const calculateOvulationDay = (cLength: number) => {
@@ -410,14 +382,12 @@ export default function HomeScreen() {
           <View>
             <ThemedView style={styles.inputGroup}>
               <ThemedText style={{ color: textColor }}>Cycle Length (days)</ThemedText>
-              <TextInput
-                style={[styles.input, { color: textColor, borderColor: textColor }]}
-                keyboardType="numeric"
+              <StepperInput
                 value={cycleLength}
-                onChangeText={handleCycleLengthChange}
-              onBlur={validateCycleLength}
-                returnKeyType="done"
-                accessibilityLabel="Cycle length in days"
+                onChange={handleCycleLengthChange}
+                min={10}
+                max={120}
+                label="Cycle length in days"
               />
             </ThemedView>
             {cycleWarning && (
@@ -434,14 +404,12 @@ export default function HomeScreen() {
           <View>
             <ThemedView style={styles.inputGroup}>
               <ThemedText style={{ color: textColor }}>Period Duration (days)</ThemedText>
-              <TextInput
-                style={[styles.input, { color: textColor, borderColor: textColor }]}
-                keyboardType="numeric"
+              <StepperInput
                 value={periodDuration}
-                onChangeText={handlePeriodDurationChange}
-              onBlur={validatePeriodDuration}
-                returnKeyType="done"
-                accessibilityLabel="Period duration in days"
+                onChange={handlePeriodDurationChange}
+                min={1}
+                max={14}
+                label="Period duration in days"
               />
             </ThemedView>
             {periodWarning && (
@@ -545,13 +513,6 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
     alignItems: 'center',
     marginBottom: 12,
-  },
-  input: {
-    borderWidth: 1,
-    borderRadius: 8,
-    padding: 8,
-    width: 100,
-    textAlign: 'center',
   },
   dateButton: {
     padding: 8,

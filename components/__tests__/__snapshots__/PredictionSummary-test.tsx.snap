@@ -1,0 +1,363 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`PredictionSummary renders correctly 1`] = `
+[
+  <View
+    style={
+      [
+        {
+          "backgroundColor": "#F1FAEE",
+        },
+        {
+          "borderRadius": 8,
+          "marginBottom": 12,
+          "padding": 5,
+        },
+      ]
+    }
+  >
+    <Text
+      style={
+        [
+          {
+            "color": "#1D3557",
+          },
+          undefined,
+          undefined,
+          undefined,
+          {
+            "fontSize": 20,
+            "fontWeight": "bold",
+          },
+          undefined,
+          {
+            "color": "#123",
+            "marginBottom": 10,
+            "marginTop": 15,
+          },
+        ]
+      }
+    >
+      Predicted Periods
+    </Text>
+    <View
+      style={
+        [
+          {
+            "backgroundColor": "#F1FAEE",
+          },
+          [
+            {
+              "borderRadius": 8,
+              "marginBottom": 8,
+              "padding": 12,
+            },
+            {
+              "borderColor": "#000",
+              "borderWidth": 1,
+            },
+          ],
+        ]
+      }
+    >
+      <Text
+        style={
+          [
+            {
+              "color": "#1D3557",
+            },
+            {
+              "fontSize": 16,
+              "lineHeight": 24,
+            },
+            undefined,
+            undefined,
+            undefined,
+            undefined,
+            {
+              "color": "#000",
+            },
+          ]
+        }
+      >
+        1 Jan
+      </Text>
+      <Text
+        style={
+          [
+            {
+              "color": "#1D3557",
+            },
+            {
+              "fontSize": 16,
+              "lineHeight": 24,
+            },
+            undefined,
+            undefined,
+            undefined,
+            undefined,
+            {
+              "color": "#000",
+              "fontSize": 12,
+              "marginTop": 5,
+            },
+          ]
+        }
+      >
+        1 Jan
+         -
+        5 Jan
+      </Text>
+    </View>
+    <View
+      style={
+        [
+          {
+            "backgroundColor": "#F1FAEE",
+          },
+          [
+            {
+              "borderRadius": 8,
+              "marginBottom": 8,
+              "padding": 12,
+            },
+            {
+              "borderColor": "#000",
+              "borderWidth": 1,
+            },
+          ],
+        ]
+      }
+    >
+      <Text
+        style={
+          [
+            {
+              "color": "#1D3557",
+            },
+            {
+              "fontSize": 16,
+              "lineHeight": 24,
+            },
+            undefined,
+            undefined,
+            undefined,
+            undefined,
+            {
+              "color": "#000",
+            },
+          ]
+        }
+      >
+        1 Feb
+      </Text>
+      <Text
+        style={
+          [
+            {
+              "color": "#1D3557",
+            },
+            {
+              "fontSize": 16,
+              "lineHeight": 24,
+            },
+            undefined,
+            undefined,
+            undefined,
+            undefined,
+            {
+              "color": "#000",
+              "fontSize": 12,
+              "marginTop": 5,
+            },
+          ]
+        }
+      >
+        1 Feb
+         -
+        5 Feb
+      </Text>
+    </View>
+  </View>,
+  <View
+    style={
+      [
+        {
+          "backgroundColor": "#F1FAEE",
+        },
+        {
+          "borderRadius": 8,
+          "marginBottom": 12,
+          "padding": 5,
+        },
+      ]
+    }
+  >
+    <Text
+      style={
+        [
+          {
+            "color": "#1D3557",
+          },
+          undefined,
+          undefined,
+          undefined,
+          {
+            "fontSize": 20,
+            "fontWeight": "bold",
+          },
+          undefined,
+          {
+            "color": "#123",
+            "marginBottom": 10,
+          },
+        ]
+      }
+    >
+      Predicted Ovulations
+    </Text>
+    <View
+      style={
+        [
+          {
+            "backgroundColor": "#F1FAEE",
+          },
+          [
+            {
+              "borderRadius": 8,
+              "marginBottom": 8,
+              "padding": 12,
+            },
+            {
+              "borderColor": "#000",
+              "borderWidth": 1,
+            },
+          ],
+        ]
+      }
+    >
+      <Text
+        style={
+          [
+            {
+              "color": "#1D3557",
+            },
+            {
+              "fontSize": 16,
+              "lineHeight": 24,
+            },
+            undefined,
+            undefined,
+            undefined,
+            undefined,
+            {
+              "color": "#000",
+            },
+          ]
+        }
+      >
+        Ovulation:
+        14 Jan
+      </Text>
+      <Text
+        style={
+          [
+            {
+              "color": "#1D3557",
+            },
+            {
+              "fontSize": 16,
+              "lineHeight": 24,
+            },
+            undefined,
+            undefined,
+            undefined,
+            undefined,
+            {
+              "color": "#000",
+              "fontSize": 12,
+              "marginTop": 5,
+            },
+          ]
+        }
+      >
+        Fertile Window:
+        12 Jan
+         -
+        14 Jan
+      </Text>
+    </View>
+    <View
+      style={
+        [
+          {
+            "backgroundColor": "#F1FAEE",
+          },
+          [
+            {
+              "borderRadius": 8,
+              "marginBottom": 8,
+              "padding": 12,
+            },
+            {
+              "borderColor": "#000",
+              "borderWidth": 1,
+            },
+          ],
+        ]
+      }
+    >
+      <Text
+        style={
+          [
+            {
+              "color": "#1D3557",
+            },
+            {
+              "fontSize": 16,
+              "lineHeight": 24,
+            },
+            undefined,
+            undefined,
+            undefined,
+            undefined,
+            {
+              "color": "#000",
+            },
+          ]
+        }
+      >
+        Ovulation:
+        14 Feb
+      </Text>
+      <Text
+        style={
+          [
+            {
+              "color": "#1D3557",
+            },
+            {
+              "fontSize": 16,
+              "lineHeight": 24,
+            },
+            undefined,
+            undefined,
+            undefined,
+            undefined,
+            {
+              "color": "#000",
+              "fontSize": 12,
+              "marginTop": 5,
+            },
+          ]
+        }
+      >
+        Fertile Window:
+        12 Feb
+         -
+        14 Feb
+      </Text>
+    </View>
+  </View>,
+]
+`;
