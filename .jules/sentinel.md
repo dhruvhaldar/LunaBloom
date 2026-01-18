@@ -17,3 +17,8 @@
 **Vulnerability:** When importing a backup file, `DocumentPicker` with `copyToCacheDirectory: true` created a temporary copy of the file containing sensitive PHI. This file was not deleted after processing, leaving plain text health data in the cache directory indefinitely.
 **Learning:** Utilities like `DocumentPicker` often cache files by default. If these files contain sensitive data, relying on the OS to eventually clear the cache is insufficient for privacy compliance (like HIPAA/GDPR).
 **Prevention:** Always wrap file operations involving sensitive data in a `try...finally` block that explicitly deletes the temporary file using `FileSystem.deleteAsync`, regardless of success or failure.
+
+## 2026-01-20 - LLM Prompt Injection via Special Tokens
+**Vulnerability:** The `sanitizePromptInput` function only redacted role keywords like "System:", but allowed Llama 3 special tokens (e.g., `<|start_header_id|>`) to pass through. This allowed users to inject fake role headers and potential instructions into the prompt structure.
+**Learning:** Simple string replacement is insufficient for modern LLMs which rely on specific control tokens for structure. Security mechanisms must account for the specific tokenization scheme of the model in use.
+**Prevention:** Explicitly strip known special tokens (like `<|start_header_id|>`, `<|eot_id|>`) from user input before constructing the prompt.

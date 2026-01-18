@@ -39,12 +39,21 @@ export const sanitizeInput = (text: string): string => {
  */
 export const sanitizePromptInput = (text: string): string => {
   if (!text) return '';
+
+  // Remove Llama 3 special tokens to prevent prompt injection.
+  // These tokens are used to define roles (System, User, Assistant) and control flow.
+  // Using a regex to match the <|...|> pattern specifically for known Llama 3 tokens.
+  const llamaSpecialTokens = /<\|(begin_of_text|end_of_text|start_header_id|end_header_id|eot_id|python_tag)\|>/gi;
+  let sanitized = text.replace(llamaSpecialTokens, '');
+
   // Replace reserved keywords at start of string or after newline with a safe alternative.
   // We use a regex with case insensitivity and multiline check.
   // Replaces "System:" with "[Role Redacted]:" to prevent role spoofing.
-  return text
+  sanitized = sanitized
     .replace(/(^|[\r\n]+)(User|System|Assistant):/gim, '$1[Role Redacted]:')
     .trim();
+
+  return sanitized;
 };
 
 // Defense-in-depth: Check for common XSS vectors and malicious patterns.
