@@ -1,4 +1,4 @@
-import React, { useCallback } from 'react';
+import React, { useCallback, memo } from 'react';
 import { StyleSheet, TextInput, TouchableOpacity, View, Platform, ViewStyle, StyleProp } from 'react-native';
 import * as Haptics from 'expo-haptics';
 import { IconSymbol } from '@/components/ui/IconSymbol';
@@ -14,7 +14,9 @@ interface StepperInputProps {
   style?: StyleProp<ViewStyle>;
 }
 
-export function StepperInput({
+// Optimization: Use memo to prevent re-renders when parent state changes (e.g. typing notes)
+// but stepper props (value, handlers) remain stable.
+export const StepperInput = memo(function StepperInput({
   value,
   onChangeText,
   onBlur,
@@ -86,7 +88,7 @@ export function StepperInput({
       </TouchableOpacity>
     </View>
   );
-}
+});
 
 const styles = StyleSheet.create({
   container: {
