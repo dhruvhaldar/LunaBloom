@@ -5,6 +5,10 @@
 // Constants for validation limits
 export const MAX_INPUT_LENGTH = 500;
 export const MAX_NOTES_LENGTH = 1000;
+export const MAX_SYMPTOM_LENGTH = 50;
+export const MAX_FLOW_LENGTH = 20;
+export const MAX_SYMPTOMS_COUNT = 50;
+export const MAX_CYCLE_LENGTH_DAYS = 365;
 
 /**
  * Validates if the input text is within the allowed length.
@@ -115,12 +119,30 @@ export const isValidBackupEntry = (entry: any): boolean => {
   // lastPeriod could be ISO string
   if (typeof entry.lastPeriod !== 'string' || !isValidDate(entry.lastPeriod)) return false;
 
-  // cycleLength can be string or number (based on legacy data)
-  if (typeof entry.cycleLength !== 'string' && typeof entry.cycleLength !== 'number') return false;
+  // cycleLength validation (number or string representation of number)
+  let cLength = entry.cycleLength;
+  if (typeof cLength === 'string') {
+    if (cLength.length > 10) return false; // Fast fail for unreasonably long strings
+    cLength = parseInt(cLength, 10);
+  }
+  // Must be a valid number within reasonable range
+  if (typeof cLength !== 'number' || isNaN(cLength) || cLength < 0 || cLength > MAX_CYCLE_LENGTH_DAYS) return false;
 
-  // selectedSymptoms must be array of strings
+  // selectedSymptoms validation
   if (!Array.isArray(entry.selectedSymptoms)) return false;
-  if (!entry.selectedSymptoms.every((s: any) => typeof s === 'string')) return false;
+  if (entry.selectedSymptoms.length > MAX_SYMPTOMS_COUNT) return false; // Prevent array bomb
+  if (!entry.selectedSymptoms.every((s: any) =>
+      typeof s === 'string' &&
+      s.length <= MAX_SYMPTOM_LENGTH &&
+      !containsSuspiciousPatterns(s)
+  )) return false;
+
+  // selectedFlow validation (optional, can be null)
+  if (entry.selectedFlow !== null && entry.selectedFlow !== undefined) {
+      if (typeof entry.selectedFlow !== 'string') return false;
+      if (entry.selectedFlow.length > MAX_FLOW_LENGTH) return false;
+      if (containsSuspiciousPatterns(entry.selectedFlow)) return false;
+  }
 
   // notes must be string
   if (typeof entry.notes !== 'string') return false;
@@ -128,9 +150,6 @@ export const isValidBackupEntry = (entry: any): boolean => {
   // Security checks on content
   if (entry.notes.length > MAX_NOTES_LENGTH) return false;
   if (containsSuspiciousPatterns(entry.notes)) return false;
-
-  // Optional: Check other fields if critical, but these are the core ones
-  // If we wanted to be strict, we'd check everything, but backward compatibility is important.
 
   return true;
 };
