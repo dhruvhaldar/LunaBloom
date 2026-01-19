@@ -9,6 +9,7 @@ export const MAX_SYMPTOM_LENGTH = 50;
 export const MAX_FLOW_LENGTH = 20;
 export const MAX_SYMPTOMS_COUNT = 50;
 export const MAX_CYCLE_LENGTH_DAYS = 365;
+export const MAX_BACKUP_FILE_SIZE = 10 * 1024 * 1024; // 10MB
 
 /**
  * Validates if the input text is within the allowed length.

@@ -22,3 +22,8 @@
 **Vulnerability:** The `sanitizePromptInput` function only redacted role keywords like "System:", but allowed Llama 3 special tokens (e.g., `<|start_header_id|>`) to pass through. This allowed users to inject fake role headers and potential instructions into the prompt structure.
 **Learning:** Simple string replacement is insufficient for modern LLMs which rely on specific control tokens for structure. Security mechanisms must account for the specific tokenization scheme of the model in use.
 **Prevention:** Explicitly strip known special tokens (like `<|start_header_id|>`, `<|eot_id|>`) from user input before constructing the prompt.
+
+## 2026-02-05 - DoS via Large File Import
+**Vulnerability:** The app read the entire backup file into memory using `FileSystem.readAsStringAsync` without checking its size, allowing attackers (or accidental users) to crash the app (OOM) with large files.
+**Learning:** `FileSystem.readAsStringAsync` is dangerous for untrusted files without size checks. Always check `fileInfo.size` first.
+**Prevention:** Enforce `MAX_BACKUP_FILE_SIZE` check using `FileSystem.getInfoAsync` before reading file content.
