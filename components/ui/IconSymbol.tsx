@@ -16,7 +16,7 @@ const MAPPING = {
   'chevron.left.forwardslash.chevron.right': 'code',
   'chevron.right': 'chevron-right',
   'history.fill': 'history',
-  'delete.fill': 'delete',
+  'trash.fill': 'delete',
   'bar-chart.fill': 'bar-chart',
   'chat.fill': 'chat',
   'settings.fill':'settings',
