@@ -11,6 +11,7 @@ import { Image } from 'react-native';
 import { IconSymbol } from '@/components/ui/IconSymbol';
 import PredictionSummary from '@/components/PredictionSummary';
 import { StepperInput } from '@/components/StepperInput';
+import SelectionButton from '@/components/SelectionButton';
 
 
 export default function HomeScreen() {
@@ -58,7 +59,14 @@ export default function HomeScreen() {
   const predictedsectionHeadingtextColor = colorScheme === 'dark' ? '#F1FAEE' : '#413c58';
   const selectedSymptomBackgroundColor = colorScheme === 'dark' ? '#E63946' : '#A8DADC';
   const symptomButtonBorderColor = colorScheme === 'dark' ? '#F1FAEE' : '#1D3557';
-  
+
+  // Selection Button Colors
+  const selectionButtonColors = useMemo(() => ({
+    borderColor: symptomButtonBorderColor,
+    selectedBackgroundColor: selectedSymptomBackgroundColor,
+    textColor: symptomtextColor,
+  }), [symptomButtonBorderColor, selectedSymptomBackgroundColor, symptomtextColor]);
+
   // Date Picker Functions
   const onChange = useCallback((event: any, selectedDate: any) => {
     if (selectedDate) {
@@ -268,6 +276,21 @@ export default function HomeScreen() {
     }
   }, [lastPeriod, cycleLength, periodDuration, selectedFlow, selectedSymptoms, predictedPeriods, predictedOvulations]); // notes removed from dependencies
 
+  // Handlers for selection to ensure stable references
+  const handleToggleFlow = useCallback((flow: string) => {
+    Haptics.selectionAsync();
+    setSelectedFlow((prev) => (prev === flow ? null : flow));
+  }, []);
+
+  const handleToggleSymptom = useCallback((symptom: string) => {
+    Haptics.selectionAsync();
+    setSelectedSymptoms(prev =>
+      prev.includes(symptom)
+        ? prev.filter(s => s !== symptom)
+        : [...prev, symptom]
+    );
+  }, []);
+
   // Optimized: Memoize flow section to prevent re-renders when notes/date change
   const flowSection = useMemo(() => (
     <ThemedView style={styles.section}>
@@ -276,44 +299,19 @@ export default function HomeScreen() {
       </ThemedText>
       <ThemedView style={styles.symptomsGrid}>
         {flowTypes.map((flow) => (
-          <TouchableOpacity
+          <SelectionButton
             key={flow}
-            style={[
-              styles.symptomButton,
-              { borderColor: symptomButtonBorderColor },
-              selectedFlow === flow && { backgroundColor: selectedSymptomBackgroundColor },
-            ]}
-            onPress={() => {
-              Haptics.selectionAsync();
-              setSelectedFlow((prev) => (prev === flow ? null : flow));
-            }}
-            accessibilityRole="radio"
-            accessibilityState={{ checked: selectedFlow === flow }}
+            label={flow}
+            isSelected={selectedFlow === flow}
+            onToggle={handleToggleFlow}
+            type="radio"
+            colors={selectionButtonColors}
             accessibilityLabel={`Select ${flow} flow`}
-          >
-            <View style={styles.symptomContent}>
-              {selectedFlow === flow && (
-                <IconSymbol
-                  name="checkmark"
-                  size={16}
-                  color={symptomtextColor}
-                  style={{ marginRight: 4 }}
-                />
-              )}
-              <ThemedText
-                style={[
-                  { color: symptomtextColor },
-                  selectedFlow === flow && styles.selectedSymptom,
-                ]}
-              >
-                {flow}
-              </ThemedText>
-            </View>
-          </TouchableOpacity>
+          />
         ))}
       </ThemedView>
     </ThemedView>
-  ), [selectedFlow, sectionHeadingtextColor, symptomButtonBorderColor, selectedSymptomBackgroundColor, symptomtextColor]);
+  ), [selectedFlow, sectionHeadingtextColor, selectionButtonColors, handleToggleFlow]);
 
   // Optimized: Memoize symptoms section
   const symptomsSection = useMemo(() => (
@@ -323,48 +321,19 @@ export default function HomeScreen() {
       </ThemedText>
       <ThemedView style={styles.symptomsGrid}>
         {symptomsList.map((symptom) => (
-          <TouchableOpacity
+          <SelectionButton
             key={symptom}
-            style={[
-              styles.symptomButton,
-              { borderColor: symptomButtonBorderColor },
-              selectedSymptoms.includes(symptom) && {
-                backgroundColor: selectedSymptomBackgroundColor
-              }
-            ]}
-            onPress={() => {
-              Haptics.selectionAsync();
-              setSelectedSymptoms(prev =>
-                prev.includes(symptom)
-                  ? prev.filter(s => s !== symptom)
-                  : [...prev, symptom]
-              );
-            }}
-            accessibilityRole="checkbox"
-            accessibilityState={{ checked: selectedSymptoms.includes(symptom) }}
+            label={symptom}
+            isSelected={selectedSymptoms.includes(symptom)}
+            onToggle={handleToggleSymptom}
+            type="checkbox"
+            colors={selectionButtonColors}
             accessibilityLabel={`Select ${symptom} symptom`}
-          >
-            <View style={styles.symptomContent}>
-              {selectedSymptoms.includes(symptom) && (
-                <IconSymbol
-                  name="checkmark"
-                  size={16}
-                  color={symptomtextColor}
-                  style={{ marginRight: 4 }}
-                />
-              )}
-              <ThemedText style={[
-                { color: symptomtextColor },
-                selectedSymptoms.includes(symptom) && styles.selectedSymptom
-              ]}>
-                {symptom}
-              </ThemedText>
-            </View>
-          </TouchableOpacity>
+          />
         ))}
       </ThemedView>
     </ThemedView>
-  ), [selectedSymptoms, sectionHeadingtextColor, symptomButtonBorderColor, selectedSymptomBackgroundColor, symptomtextColor]);
+  ), [selectedSymptoms, sectionHeadingtextColor, selectionButtonColors, handleToggleSymptom]);
 
   // Optimized: Memoize Cycle Settings section to prevent re-renders when typing notes
   const cycleSettingsSection = useMemo(() => (
