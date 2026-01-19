@@ -366,6 +366,101 @@ export default function HomeScreen() {
     </ThemedView>
   ), [selectedSymptoms, sectionHeadingtextColor, symptomButtonBorderColor, selectedSymptomBackgroundColor, symptomtextColor]);
 
+  // Optimized: Memoize Cycle Settings section to prevent re-renders when typing notes
+  const cycleSettingsSection = useMemo(() => (
+    <ThemedView style={styles.section}>
+      <ThemedText type="subtitle" style={{ color: sectionHeadingtextColor, marginBottom: 10 }}>
+        Cycle Settings ⚙️
+      </ThemedText>
+
+      {/* Last Period Date */}
+      <ThemedView style={styles.inputGroup}>
+        <ThemedText style={{ color: textColor }}>Last Period Start</ThemedText>
+        <TouchableOpacity
+          onPress={showDatepicker}
+          style={[styles.dateButton, { borderColor: textColor }]}
+          accessibilityLabel={`Select last period start date. Current: ${formattedLastPeriod}`}
+          accessibilityRole="button"
+        >
+          <ThemedText style={[styles.dateText, { color: textColor }]}>
+            {formattedLastPeriod}
+          </ThemedText>
+        </TouchableOpacity>
+        {show && (
+          <DateTimePicker
+            testID="dateTimePicker"
+            value={date}
+            is24Hour={true}
+            display="default"
+            onChange={onChange}
+          />
+        )}
+      </ThemedView>
+
+      {/* Cycle Length */}
+      <View>
+        <ThemedView style={styles.inputGroup}>
+          <ThemedText style={{ color: textColor }}>Cycle Length (days)</ThemedText>
+          <StepperInput
+            value={cycleLength}
+            onChangeText={handleCycleLengthChange}
+            onBlur={validateCycleLength}
+            min={15}
+            max={120}
+            label="Cycle length in days"
+          />
+        </ThemedView>
+        {cycleWarning && (
+          <ThemedText
+            style={{ color: '#E63946', fontSize: 12, marginTop: -8, marginBottom: 8, textAlign: 'right' }}
+            accessibilityLiveRegion="polite"
+          >
+            ⚠️ {cycleWarning}
+          </ThemedText>
+        )}
+      </View>
+
+      {/* Period Duration */}
+      <View>
+        <ThemedView style={styles.inputGroup}>
+          <ThemedText style={{ color: textColor }}>Period Duration (days)</ThemedText>
+          <StepperInput
+            value={periodDuration}
+            onChangeText={handlePeriodDurationChange}
+            onBlur={validatePeriodDuration}
+            min={1}
+            max={14}
+            label="Period duration in days"
+          />
+        </ThemedView>
+        {periodWarning && (
+          <ThemedText
+            style={{ color: '#E63946', fontSize: 12, marginTop: -8, marginBottom: 8, textAlign: 'right' }}
+            accessibilityLiveRegion="polite"
+          >
+            ⚠️ {periodWarning}
+          </ThemedText>
+        )}
+      </View>
+    </ThemedView>
+  ), [
+    sectionHeadingtextColor,
+    textColor,
+    formattedLastPeriod,
+    showDatepicker,
+    show,
+    date,
+    onChange,
+    cycleLength,
+    handleCycleLengthChange,
+    validateCycleLength,
+    cycleWarning,
+    periodDuration,
+    handlePeriodDurationChange,
+    validatePeriodDuration,
+    periodWarning
+  ]);
+
   return (
     <ParallaxScrollView headerBackgroundColor={{ light: Parallaxheaderlightcolor, dark: Parallaxheaderdarkcolor }}
       headerImage={
@@ -378,81 +473,7 @@ export default function HomeScreen() {
         </ThemedText>
 
         {/* Cycle Configuration */}
-        <ThemedView style={styles.section}>
-          <ThemedText type="subtitle" style={{ color: sectionHeadingtextColor, marginBottom: 10 }}>
-            Cycle Settings ⚙️
-          </ThemedText>
-          
-          {/* Last Period Date */}
-          <ThemedView style={styles.inputGroup}>
-            <ThemedText style={{ color: textColor }}>Last Period Start</ThemedText>
-            <TouchableOpacity
-              onPress={showDatepicker}
-              style={[styles.dateButton, { borderColor: textColor }]}
-              accessibilityLabel={`Select last period start date. Current: ${formattedLastPeriod}`}
-              accessibilityRole="button"
-            >
-              <ThemedText style={[styles.dateText, { color: textColor }]}>
-                {formattedLastPeriod}
-              </ThemedText>
-            </TouchableOpacity>
-            {show && (
-              <DateTimePicker
-                testID="dateTimePicker"
-                value={date}
-                is24Hour={true}
-                display="default"
-                onChange={onChange}
-              />
-            )}
-          </ThemedView>
-
-          {/* Cycle Length */}
-          <View>
-            <ThemedView style={styles.inputGroup}>
-              <ThemedText style={{ color: textColor }}>Cycle Length (days)</ThemedText>
-              <StepperInput
-                value={cycleLength}
-                onChangeText={handleCycleLengthChange}
-                onBlur={validateCycleLength}
-                min={15}
-                max={120}
-                label="Cycle length in days"
-              />
-            </ThemedView>
-            {cycleWarning && (
-              <ThemedText
-                style={{ color: '#E63946', fontSize: 12, marginTop: -8, marginBottom: 8, textAlign: 'right' }}
-                accessibilityLiveRegion="polite"
-              >
-                ⚠️ {cycleWarning}
-              </ThemedText>
-            )}
-          </View>
-
-          {/* Period Duration */}
-          <View>
-            <ThemedView style={styles.inputGroup}>
-              <ThemedText style={{ color: textColor }}>Period Duration (days)</ThemedText>
-              <StepperInput
-                value={periodDuration}
-                onChangeText={handlePeriodDurationChange}
-                onBlur={validatePeriodDuration}
-                min={1}
-                max={14}
-                label="Period duration in days"
-              />
-            </ThemedView>
-            {periodWarning && (
-              <ThemedText
-                style={{ color: '#E63946', fontSize: 12, marginTop: -8, marginBottom: 8, textAlign: 'right' }}
-                accessibilityLiveRegion="polite"
-              >
-                ⚠️ {periodWarning}
-              </ThemedText>
-            )}
-          </View>
-        </ThemedView>
+        {cycleSettingsSection}
 
         {/* Period Flow Section */}
         {flowSection}
