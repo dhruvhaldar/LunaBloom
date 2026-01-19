@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from 'react';
-import { StyleSheet, View, Alert, useColorScheme, TouchableOpacity, Image, Platform } from 'react-native';
+import { StyleSheet, View, Alert, useColorScheme, TouchableOpacity, Image } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import * as Haptics from 'expo-haptics';
 import { IconSymbol } from '@/components/ui/IconSymbol';
 import * as DocumentPicker from 'expo-document-picker';
 import * as FileSystem from 'expo-file-system';
@@ -11,39 +10,7 @@ import { isValidBackupEntry, sanitizeInput } from '@/utils/validation';
 import { ThemedText } from '@/components/ThemedText';
 import { ThemedView } from '@/components/ThemedView';
 import ParallaxScrollView from '@/components/ParallaxScrollView';
-
-interface ToggleSwitchProps {
-    value: boolean;
-    onValueChange: (value: boolean) => void;
-    accessibilityLabel: string;
-}
-
-const ToggleSwitch: React.FC<ToggleSwitchProps> = ({ value, onValueChange, accessibilityLabel }) => {
-    return (
-        <TouchableOpacity 
-            onPress={() => {
-                if (Platform.OS !== 'web') {
-                    Haptics.selectionAsync();
-                }
-                onValueChange(!value);
-            }}
-            style={[styles.toggleContainer, value ? styles.toggleContainerActive : styles.toggleContainerInactive]}
-            accessibilityRole="switch"
-            accessibilityState={{ checked: value }}
-            accessibilityLabel={accessibilityLabel}
-        >
-            <View style={[styles.toggleCircle, value ? styles.toggleCircleActive : styles.toggleCircleInactive]}>
-                {value && (
-                    <IconSymbol
-                        name="checkmark"
-                        size={16}
-                        color="#457B9D"
-                    />
-                )}
-            </View>
-        </TouchableOpacity>
-    );
-};
+import { Switch } from '@/components/ui/Switch';
 
 export default function SettingsScreen() {
     const colorScheme = useColorScheme();
@@ -321,7 +288,7 @@ export default function SettingsScreen() {
                     
                     <View style={styles.settingRow}>
                         <ThemedText style={[styles.settingText, { color: textColor }]}>Luteal Phase Calculation</ThemedText>
-                        <ToggleSwitch
+                        <Switch
                             value={lutealPhase}
                             onValueChange={handleLutealPhaseToggle}
                             accessibilityLabel="Luteal Phase Calculation"
@@ -330,7 +297,7 @@ export default function SettingsScreen() {
 
                     <View style={styles.settingRow}>
                         <ThemedText style={[styles.settingText, { color: textColor }]}>Prevent Screenshots</ThemedText>
-                        <ToggleSwitch
+                        <Switch
                             value={preventScreenshots}
                             onValueChange={handleScreenshotToggle}
                             accessibilityLabel="Prevent Screenshots"
@@ -467,34 +434,5 @@ const styles = StyleSheet.create({
         alignSelf: 'center',
         marginBottom: -50,
         marginTop: -50,
-    },
-    toggleContainer: {
-        width: 50,
-        height: 30,
-        borderRadius: 15,
-        padding: 2,
-        justifyContent: 'center',
-    },
-    toggleContainerActive: {
-        backgroundColor: '#457B9D',
-    },
-    toggleContainerInactive: {
-        backgroundColor: '#3f3f3f',
-    },
-    toggleCircle: {
-        width: 26,
-        height: 26,
-        borderRadius: 13,
-        position: 'absolute',
-        justifyContent: 'center',
-        alignItems: 'center',
-    },
-    toggleCircleActive: {
-        backgroundColor: '#ffffff',
-        right: 2,
-    },
-    toggleCircleInactive: {
-        backgroundColor: '#909090',
-        left: 2,
     },
 });
