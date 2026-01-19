@@ -1,41 +1,37 @@
 import React, { useState, useEffect, useMemo, useCallback, useRef } from 'react';
-import { StyleSheet, TouchableOpacity, TextInput, Alert, useColorScheme, View, ActivityIndicator, Keyboard } from 'react-native';
+import { StyleSheet, TouchableOpacity, Alert, useColorScheme, View, ActivityIndicator, Keyboard } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import DateTimePicker from '@react-native-community/datetimepicker';
 import * as Haptics from 'expo-haptics';
-import { validateInputLength, MAX_NOTES_LENGTH, sanitizeInput, containsSuspiciousPatterns } from '@/utils/validation';
+import { sanitizeInput, containsSuspiciousPatterns } from '@/utils/validation';
 import { ThemedText } from '@/components/ThemedText';
 import { ThemedView } from '@/components/ThemedView';
 import ParallaxScrollView from '@/components/ParallaxScrollView';
 import { Image } from 'react-native';
-import { IconSymbol } from '@/components/ui/IconSymbol';
 import PredictionSummary from '@/components/PredictionSummary';
 import { StepperInput } from '@/components/StepperInput';
 import SelectionButton from '@/components/SelectionButton';
+import { NotesInput, NotesInputHandle } from '@/components/NotesInput';
 
 
 export default function HomeScreen() {
   // State Management
-  const [lastPeriod, setLastPeriod] = useState(new Date());
+  const [lastPeriod, setLastPeriod] = useState(() => new Date());
   const [cycleLength, setCycleLength] = useState('28');
   const [cycleWarning, setCycleWarning] = useState<string | null>(null);
   const [periodDuration, setPeriodDuration] = useState('5');
   const [periodWarning, setPeriodWarning] = useState<string | null>(null);
   // Predictions are now derived via useMemo
   const [selectedSymptoms, setSelectedSymptoms] = useState<string[]>([]);
-  const [notes, setNotes] = useState('');
   const [lutealPhaseEnabled, setLutealPhaseEnabled] = useState(false);
   const [selectedFlow, setSelectedFlow] = useState<string | null>(null);
   const [isLogging, setIsLogging] = useState(false);
 
   // Ref to track notes for stable callbacks
-  const notesRef = useRef(notes);
-  useEffect(() => {
-    notesRef.current = notes;
-  }, [notes]);
+  const notesInputRef = useRef<NotesInputHandle>(null);
 
   // Date Picker States
-  const [date, setDate] = useState(new Date());
+  const [date, setDate] = useState(() => new Date());
   const [, setMode] = useState('date');
   const [show, setShow] = useState(false);
 
@@ -113,14 +109,6 @@ export default function HomeScreen() {
       setCycleWarning(null);
     }
   }, [cycleLength]);
-
-  // Input Validation Functions
-  const handleNotesChange = useCallback((text: string) => {
-    if (!validateInputLength(text, MAX_NOTES_LENGTH)) {
-        return;
-    }
-    setNotes(text);
-  }, []);
 
   const handlePeriodDurationChange = useCallback((text: string) => {
     const filteredText = text.replace(/[^0-9]/g, '');
@@ -204,7 +192,7 @@ export default function HomeScreen() {
   // Optimization: Use ref for notes to keep callback stable during typing
   const logPeriod = useCallback(async () => {
     Keyboard.dismiss();
-    const currentNotes = notesRef.current;
+    const currentNotes = notesInputRef.current?.getNotes() || '';
 
     // Security: Validate notes before saving to prevent Stored XSS and future backup corruption
     const sanitizedNotes = sanitizeInput(currentNotes);
@@ -247,7 +235,7 @@ export default function HomeScreen() {
         await AsyncStorage.setItem('periodEntries', JSON.stringify(entries));
         setSelectedFlow(null); // Reset new field
         setSelectedSymptoms([]);
-        setNotes('');
+        notesInputRef.current?.resetNotes();
         
         await Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
 
@@ -274,7 +262,7 @@ export default function HomeScreen() {
     } finally {
       setIsLogging(false);
     }
-  }, [lastPeriod, cycleLength, periodDuration, selectedFlow, selectedSymptoms, predictedPeriods, predictedOvulations]); // notes removed from dependencies
+  }, [lastPeriod, cycleLength, periodDuration, selectedFlow, selectedSymptoms, predictedPeriods, predictedOvulations]);
 
   // Handlers for selection to ensure stable references
   const handleToggleFlow = useCallback((flow: string) => {
@@ -450,29 +438,14 @@ export default function HomeScreen() {
         {/* Symptom Tracker */}
         {symptomsSection}
 
-        {/* Notes */}
-        <ThemedView style={styles.section}>
-          <ThemedText type="subtitle" style={{ color: sectionHeadingtextColor, marginBottom: 10 }}>
-            Notes 🗒️
-          </ThemedText>
-          <TextInput
-            style={[styles.notesInput, { color: textColor, borderColor: textColor }]}
-            multiline
-            value={notes}
-            onChangeText={handleNotesChange}
-            placeholder="Record any additional notes..."
-            placeholderTextColor={colorScheme === 'dark' ? '#AAAAAA' : '#888'}
-            accessibilityLabel="Notes"
-            accessibilityHint={`Maximum ${MAX_NOTES_LENGTH} characters`}
-            maxLength={MAX_NOTES_LENGTH}
-          />
-          <ThemedText
-            style={{ color: textColor, fontSize: 10, textAlign: 'right' }}
-            accessibilityLabel={`${notes.length} characters used out of ${MAX_NOTES_LENGTH}`}
-          >
-            {notes.length}/{MAX_NOTES_LENGTH}
-          </ThemedText>
-        </ThemedView>
+        {/* Notes (Optimized: Isolated component) */}
+        <NotesInput
+          ref={notesInputRef}
+          textColor={textColor}
+          borderColor={textColor}
+          placeholderTextColor={colorScheme === 'dark' ? '#AAAAAA' : '#888'}
+          headingColor={sectionHeadingtextColor}
+        />
 
         {/* Log Period Button */}
         {useMemo(() => (
@@ -575,14 +548,6 @@ const styles = StyleSheet.create({
     padding: 12,
     borderRadius: 8,
     marginBottom: 8,
-  },
-  notesInput: {
-    borderWidth: 1,
-    borderRadius: 8,
-    paddingHorizontal: 15,
-    height: 100,
-    textAlignVertical: 'top',
-    fontSize: 16,
   },
   logButton: {
     backgroundColor: '#457B9D',
