@@ -141,14 +141,16 @@ export function useChatbot() {
     setResponse('');
 
     try {
-      const systemPrompt = "System: You are a helpful women's health expert assistant. Answer concisely in 3 lines or less. Focus on period-based advice.";
-      const prompt = `${systemPrompt}\nUser: ${textToAsk}\nAssistant:`;
+      // Security Enhancement: Use Llama 3 special tokens to enforce role separation
+      // and prevent prompt injection (user cannot break out of 'user' role).
+      const systemPrompt = "You are a helpful women's health expert assistant. Answer concisely in 3 lines or less. Focus on period-based advice.";
+      const prompt = `<|begin_of_text|><|start_header_id|>system<|end_header_id|>\n\n${systemPrompt}<|eot_id|><|start_header_id|>user<|end_header_id|>\n\n${textToAsk}<|eot_id|><|start_header_id|>assistant<|end_header_id|>\n\n`;
 
       const result = await llamaContext.completion(
         {
           prompt,
           n_predict: 100,
-          stop: ["User:", "System:"],
+          stop: ["<|eot_id|>", "<|end_of_text|>"],
         },
         (data) => {
           // Streaming callback if needed
