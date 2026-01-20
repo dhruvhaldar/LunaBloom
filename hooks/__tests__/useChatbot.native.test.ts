@@ -2,6 +2,7 @@ import { renderHook, act, waitFor } from '@testing-library/react-native';
 import { useChatbot } from '../useChatbot.native';
 import * as FileSystem from 'expo-file-system';
 import { Alert } from 'react-native';
+import { initLlama } from 'llama.rn';
 
 // Mock dependencies
 jest.mock('expo-file-system', () => ({
@@ -70,5 +71,45 @@ describe('useChatbot Native Hook', () => {
        // And model should NOT be marked as downloaded
        expect(result.current.isModelDownloaded).toBe(false);
     });
+  });
+
+  it('uses secure Llama 3 prompt format', async () => {
+    const mockCompletion = jest.fn().mockResolvedValue({ text: 'Response' });
+    (initLlama as jest.Mock).mockResolvedValue({
+      completion: mockCompletion,
+    });
+
+    // Mock model exists
+    (FileSystem.getInfoAsync as jest.Mock).mockResolvedValue({
+      exists: true,
+      size: MODEL_SIZE_BYTES
+    });
+
+    const { result } = renderHook(() => useChatbot());
+
+    // Wait for initial checkModelExists to complete and update state
+    await waitFor(() => expect(result.current.isModelDownloaded).toBe(true));
+
+    // Initialize
+    await act(async () => {
+      await result.current.initializeLlama();
+    });
+
+    await waitFor(() => expect(result.current.isReady).toBe(true));
+
+    // Send chat
+    await act(async () => {
+      await result.current.handleChat('Hello');
+    });
+
+    expect(mockCompletion).toHaveBeenCalledWith(
+      expect.objectContaining({
+        prompt: expect.stringMatching(
+            /<\|begin_of_text\|><\|start_header_id\|>system<\|end_header_id\|>.*<\|start_header_id\|>user<\|end_header_id\|>\n\nHello<\|eot_id\|>/s
+        ),
+        stop: expect.arrayContaining(['<|eot_id|>', '<|end_of_text|>']),
+      }),
+      expect.any(Function)
+    );
   });
 });
