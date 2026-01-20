@@ -14,12 +14,13 @@ import { VictoryBar, VictoryLabel } from 'victory-native';
 import { useFocusEffect, useRouter } from 'expo-router';
 import { EmptyState } from '@/components/ui/EmptyState';
 import { formatDate, DateFormats } from '@/utils/dateFormatter';
+import { HistoryEntry } from '@/components/HistoryItem';
 
 const screenWidth = Dimensions.get('window').width;
 
 export default function InsightsScreen() {
   const router = useRouter();
-  const [entries, setEntries] = useState([]);
+  const [entries, setEntries] = useState<HistoryEntry[]>([]);
   const lastFetchedEntriesRef = useRef<string | null>(null);
 
   // Color Scheme
@@ -229,42 +230,68 @@ export default function InsightsScreen() {
             Key Metrics 📊
           </ThemedText>
           <View style={styles.metricsContainer}>
-            <View style={styles.metricItem}>
+            <View
+              style={styles.metricItem}
+              accessible={true}
+              accessibilityLabel={`Average Cycle Length: ${isNaN(averageCycleLength) ? 'N/A' : `${averageCycleLength} days`}`}
+            >
               <ThemedText>Avg. Cycle Length</ThemedText>
               <ThemedText type="subtitle">
                 {isNaN(averageCycleLength) ? 'N/A' : `${averageCycleLength} days`}
               </ThemedText>
             </View>
-          </View>
-            <View style={styles.metricItem}>
+
+            <View
+              style={styles.metricItem}
+              accessible={true}
+              accessibilityLabel={`Average Period Duration: ${isNaN(averagePeriodDuration) ? 'N/A' : `${averagePeriodDuration} days`}`}
+            >
               <ThemedText>Avg. Period Duration</ThemedText>
               <ThemedText type="subtitle">
                 {isNaN(averagePeriodDuration) ? 'N/A' : `${averagePeriodDuration} days`}
               </ThemedText>
             </View>
-            <View style={styles.metricItem}>
-              <ThemedText>Avg. Ovulation Duration</ThemedText>
+
+            <View
+              style={styles.metricItem}
+              accessible={true}
+              accessibilityLabel={`Average Ovulation Day: ${isNaN(averageOvulationDay) ? 'N/A' : `Day ${averageOvulationDay}`}`}
+            >
+              <ThemedText>Avg. Ovulation Day</ThemedText>
               <ThemedText type="subtitle">
-                {isNaN(averageOvulationDay) ? 'N/A' : `${averageOvulationDay} days`}
+                {isNaN(averageOvulationDay) ? 'N/A' : `Day ${averageOvulationDay}`}
               </ThemedText>
             </View>
-            
-            <View style={styles.metricItem}>
+
+            <View
+              style={styles.metricItem}
+              accessible={true}
+              accessibilityLabel={`Next Period Prediction: ${nextPeriodPrediction}`}
+            >
               <ThemedText>Next Period Prediction</ThemedText>
               <ThemedText type="subtitle">{nextPeriodPrediction}</ThemedText>
             </View>
-            <View style={styles.metricItem}>
+
+            <View
+              style={styles.metricItem}
+              accessible={true}
+              accessibilityLabel={`Next Ovulation Prediction: ${nextOvulationPrediction}`}
+            >
               <ThemedText>Next Ovulation Prediction</ThemedText>
               <ThemedText type="subtitle">{nextOvulationPrediction}</ThemedText>
             </View>
 
-            <View style={styles.metricItem}>
+            <View
+              style={styles.metricItem}
+              accessible={true}
+              accessibilityLabel={`Periods Tracked: ${entries.length}`}
+            >
               <ThemedText>Periods Tracked</ThemedText>
               <ThemedText type="subtitle">
                 {entries.length}
               </ThemedText>
             </View>
-            
+          </View>
         </ThemedView>
 
       </ThemedView>
@@ -289,12 +316,17 @@ const styles = StyleSheet.create({
   },
   metricsContainer: {
     flexDirection: 'row',
+    flexWrap: 'wrap',
     justifyContent: 'space-between',
+    gap: 8,
   },
   metricItem: {
-    flex: 1,
+    width: '48%',
     alignItems: 'center',
     padding: 10,
+    borderRadius: 8,
+    marginBottom: 8,
+    backgroundColor: 'rgba(150, 150, 150, 0.1)',
   },
   noDataText: {
     textAlign: 'center',

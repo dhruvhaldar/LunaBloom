@@ -8,9 +8,12 @@ export interface HistoryEntry {
   date: string;
   lastPeriod: string;
   cycleLength: number;
+  periodDuration?: number | string;
   selectedSymptoms: string[];
   selectedFlow: string | null;
   notes: string;
+  predictedNextPeriod?: string | null;
+  predictedNextOvulation?: string | null;
 }
 
 interface HistoryItemProps {
