@@ -27,6 +27,7 @@ const MAPPING = {
   'plus': 'add',
   'minus': 'remove',
   'exclamationmark.triangle.fill': 'warning',
+  'xmark.circle.fill': 'close',
 } as Partial<
   Record<
     import('expo-symbols').SymbolViewProps['name'],

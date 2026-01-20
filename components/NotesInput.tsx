@@ -1,8 +1,9 @@
 import React, { useState, useCallback, useImperativeHandle, forwardRef, memo } from 'react';
-import { TextInput, StyleSheet } from 'react-native';
+import { TextInput, StyleSheet, TouchableOpacity, View } from 'react-native';
 import { ThemedView } from '@/components/ThemedView';
 import { ThemedText } from '@/components/ThemedText';
 import { validateInputLength, MAX_NOTES_LENGTH } from '@/utils/validation';
+import { IconSymbol } from '@/components/ui/IconSymbol';
 
 interface NotesInputProps {
   textColor: string;
@@ -36,11 +37,27 @@ export const NotesInput = memo(forwardRef<NotesInputHandle, NotesInputProps>(({
     setNotes(text);
   }, []);
 
+  const handleClear = useCallback(() => {
+    setNotes('');
+  }, []);
+
   return (
     <ThemedView style={styles.section}>
-      <ThemedText type="subtitle" style={{ color: headingColor, marginBottom: 10 }}>
-        Notes 🗒️
-      </ThemedText>
+      <View style={styles.headerContainer}>
+        <ThemedText type="subtitle" style={{ color: headingColor }}>
+          Notes 🗒️
+        </ThemedText>
+        {notes.length > 0 && (
+          <TouchableOpacity
+            onPress={handleClear}
+            accessibilityLabel="Clear notes"
+            accessibilityRole="button"
+            hitSlop={{ top: 10, bottom: 10, left: 10, right: 10 }}
+          >
+             <IconSymbol name="xmark.circle.fill" size={20} color={headingColor} />
+          </TouchableOpacity>
+        )}
+      </View>
       <TextInput
         style={[styles.notesInput, { color: textColor, borderColor: borderColor }]}
         multiline
@@ -67,6 +84,12 @@ const styles = StyleSheet.create({
     borderRadius: 8,
     padding: 5,
     marginBottom: 12,
+  },
+  headerContainer: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    marginBottom: 10,
   },
   notesInput: {
     borderWidth: 1,

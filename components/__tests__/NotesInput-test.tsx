@@ -67,4 +67,32 @@ describe('NotesInput', () => {
 
     expect(ref.current?.getNotes()).toBe('');
   });
+
+  it('clears notes when clear button is pressed', () => {
+    const { getByPlaceholderText, getByLabelText, queryByLabelText } = render(
+      <NotesInput
+        textColor="#000"
+        borderColor="#000"
+        placeholderTextColor="#666"
+        headingColor="#000"
+      />
+    );
+    const input = getByPlaceholderText('Record any additional notes...');
+
+    // Type something
+    fireEvent.changeText(input, 'Mistake');
+
+    // Find clear button
+    const clearButton = getByLabelText('Clear notes');
+    expect(clearButton).toBeTruthy();
+
+    // Press clear
+    fireEvent.press(clearButton);
+
+    // Input should be empty
+    expect(input.props.value).toBe('');
+
+    // Clear button should disappear
+    expect(queryByLabelText('Clear notes')).toBeNull();
+  });
 });
