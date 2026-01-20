@@ -6,6 +6,12 @@ export const DateFormats = {
   MonthDay: { day: 'numeric', month: 'short' } as const, // "1 Jan"
 };
 
+// Optimization: Pre-calculate keys for known formats to avoid JSON.stringify on every call
+// This is O(1) lookup vs O(N) serialization
+const knownKeys = new Map<object, string>();
+knownKeys.set(DateFormats.ShortDate, JSON.stringify(DateFormats.ShortDate));
+knownKeys.set(DateFormats.MonthDay, JSON.stringify(DateFormats.MonthDay));
+
 /**
  * Formats a date string or object using cached Intl.DateTimeFormat instances.
  * This is significantly faster than calling toLocaleDateString() repeatedly in loops or lists.
@@ -23,8 +29,15 @@ export const formatDate = (
   }
 
   // Optimization: Cache Intl.DateTimeFormat instances to avoid expensive re-creation
-  // JSON.stringify is fast for small configuration objects
-  const key = `${locale}-${JSON.stringify(options)}`;
+  // Check fast path for known options objects (reference equality)
+  let optionsKey = knownKeys.get(options);
+
+  if (!optionsKey) {
+     // Fallback to serialization for custom options
+     optionsKey = JSON.stringify(options);
+  }
+
+  const key = `${locale}-${optionsKey}`;
 
   let formatter = formatters.get(key);
   if (!formatter) {
