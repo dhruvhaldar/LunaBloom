@@ -6,7 +6,7 @@ import * as DocumentPicker from 'expo-document-picker';
 import * as FileSystem from 'expo-file-system';
 import * as Sharing from 'expo-sharing';
 import * as ScreenCapture from 'expo-screen-capture';
-import { isValidBackupEntry, sanitizeInput } from '@/utils/validation';
+import { isValidBackupEntry, sanitizeInput, MAX_BACKUP_FILE_SIZE } from '@/utils/validation';
 import { ThemedText } from '@/components/ThemedText';
 import { ThemedView } from '@/components/ThemedView';
 import ParallaxScrollView from '@/components/ParallaxScrollView';
@@ -196,6 +196,16 @@ export default function SettingsScreen() {
 
             const file = result.assets[0];
             fileUri = file.uri;
+
+            // Security Check: Verify file size before reading to prevent DoS (OOM)
+            const fileInfo = await FileSystem.getInfoAsync(fileUri);
+            if (fileInfo.exists && fileInfo.size > MAX_BACKUP_FILE_SIZE) {
+                Alert.alert(
+                    '❌ File Too Large',
+                    `The backup file exceeds the maximum allowed size of ${MAX_BACKUP_FILE_SIZE / (1024 * 1024)}MB.`
+                );
+                return;
+            }
 
             // Security Improvement: Use FileSystem to read the file instead of fetch
             // fetch on file:// URIs can be inconsistent and FileSystem is safer for local reads
