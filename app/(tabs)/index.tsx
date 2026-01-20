@@ -4,6 +4,7 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import DateTimePicker from '@react-native-community/datetimepicker';
 import * as Haptics from 'expo-haptics';
 import { sanitizeInput, containsSuspiciousPatterns } from '@/utils/validation';
+import { formatDate, DateFormats } from '@/utils/dateFormatter';
 import { ThemedText } from '@/components/ThemedText';
 import { ThemedView } from '@/components/ThemedView';
 import ParallaxScrollView from '@/components/ParallaxScrollView';
@@ -37,11 +38,8 @@ export default function HomeScreen() {
 
   // Optimization: Memoize formatted date to prevent expensive re-calculation on every render (e.g. typing)
   const formattedLastPeriod = useMemo(() => {
-    return lastPeriod.toLocaleDateString('en-GB', {
-      day: 'numeric',
-      month: 'short',
-      year: 'numeric'
-    });
+    // ⚡ Bolt: Use optimized formatter to leverage caching
+    return formatDate(lastPeriod, DateFormats.ShortDate);
   }, [lastPeriod]);
 
   // Color Scheme
