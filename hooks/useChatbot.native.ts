@@ -2,12 +2,29 @@ import { useState, useEffect, useCallback, useRef } from 'react';
 import { Keyboard, Alert } from 'react-native';
 import { initLlama, LlamaContext } from 'llama.rn';
 import * as FileSystem from 'expo-file-system';
+import * as RNFS from 'react-native-fs';
 import { validateInputLength, sanitizeInput, sanitizePromptInput, containsSuspiciousPatterns, MAX_INPUT_LENGTH } from '@/utils/validation';
 
 const MODEL_URL = 'https://huggingface.co/hugging-quants/Llama-3.2-1B-Instruct-Q4_K_M-GGUF/resolve/main/llama-3.2-1b-instruct-q4_k_m.gguf';
 const MODEL_FILENAME = 'llama-3.2-1b-instruct-q4_k_m.gguf';
 const MODEL_PATH = `${FileSystem.documentDirectory}${MODEL_FILENAME}`;
 const MODEL_SIZE_BYTES = 807690656; // Expected size from HF (exact bytes)
+const MODEL_SHA256 = '1d0e9419ec4e12aef73ccf4ffd122703e94c48344a96bc7c5f0f2772c2152ce3';
+
+const verifyModelChecksum = async (path: string): Promise<boolean> => {
+  try {
+    // RNFS expects a path, usually without 'file://' on Android/iOS for some APIs,
+    // but works with it for others. Safest is to strip 'file://' if present.
+    const safePath = path.startsWith('file://') ? path.substring(7) : path;
+
+    // Calculate SHA256 hash
+    const hash = await RNFS.hash(safePath, 'sha256');
+    return hash.toLowerCase() === MODEL_SHA256.toLowerCase();
+  } catch (error) {
+    console.error('Error calculating model checksum:', error);
+    return false;
+  }
+};
 
 export function useChatbot() {
   const [question, setQuestion] = useState('');
@@ -70,8 +87,17 @@ export function useChatbot() {
         // Security/Integrity Check: Verify file size immediately after download
         const fileInfo = await FileSystem.getInfoAsync(MODEL_PATH);
         if (fileInfo.exists && fileInfo.size === MODEL_SIZE_BYTES) {
-          setIsModelDownloaded(true);
-          Alert.alert("Success", "Model downloaded successfully!");
+          // Defense in Depth: Verify SHA256 Checksum
+          const isMsgIntegrityValid = await verifyModelChecksum(MODEL_PATH);
+          if (isMsgIntegrityValid) {
+            setIsModelDownloaded(true);
+            Alert.alert("Success", "Model downloaded and verified successfully!");
+          } else {
+            console.error('Download checksum mismatch. Deleting corrupted file.');
+            await FileSystem.deleteAsync(MODEL_PATH, { idempotent: true });
+            setIsModelDownloaded(false);
+            Alert.alert("Security Error", "Model verification failed. The file may have been tampered with.");
+          }
         } else {
           console.error(`Download integrity check failed. Expected ${MODEL_SIZE_BYTES}, got ${fileInfo.exists ? fileInfo.size : 'file not found'}.`);
           // Clean up corrupted file
