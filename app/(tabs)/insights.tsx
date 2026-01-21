@@ -174,6 +174,27 @@ export default function InsightsScreen() {
     };
   }, [entries]);
 
+  // Bolt Optimization: Memoize chart props to prevent expensive re-renders
+  // These objects/components would otherwise be recreated on every render, forcing VictoryNative to update.
+  const chartStyle = useMemo(() => ({
+    data: { fill: barColor },
+    labels: { fill: barColor }
+  }), [barColor]);
+
+  const chartPadding = useMemo(() => ({ top: 20, left: 5, right: 110, bottom: 20 }), []);
+
+  const getBarLabel = useCallback(({ datum }: any) => `${datum.y} days`, []);
+
+  const chartLabelComponent = useMemo(() => (
+    <VictoryLabel
+      dy={0}
+      dx={10}
+      textAnchor="start"
+      style={[{ fontSize: 13, fill: barColor }]}
+      text={({ datum }) => `${datum.dateRange.split(' - ')[0]} (${datum.y} days)`}
+    />
+  ), [barColor]);
+
   return (
     <ParallaxScrollView
       headerBackgroundColor={{ light: '#ffdde2', dark: '#151718' }}
@@ -196,19 +217,11 @@ export default function InsightsScreen() {
             <VictoryBar 
             data={cycleData} horizontal 
             barRatio={0.2} // Adjusted to make bars shorter
-            labels={({ datum }) => `${datum.y} days`}
-            labelComponent={
-              <VictoryLabel 
-                dy={0} 
-                dx={10} 
-                textAnchor="start" 
-                style={[{ fontSize: 13, fill: barColor }]}
-                text={({ datum }) => `${datum.dateRange.split(' - ')[0]} (${datum.y} days)`}
-              />
-            }
-            style={{ data: { fill: barColor }, labels: { fill: barColor }}}
+            labels={getBarLabel}
+            labelComponent={chartLabelComponent}
+            style={chartStyle}
             width={screenWidth - 150} // Width of bar - 150 pixels
-            padding={{ top: 20, left: 5, right: 110, bottom: 20 }}
+            padding={chartPadding}
           />
           ) : (
             <EmptyState
