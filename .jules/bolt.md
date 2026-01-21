@@ -29,3 +29,7 @@
 ## 2026-05-22 - Fragment Props Stability
 **Learning:** Passing an inline Fragment (e.g. `<>...</>`) or an inline element as a prop (like `ListHeaderComponent`) creates a new object reference on every render. For components like `FlatList`, this forces the header to unmount and remount, causing potential state loss and animation glitches.
 **Action:** Memoize the component passed to `ListHeaderComponent` (or similar props) using `useMemo` to ensure referential stability across re-renders.
+
+## 2026-06-15 - Victory Chart Prop Memoization
+**Learning:** Passing inline objects or functions to `Victory` components (like `style` or `labelComponent`) forces re-calculation of expensive SVG paths on every render, even if data hasn't changed.
+**Action:** Memoize `style`, `labelComponent`, and callback props passed to heavy visualization components.
