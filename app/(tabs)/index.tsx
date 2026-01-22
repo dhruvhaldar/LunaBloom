@@ -61,6 +61,17 @@ export default function HomeScreen() {
     textColor: symptomtextColor,
   }), [symptomButtonBorderColor, selectedSymptomBackgroundColor, symptomtextColor]);
 
+  // Optimization: Memoize header background color to avoid referential changes on every render
+  const headerBackgroundColor = useMemo(() => ({
+    light: Parallaxheaderlightcolor,
+    dark: Parallaxheaderdarkcolor
+  }), [Parallaxheaderlightcolor, Parallaxheaderdarkcolor]);
+
+  // Optimization: Memoize header image to prevent unnecessary re-rendering of ParallaxScrollView header
+  const headerImage = useMemo(() => (
+    <Image source={require('@/assets/images/LunaBloom_adaptive.png')} style={styles.reactLogo} resizeMode="contain"/>
+  ), []);
+
   // Date Picker Functions
   const onChange = useCallback((event: any, selectedDate: any) => {
     if (selectedDate) {
@@ -417,10 +428,8 @@ export default function HomeScreen() {
   ]);
 
   return (
-    <ParallaxScrollView headerBackgroundColor={{ light: Parallaxheaderlightcolor, dark: Parallaxheaderdarkcolor }}
-      headerImage={
-        <Image source={require('@/assets/images/LunaBloom_adaptive.png')} style={styles.reactLogo} resizeMode="contain"/>
-      }
+    <ParallaxScrollView headerBackgroundColor={headerBackgroundColor}
+      headerImage={headerImage}
     >
       <ThemedView style={styles.container}>
         <ThemedText type="title" style={[styles.header, { color: textColor }]}>
