@@ -2,12 +2,14 @@ import { useState, useEffect, useCallback, useRef } from 'react';
 import { Keyboard, Alert } from 'react-native';
 import { initLlama, LlamaContext } from 'llama.rn';
 import * as FileSystem from 'expo-file-system';
+import RNFS from 'react-native-fs';
 import { validateInputLength, sanitizeInput, sanitizePromptInput, containsSuspiciousPatterns, MAX_INPUT_LENGTH } from '@/utils/validation';
 
 const MODEL_URL = 'https://huggingface.co/hugging-quants/Llama-3.2-1B-Instruct-Q4_K_M-GGUF/resolve/main/llama-3.2-1b-instruct-q4_k_m.gguf';
 const MODEL_FILENAME = 'llama-3.2-1b-instruct-q4_k_m.gguf';
 const MODEL_PATH = `${FileSystem.documentDirectory}${MODEL_FILENAME}`;
 const MODEL_SIZE_BYTES = 807690656; // Expected size from HF (exact bytes)
+const MODEL_SHA256 = '1d0e9419ec4e12aef73ccf4ffd122703e94c48344a96bc7c5f0f2772c2152ce3';
 
 export function useChatbot() {
   const [question, setQuestion] = useState('');
@@ -29,6 +31,22 @@ export function useChatbot() {
   useEffect(() => {
     checkModelExists();
   }, []);
+
+  const verifyModelIntegrity = async (path: string): Promise<boolean> => {
+    try {
+      // RNFS expects absolute path, stripping file:// prefix if present
+      const cleanPath = path.startsWith('file://') ? path.substring(7) : path;
+      const hash = await RNFS.hash(cleanPath, 'sha256');
+      if (hash !== MODEL_SHA256) {
+         console.error(`Hash mismatch. Expected ${MODEL_SHA256}, got ${hash}`);
+         return false;
+      }
+      return true;
+    } catch (error) {
+      console.error('Error verifying model integrity:', error instanceof Error ? error.message : String(error));
+      return false;
+    }
+  };
 
   const checkModelExists = async () => {
     try {
@@ -70,8 +88,18 @@ export function useChatbot() {
         // Security/Integrity Check: Verify file size immediately after download
         const fileInfo = await FileSystem.getInfoAsync(MODEL_PATH);
         if (fileInfo.exists && fileInfo.size === MODEL_SIZE_BYTES) {
-          setIsModelDownloaded(true);
-          Alert.alert("Success", "Model downloaded successfully!");
+          // Security/Integrity Check: Verify SHA256 checksum
+          const isIntegrityValid = await verifyModelIntegrity(MODEL_PATH);
+          if (isIntegrityValid) {
+            setIsModelDownloaded(true);
+            Alert.alert("Success", "Model downloaded successfully!");
+          } else {
+            console.error(`Download integrity check failed. Hash mismatch.`);
+            // Clean up corrupted file
+            await FileSystem.deleteAsync(MODEL_PATH, { idempotent: true });
+            setIsModelDownloaded(false);
+            Alert.alert("Error", "Model downloaded but seems corrupted (hash mismatch). Please try again.");
+          }
         } else {
           console.error(`Download integrity check failed. Expected ${MODEL_SIZE_BYTES}, got ${fileInfo.exists ? fileInfo.size : 'file not found'}.`);
           // Clean up corrupted file
@@ -92,6 +120,13 @@ export function useChatbot() {
     if (!isModelDownloaded) return;
     setIsInitializing(true);
     try {
+      // Security/Integrity Check: Verify SHA256 checksum before loading into memory
+      const isIntegrityValid = await verifyModelIntegrity(MODEL_PATH);
+      if (!isIntegrityValid) {
+        Alert.alert("Integrity Error", "Model file is corrupted. Please delete and re-download.");
+        return;
+      }
+
       const context = await initLlama({
         model: MODEL_PATH,
         use_mlock: true,

@@ -3,6 +3,7 @@ import { useChatbot } from '../useChatbot.native';
 import * as FileSystem from 'expo-file-system';
 import { Alert } from 'react-native';
 import { initLlama } from 'llama.rn';
+import RNFS from 'react-native-fs';
 
 // Mock dependencies
 jest.mock('expo-file-system', () => ({
@@ -14,6 +15,10 @@ jest.mock('expo-file-system', () => ({
 
 jest.mock('llama.rn', () => ({
   initLlama: jest.fn(),
+}));
+
+jest.mock('react-native-fs', () => ({
+  hash: jest.fn(),
 }));
 
 jest.spyOn(Alert, 'alert');
@@ -29,6 +34,7 @@ jest.mock('@/utils/validation', () => ({
 
 describe('useChatbot Native Hook', () => {
   const MODEL_SIZE_BYTES = 807690656;
+  const MODEL_SHA256 = '1d0e9419ec4e12aef73ccf4ffd122703e94c48344a96bc7c5f0f2772c2152ce3';
 
   beforeEach(() => {
     jest.clearAllMocks();
@@ -36,8 +42,8 @@ describe('useChatbot Native Hook', () => {
     (FileSystem.getInfoAsync as jest.Mock).mockResolvedValue({ exists: false });
   });
 
-  it('verifies integrity after download and deletes corrupted file', async () => {
-    // Mock download success but file size mismatch (corruption)
+  it('verifies integrity (checksum) after download and deletes corrupted file', async () => {
+    // Mock download success
     const mockDownloadAsync = jest.fn().mockResolvedValue({ uri: 'file:///path/to/model.gguf' });
     (FileSystem.createDownloadResumable as jest.Mock).mockReturnValue({
       downloadAsync: mockDownloadAsync,
@@ -45,10 +51,13 @@ describe('useChatbot Native Hook', () => {
 
     // Mock getInfoAsync:
     // 1. Initial check (does not exist)
-    // 2. Check after download (exists but wrong size)
+    // 2. Check after download (exists and CORRECT size, but we'll fail hash)
     (FileSystem.getInfoAsync as jest.Mock)
       .mockResolvedValueOnce({ exists: false })
-      .mockResolvedValueOnce({ exists: true, size: 12345 });
+      .mockResolvedValueOnce({ exists: true, size: MODEL_SIZE_BYTES });
+
+    // Mock RNFS.hash to return WRONG hash
+    (RNFS.hash as jest.Mock).mockResolvedValue('wrong_hash');
 
     const { result } = renderHook(() => useChatbot());
 
@@ -85,6 +94,9 @@ describe('useChatbot Native Hook', () => {
       size: MODEL_SIZE_BYTES
     });
 
+    // Mock Correct Hash
+    (RNFS.hash as jest.Mock).mockResolvedValue(MODEL_SHA256);
+
     const { result } = renderHook(() => useChatbot());
 
     // Wait for initial checkModelExists to complete and update state
@@ -111,5 +123,35 @@ describe('useChatbot Native Hook', () => {
       }),
       expect.any(Function)
     );
+  });
+
+  it('fails initialization if integrity check fails', async () => {
+    // Mock model exists
+    (FileSystem.getInfoAsync as jest.Mock).mockResolvedValue({
+      exists: true,
+      size: MODEL_SIZE_BYTES
+    });
+
+    // Mock Wrong Hash
+    (RNFS.hash as jest.Mock).mockResolvedValue('corrupted_hash');
+
+    const { result } = renderHook(() => useChatbot());
+
+    // Wait for initial checkModelExists to complete and update state
+    await waitFor(() => expect(result.current.isModelDownloaded).toBe(true));
+
+    // Initialize
+    await act(async () => {
+      await result.current.initializeLlama();
+    });
+
+    // Expect initialization to fail
+    await waitFor(() => {
+      expect(Alert.alert).toHaveBeenCalledWith(
+        'Integrity Error',
+        expect.stringContaining('corrupted')
+      );
+      expect(result.current.isReady).toBe(false);
+    });
   });
 });
