@@ -27,3 +27,8 @@
 **Vulnerability:** The app read the entire backup file into memory using `FileSystem.readAsStringAsync` without checking its size, allowing attackers (or accidental users) to crash the app (OOM) with large files.
 **Learning:** `FileSystem.readAsStringAsync` is dangerous for untrusted files without size checks. Always check `fileInfo.size` first.
 **Prevention:** Enforce `MAX_BACKUP_FILE_SIZE` check using `FileSystem.getInfoAsync` before reading file content.
+
+## 2026-03-05 - Model Hash Verification
+**Vulnerability:** The large AI model was checked only for file size, not content integrity. A corrupted download or malicious replacement with the same size would bypass the check.
+**Learning:** `expo-file-system` lacks native hashing for large files. `react-native-fs` is required for SHA256 hashing. Also, `react-native-fs` requires stripping the `file://` prefix from paths on Android/iOS.
+**Prevention:** Use `react-native-fs.hash()` to verify SHA256 of downloaded models. Ensure `file://` prefix is stripped from the path before hashing.

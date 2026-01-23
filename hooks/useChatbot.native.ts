@@ -2,12 +2,14 @@ import { useState, useEffect, useCallback, useRef } from 'react';
 import { Keyboard, Alert } from 'react-native';
 import { initLlama, LlamaContext } from 'llama.rn';
 import * as FileSystem from 'expo-file-system';
+import * as RNFS from 'react-native-fs';
 import { validateInputLength, sanitizeInput, sanitizePromptInput, containsSuspiciousPatterns, MAX_INPUT_LENGTH } from '@/utils/validation';
 
 const MODEL_URL = 'https://huggingface.co/hugging-quants/Llama-3.2-1B-Instruct-Q4_K_M-GGUF/resolve/main/llama-3.2-1b-instruct-q4_k_m.gguf';
 const MODEL_FILENAME = 'llama-3.2-1b-instruct-q4_k_m.gguf';
 const MODEL_PATH = `${FileSystem.documentDirectory}${MODEL_FILENAME}`;
 const MODEL_SIZE_BYTES = 807690656; // Expected size from HF (exact bytes)
+const MODEL_SHA256 = '1d0e9419ec4e12aef73ccf4ffd122703e94c48344a96bc7c5f0f2772c2152ce3';
 
 export function useChatbot() {
   const [question, setQuestion] = useState('');
@@ -41,7 +43,18 @@ export function useChatbot() {
           setIsModelDownloaded(false);
           Alert.alert("Integrity Check Failed", "The downloaded model was corrupted and has been deleted. Please download it again.");
         } else {
-          setIsModelDownloaded(true);
+          // Security/Integrity Check: Verify SHA256 Hash
+          const cleanPath = MODEL_PATH.replace('file://', '');
+          const fileHash = await RNFS.hash(cleanPath, 'sha256');
+
+          if (fileHash !== MODEL_SHA256) {
+            console.error(`Model hash mismatch: expected ${MODEL_SHA256}, got ${fileHash}. Deleting corrupted file.`);
+            await FileSystem.deleteAsync(MODEL_PATH, { idempotent: true });
+            setIsModelDownloaded(false);
+            Alert.alert("Integrity Check Failed", "The downloaded model is corrupted (hash mismatch). Please download it again.");
+          } else {
+            setIsModelDownloaded(true);
+          }
         }
       }
     } catch (error) {
@@ -70,8 +83,19 @@ export function useChatbot() {
         // Security/Integrity Check: Verify file size immediately after download
         const fileInfo = await FileSystem.getInfoAsync(MODEL_PATH);
         if (fileInfo.exists && fileInfo.size === MODEL_SIZE_BYTES) {
-          setIsModelDownloaded(true);
-          Alert.alert("Success", "Model downloaded successfully!");
+          // Security/Integrity Check: Verify SHA256 Hash
+          const cleanPath = MODEL_PATH.replace('file://', '');
+          const fileHash = await RNFS.hash(cleanPath, 'sha256');
+
+          if (fileHash === MODEL_SHA256) {
+            setIsModelDownloaded(true);
+            Alert.alert("Success", "Model downloaded successfully!");
+          } else {
+            console.error(`Download hash mismatch. Expected ${MODEL_SHA256}, got ${fileHash}.`);
+            await FileSystem.deleteAsync(MODEL_PATH, { idempotent: true });
+            setIsModelDownloaded(false);
+            Alert.alert("Error", "Model downloaded but is corrupted (hash mismatch). Please try again.");
+          }
         } else {
           console.error(`Download integrity check failed. Expected ${MODEL_SIZE_BYTES}, got ${fileInfo.exists ? fileInfo.size : 'file not found'}.`);
           // Clean up corrupted file
