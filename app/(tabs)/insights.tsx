@@ -121,6 +121,8 @@ export default function InsightsScreen() {
       acc.formattedData.push({
         y: cycleLength,
         dateRange: `${lastPeriodStr} - ${predictedNextPeriodStr}`,
+        // Optimization: Pre-calculate label to avoid string manipulation in render loop
+        label: `${lastPeriodStr} (${cycleLength} days)`,
         date: lastPeriodDate,
         ovulationDay: ovDay,
         x: sortedEntries.length - index // Calculate x directly: oldest (1) to newest (length)
@@ -174,6 +176,25 @@ export default function InsightsScreen() {
     };
   }, [entries]);
 
+  // Optimization: Memoize the label component to prevent creating new React Elements on every render.
+  // This avoids unnecessary diffing in VictoryBar.
+  // Also uses pre-calculated 'label' property to avoid string ops in render.
+  const labelComponent = useMemo(() => (
+    <VictoryLabel
+      dy={0}
+      dx={10}
+      textAnchor="start"
+      style={[{ fontSize: 13, fill: barColor }]}
+      text={({ datum }) => datum.label}
+    />
+  ), [barColor]);
+
+  // Optimization: Memoize VictoryBar styles to avoid object recreation
+  const chartStyle = useMemo(() => ({
+    data: { fill: barColor },
+    labels: { fill: barColor }
+  }), [barColor]);
+
   return (
     <ParallaxScrollView
       headerBackgroundColor={{ light: '#ffdde2', dark: '#151718' }}
@@ -197,16 +218,8 @@ export default function InsightsScreen() {
             data={cycleData} horizontal 
             barRatio={0.2} // Adjusted to make bars shorter
             labels={({ datum }) => `${datum.y} days`}
-            labelComponent={
-              <VictoryLabel 
-                dy={0} 
-                dx={10} 
-                textAnchor="start" 
-                style={[{ fontSize: 13, fill: barColor }]}
-                text={({ datum }) => `${datum.dateRange.split(' - ')[0]} (${datum.y} days)`}
-              />
-            }
-            style={{ data: { fill: barColor }, labels: { fill: barColor }}}
+            labelComponent={labelComponent}
+            style={chartStyle}
             width={screenWidth - 150} // Width of bar - 150 pixels
             padding={{ top: 20, left: 5, right: 110, bottom: 20 }}
           />
