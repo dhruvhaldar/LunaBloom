@@ -416,11 +416,24 @@ export default function HomeScreen() {
     periodWarning
   ]);
 
+  // Optimization: Memoize header props to prevent unnecessary re-rendering of ParallaxScrollView header
+  const headerBackgroundColor = useMemo(() => ({
+    light: Parallaxheaderlightcolor,
+    dark: Parallaxheaderdarkcolor
+  }), [Parallaxheaderlightcolor, Parallaxheaderdarkcolor]);
+
+  const headerImage = useMemo(() => (
+    <Image
+      source={require('@/assets/images/LunaBloom_adaptive.png')}
+      style={styles.reactLogo}
+      resizeMode="contain"
+    />
+  ), []);
+
   return (
-    <ParallaxScrollView headerBackgroundColor={{ light: Parallaxheaderlightcolor, dark: Parallaxheaderdarkcolor }}
-      headerImage={
-        <Image source={require('@/assets/images/LunaBloom_adaptive.png')} style={styles.reactLogo} resizeMode="contain"/>
-      }
+    <ParallaxScrollView
+      headerBackgroundColor={headerBackgroundColor}
+      headerImage={headerImage}
     >
       <ThemedView style={styles.container}>
         <ThemedText type="title" style={[styles.header, { color: textColor }]}>

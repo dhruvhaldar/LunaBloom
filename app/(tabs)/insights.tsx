@@ -174,16 +174,19 @@ export default function InsightsScreen() {
     };
   }, [entries]);
 
+  const headerBackgroundColor = useMemo(() => ({ light: '#ffdde2', dark: '#151718' }), []);
+  const headerImage = useMemo(() => (
+    <Image
+      source={require('@/assets/images/history2.png')}
+      style={styles.reactLogo}
+      resizeMode="contain"
+    />
+  ), []);
+
   return (
     <ParallaxScrollView
-      headerBackgroundColor={{ light: '#ffdde2', dark: '#151718' }}
-      headerImage={
-        <Image 
-          source={require('@/assets/images/history2.png')}
-          style={styles.reactLogo}
-          resizeMode="contain"
-        />
-      }
+      headerBackgroundColor={headerBackgroundColor}
+      headerImage={headerImage}
     >
       <ThemedView style={styles.container}>
         <ThemedText type="title" style={[styles.title, { color: sectionHeadingtextColor }]}>Cycle Insights</ThemedText>
