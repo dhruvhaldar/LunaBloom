@@ -2,12 +2,14 @@ import { useState, useEffect, useCallback, useRef } from 'react';
 import { Keyboard, Alert } from 'react-native';
 import { initLlama, LlamaContext } from 'llama.rn';
 import * as FileSystem from 'expo-file-system';
+import RNFS from 'react-native-fs';
 import { validateInputLength, sanitizeInput, sanitizePromptInput, containsSuspiciousPatterns, MAX_INPUT_LENGTH } from '@/utils/validation';
 
 const MODEL_URL = 'https://huggingface.co/hugging-quants/Llama-3.2-1B-Instruct-Q4_K_M-GGUF/resolve/main/llama-3.2-1b-instruct-q4_k_m.gguf';
 const MODEL_FILENAME = 'llama-3.2-1b-instruct-q4_k_m.gguf';
 const MODEL_PATH = `${FileSystem.documentDirectory}${MODEL_FILENAME}`;
 const MODEL_SIZE_BYTES = 807690656; // Expected size from HF (exact bytes)
+const MODEL_SHA256 = '1d0e9419ec4e12aef73ccf4ffd122703e94c48344a96bc7c5f0f2772c2152ce3';
 
 export function useChatbot() {
   const [question, setQuestion] = useState('');
@@ -30,11 +32,40 @@ export function useChatbot() {
     checkModelExists();
   }, []);
 
+  const verifyModelIntegrity = async (path: string, expectedSize: number): Promise<boolean> => {
+    try {
+      const fileInfo = await FileSystem.getInfoAsync(path);
+      if (!fileInfo.exists) return false;
+
+      // 1. Check File Size
+      if (fileInfo.size !== expectedSize) {
+        console.error(`Model size mismatch: expected ${expectedSize}, got ${fileInfo.size}`);
+        return false;
+      }
+
+      // 2. Check SHA-256 Hash
+      // RNFS requires stripping 'file://' prefix on some platforms (like Android)
+      const cleanPath = path.startsWith('file://') ? path.slice(7) : path;
+      const fileHash = await RNFS.hash(cleanPath, 'sha256');
+
+      if (fileHash.toLowerCase() !== MODEL_SHA256.toLowerCase()) {
+        console.error(`Model hash mismatch: expected ${MODEL_SHA256}, got ${fileHash}`);
+        return false;
+      }
+
+      return true;
+    } catch (error) {
+      console.error("Integrity verification error:", error);
+      return false;
+    }
+  };
+
   const checkModelExists = async () => {
     try {
       const fileInfo = await FileSystem.getInfoAsync(MODEL_PATH);
       if (fileInfo.exists) {
-        // Security/Integrity Check: Verify file size
+        // Optimization: Only check size on startup to avoid expensive hashing operation.
+        // Full integrity check (SHA-256) is performed immediately after download.
         if (fileInfo.size !== MODEL_SIZE_BYTES) {
           console.error(`Model size mismatch: expected ${MODEL_SIZE_BYTES}, got ${fileInfo.size}. Deleting corrupted file.`);
           await FileSystem.deleteAsync(MODEL_PATH, { idempotent: true });
@@ -67,13 +98,14 @@ export function useChatbot() {
 
       const result = await downloadResumable.downloadAsync();
       if (result?.uri) {
-        // Security/Integrity Check: Verify file size immediately after download
-        const fileInfo = await FileSystem.getInfoAsync(MODEL_PATH);
-        if (fileInfo.exists && fileInfo.size === MODEL_SIZE_BYTES) {
+        // Security/Integrity Check: Verify file size and hash immediately after download
+        const isValid = await verifyModelIntegrity(MODEL_PATH, MODEL_SIZE_BYTES);
+
+        if (isValid) {
           setIsModelDownloaded(true);
           Alert.alert("Success", "Model downloaded successfully!");
         } else {
-          console.error(`Download integrity check failed. Expected ${MODEL_SIZE_BYTES}, got ${fileInfo.exists ? fileInfo.size : 'file not found'}.`);
+          console.error(`Download integrity check failed.`);
           // Clean up corrupted file
           await FileSystem.deleteAsync(MODEL_PATH, { idempotent: true });
           setIsModelDownloaded(false);
