@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 import { StyleSheet, View, Alert, useColorScheme, TouchableOpacity, Image } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { IconSymbol } from '@/components/ui/IconSymbol';
@@ -15,6 +15,20 @@ import { Switch } from '@/components/ui/Switch';
 export default function SettingsScreen() {
     const colorScheme = useColorScheme();
     const textColor = colorScheme === 'dark' ? '#f0f0f0' : '#413c58';
+
+    // Optimization: Memoize header props to prevent re-rendering ParallaxScrollView header
+    const headerBackgroundColor = useMemo(() => ({
+        light: '#ffdde2',
+        dark: '#151718'
+    }), []);
+
+    const headerImage = useMemo(() => (
+        <Image
+            source={require('@/assets/images/history2.png')}
+            style={styles.reactLogo}
+            resizeMode="contain"
+        />
+    ), []);
     
     // Add state for the two toggles
     const [lutealPhase, setLutealPhase] = useState(false);
@@ -280,14 +294,8 @@ export default function SettingsScreen() {
 
       return (
         <ParallaxScrollView
-              headerBackgroundColor={{ light: '#ffdde2', dark: '#151718' }}
-              headerImage={
-                <Image 
-                  source={require('@/assets/images/history2.png')}
-                  style={styles.reactLogo}
-                  resizeMode="contain"
-                />
-            }
+              headerBackgroundColor={headerBackgroundColor}
+              headerImage={headerImage}
         >
             <ThemedView style={styles.container}>
                 <ThemedText type="title" style={[styles.title, { color: textColor }]}>Settings</ThemedText>
