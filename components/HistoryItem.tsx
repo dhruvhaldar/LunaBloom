@@ -23,7 +23,10 @@ interface HistoryItemProps {
   deleteIconColor: string;
 }
 
-const arePropsEqual = (prevProps: HistoryItemProps, nextProps: HistoryItemProps) => {
+const arePropsEqual = (
+  prevProps: HistoryItemProps,
+  nextProps: HistoryItemProps,
+) => {
   // Check stable props
   if (
     prevProps.onDelete !== nextProps.onDelete ||
@@ -50,11 +53,18 @@ const arePropsEqual = (prevProps: HistoryItemProps, nextProps: HistoryItemProps)
     prevItem.notes === nextItem.notes &&
     // Check symptoms array content
     prevItem.selectedSymptoms.length === nextItem.selectedSymptoms.length &&
-    prevItem.selectedSymptoms.every((symptom, index) => symptom === nextItem.selectedSymptoms[index])
+    prevItem.selectedSymptoms.every(
+      (symptom, index) => symptom === nextItem.selectedSymptoms[index],
+    )
   );
 };
 
-const HistoryItem = React.memo(function HistoryItem({ item, onDelete, textColor, deleteIconColor }: HistoryItemProps) {
+const HistoryItem = React.memo(function HistoryItem({
+  item,
+  onDelete,
+  textColor,
+  deleteIconColor,
+}: HistoryItemProps) {
   // Format dates once per render
   // Optimization: useMemo derived values to prevent expensive Date parsing and string formatting on every render
   const lastPeriodDate = useMemo(() => {
@@ -69,14 +79,36 @@ const HistoryItem = React.memo(function HistoryItem({ item, onDelete, textColor,
     return item.selectedSymptoms.join(', ');
   }, [item.selectedSymptoms]);
 
+  // Construct comprehensive accessibility label
+  const accessibilityLabel = useMemo(() => {
+    return `History entry from ${logDate}. Last Period: ${lastPeriodDate}. Cycle Length: ${item.cycleLength} days. Symptoms: ${symptomsString || 'None'}. Flow: ${item.selectedFlow || 'Not logged'}. Notes: ${item.notes || 'None'}.`;
+  }, [
+    logDate,
+    lastPeriodDate,
+    item.cycleLength,
+    symptomsString,
+    item.selectedFlow,
+    item.notes,
+  ]);
+
   return (
     <View style={styles.entry}>
       <View style={styles.entryContent}>
-        <View style={styles.entryTextContainer}>
-          <Text style={{ color: textColor }}>Last Period: {lastPeriodDate}</Text>
-          <Text style={{ color: textColor }}>Cycle Length: {item.cycleLength} days</Text>
+        <View
+          style={styles.entryTextContainer}
+          accessible={true}
+          accessibilityLabel={accessibilityLabel}
+        >
+          <Text style={{ color: textColor }}>
+            Last Period: {lastPeriodDate}
+          </Text>
+          <Text style={{ color: textColor }}>
+            Cycle Length: {item.cycleLength} days
+          </Text>
           <Text style={{ color: textColor }}>Symptoms: {symptomsString}</Text>
-          <Text style={{ color: textColor }}>Flow: {item.selectedFlow || 'Not logged'}</Text>
+          <Text style={{ color: textColor }}>
+            Flow: {item.selectedFlow || 'Not logged'}
+          </Text>
           <Text style={{ color: textColor }}>Notes: {item.notes}</Text>
           <Text style={{ color: textColor }}>Log Date: {logDate}</Text>
         </View>
