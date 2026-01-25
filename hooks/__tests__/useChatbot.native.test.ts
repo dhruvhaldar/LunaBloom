@@ -3,6 +3,7 @@ import { useChatbot } from '../useChatbot.native';
 import * as FileSystem from 'expo-file-system';
 import { Alert } from 'react-native';
 import { initLlama } from 'llama.rn';
+import RNFS from 'react-native-fs';
 
 // Mock dependencies
 jest.mock('expo-file-system', () => ({
@@ -14,6 +15,10 @@ jest.mock('expo-file-system', () => ({
 
 jest.mock('llama.rn', () => ({
   initLlama: jest.fn(),
+}));
+
+jest.mock('react-native-fs', () => ({
+  hash: jest.fn(),
 }));
 
 jest.spyOn(Alert, 'alert');
@@ -29,6 +34,7 @@ jest.mock('@/utils/validation', () => ({
 
 describe('useChatbot Native Hook', () => {
   const MODEL_SIZE_BYTES = 807690656;
+  const CORRECT_HASH = '1d0e9419ec4e12aef73ccf4ffd122703e94c48344a96bc7c5f0f2772c2152ce3';
 
   beforeEach(() => {
     jest.clearAllMocks();
@@ -36,7 +42,32 @@ describe('useChatbot Native Hook', () => {
     (FileSystem.getInfoAsync as jest.Mock).mockResolvedValue({ exists: false });
   });
 
-  it('verifies integrity after download and deletes corrupted file', async () => {
+  it('downloads model from pinned URL', async () => {
+    const PINNED_URL = 'https://huggingface.co/hugging-quants/Llama-3.2-1B-Instruct-Q4_K_M-GGUF/resolve/39ba0224812e8139187a155573a27d1004ef716f/llama-3.2-1b-instruct-q4_k_m.gguf';
+
+    const mockDownloadAsync = jest.fn().mockResolvedValue({ uri: 'file:///path/to/model.gguf' });
+    (FileSystem.createDownloadResumable as jest.Mock).mockReturnValue({
+      downloadAsync: mockDownloadAsync,
+    });
+
+    // Mock getInfoAsync: Does not exist
+    (FileSystem.getInfoAsync as jest.Mock).mockResolvedValue({ exists: false });
+
+    const { result } = renderHook(() => useChatbot());
+
+    await act(async () => {
+      await result.current.downloadModel();
+    });
+
+    expect(FileSystem.createDownloadResumable).toHaveBeenCalledWith(
+      PINNED_URL,
+      expect.any(String),
+      expect.any(Object),
+      expect.any(Function)
+    );
+  });
+
+  it('verifies size integrity after download and deletes corrupted file (wrong size)', async () => {
     // Mock download success but file size mismatch (corruption)
     const mockDownloadAsync = jest.fn().mockResolvedValue({ uri: 'file:///path/to/model.gguf' });
     (FileSystem.createDownloadResumable as jest.Mock).mockReturnValue({
@@ -59,19 +90,80 @@ describe('useChatbot Native Hook', () => {
 
     // Wait for async operations
     await waitFor(() => {
-       // With the fix, we expect deleteAsync to be called
        expect(FileSystem.deleteAsync).toHaveBeenCalled();
-
-       // And Alert to report corruption
        expect(Alert.alert).toHaveBeenCalledWith(
          'Error',
          expect.stringContaining('corrupted')
        );
-
-       // And model should NOT be marked as downloaded
        expect(result.current.isModelDownloaded).toBe(false);
     });
   });
+
+  it('verifies hash integrity after download and deletes corrupted file (wrong hash)', async () => {
+      // Mock download success
+      const mockDownloadAsync = jest.fn().mockResolvedValue({ uri: 'file:///path/to/model.gguf' });
+      (FileSystem.createDownloadResumable as jest.Mock).mockReturnValue({
+        downloadAsync: mockDownloadAsync,
+      });
+
+      // Mock getInfoAsync: Correct size
+      (FileSystem.getInfoAsync as jest.Mock)
+        .mockResolvedValueOnce({ exists: false })
+        .mockResolvedValueOnce({ exists: true, size: MODEL_SIZE_BYTES });
+
+      // Mock RNFS.hash: Wrong hash
+      (RNFS.hash as jest.Mock).mockResolvedValue('wronghash123');
+
+      const { result } = renderHook(() => useChatbot());
+
+      // Trigger download
+      await act(async () => {
+        await result.current.downloadModel();
+      });
+
+      await waitFor(() => {
+         expect(RNFS.hash).toHaveBeenCalledWith(expect.stringContaining('llama'), 'sha256');
+         expect(FileSystem.deleteAsync).toHaveBeenCalled();
+         expect(Alert.alert).toHaveBeenCalledWith(
+           'Error',
+           expect.stringContaining('corrupted')
+         );
+         expect(result.current.isModelDownloaded).toBe(false);
+      });
+    });
+
+    it('successfully downloads model with correct size and hash', async () => {
+        // Mock download success
+        const mockDownloadAsync = jest.fn().mockResolvedValue({ uri: 'file:///path/to/model.gguf' });
+        (FileSystem.createDownloadResumable as jest.Mock).mockReturnValue({
+          downloadAsync: mockDownloadAsync,
+        });
+
+        // Mock getInfoAsync: Correct size
+        (FileSystem.getInfoAsync as jest.Mock)
+          .mockResolvedValueOnce({ exists: false })
+          .mockResolvedValueOnce({ exists: true, size: MODEL_SIZE_BYTES });
+
+        // Mock RNFS.hash: Correct hash
+        (RNFS.hash as jest.Mock).mockResolvedValue(CORRECT_HASH);
+
+        const { result } = renderHook(() => useChatbot());
+
+        // Trigger download
+        await act(async () => {
+          await result.current.downloadModel();
+        });
+
+        await waitFor(() => {
+           expect(RNFS.hash).toHaveBeenCalled();
+           expect(FileSystem.deleteAsync).not.toHaveBeenCalled();
+           expect(Alert.alert).toHaveBeenCalledWith(
+             'Success',
+             expect.stringContaining('successfully')
+           );
+           expect(result.current.isModelDownloaded).toBe(true);
+        });
+      });
 
   it('uses secure Llama 3 prompt format', async () => {
     const mockCompletion = jest.fn().mockResolvedValue({ text: 'Response' });
@@ -79,7 +171,7 @@ describe('useChatbot Native Hook', () => {
       completion: mockCompletion,
     });
 
-    // Mock model exists
+    // Mock model exists (for checkModelExists)
     (FileSystem.getInfoAsync as jest.Mock).mockResolvedValue({
       exists: true,
       size: MODEL_SIZE_BYTES
