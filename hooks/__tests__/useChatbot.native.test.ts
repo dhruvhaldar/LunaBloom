@@ -1,6 +1,7 @@
 import { renderHook, act, waitFor } from '@testing-library/react-native';
 import { useChatbot } from '../useChatbot.native';
 import * as FileSystem from 'expo-file-system';
+import RNFS from 'react-native-fs';
 import { Alert } from 'react-native';
 import { initLlama } from 'llama.rn';
 
@@ -10,6 +11,10 @@ jest.mock('expo-file-system', () => ({
   getInfoAsync: jest.fn(),
   deleteAsync: jest.fn(),
   createDownloadResumable: jest.fn(),
+}));
+
+jest.mock('react-native-fs', () => ({
+  hash: jest.fn(),
 }));
 
 jest.mock('llama.rn', () => ({
@@ -29,14 +34,17 @@ jest.mock('@/utils/validation', () => ({
 
 describe('useChatbot Native Hook', () => {
   const MODEL_SIZE_BYTES = 807690656;
+  const MODEL_SHA256 = '1d0e9419ec4e12aef73ccf4ffd122703e94c48344a96bc7c5f0f2772c2152ce3';
 
   beforeEach(() => {
     jest.clearAllMocks();
     // Default: Model does not exist initially
     (FileSystem.getInfoAsync as jest.Mock).mockResolvedValue({ exists: false });
+    // Default: Hash is correct
+    (RNFS.hash as jest.Mock).mockResolvedValue(MODEL_SHA256);
   });
 
-  it('verifies integrity after download and deletes corrupted file', async () => {
+  it('verifies integrity (size) after download and deletes corrupted file', async () => {
     // Mock download success but file size mismatch (corruption)
     const mockDownloadAsync = jest.fn().mockResolvedValue({ uri: 'file:///path/to/model.gguf' });
     (FileSystem.createDownloadResumable as jest.Mock).mockReturnValue({
@@ -59,7 +67,7 @@ describe('useChatbot Native Hook', () => {
 
     // Wait for async operations
     await waitFor(() => {
-       // With the fix, we expect deleteAsync to be called
+       // Expect deleteAsync to be called
        expect(FileSystem.deleteAsync).toHaveBeenCalled();
 
        // And Alert to report corruption
@@ -70,6 +78,75 @@ describe('useChatbot Native Hook', () => {
 
        // And model should NOT be marked as downloaded
        expect(result.current.isModelDownloaded).toBe(false);
+    });
+  });
+
+  it('verifies integrity (hash) after download and deletes tampered file', async () => {
+    // Mock download success
+    const mockDownloadAsync = jest.fn().mockResolvedValue({ uri: 'file:///path/to/model.gguf' });
+    (FileSystem.createDownloadResumable as jest.Mock).mockReturnValue({
+      downloadAsync: mockDownloadAsync,
+    });
+
+    // Mock getInfoAsync: Correct size
+    (FileSystem.getInfoAsync as jest.Mock)
+      .mockResolvedValueOnce({ exists: false })
+      .mockResolvedValueOnce({ exists: true, size: MODEL_SIZE_BYTES });
+
+    // Mock hash: Incorrect hash
+    (RNFS.hash as jest.Mock).mockResolvedValue('wrong_hash');
+
+    const { result } = renderHook(() => useChatbot());
+
+    // Trigger download
+    await act(async () => {
+      await result.current.downloadModel();
+    });
+
+    // Wait for async operations
+    await waitFor(() => {
+       // Expect hash check to have been called
+       expect(RNFS.hash).toHaveBeenCalled();
+
+       // Expect deleteAsync to be called
+       expect(FileSystem.deleteAsync).toHaveBeenCalled();
+
+       // And Alert to report verification failure
+       expect(Alert.alert).toHaveBeenCalledWith(
+         'Error',
+         expect.stringContaining('verification failed')
+       );
+
+       // And model should NOT be marked as downloaded
+       expect(result.current.isModelDownloaded).toBe(false);
+    });
+  });
+
+  it('successfully downloads and validates correct model', async () => {
+    // Mock download success
+    const mockDownloadAsync = jest.fn().mockResolvedValue({ uri: 'file:///path/to/model.gguf' });
+    (FileSystem.createDownloadResumable as jest.Mock).mockReturnValue({
+      downloadAsync: mockDownloadAsync,
+    });
+
+    // Mock getInfoAsync: Correct size
+    (FileSystem.getInfoAsync as jest.Mock)
+      .mockResolvedValueOnce({ exists: false })
+      .mockResolvedValueOnce({ exists: true, size: MODEL_SIZE_BYTES });
+
+    // Mock hash: Correct hash (already set in beforeEach, but explicit here)
+    (RNFS.hash as jest.Mock).mockResolvedValue(MODEL_SHA256);
+
+    const { result } = renderHook(() => useChatbot());
+
+    // Trigger download
+    await act(async () => {
+      await result.current.downloadModel();
+    });
+
+    await waitFor(() => {
+        expect(result.current.isModelDownloaded).toBe(true);
+        expect(Alert.alert).toHaveBeenCalledWith("Success", "Model downloaded successfully!");
     });
   });
 
