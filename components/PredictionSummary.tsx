@@ -31,9 +31,6 @@ const PredictionSummary = React.memo(function PredictionSummary({
         Predicted Periods
       </ThemedText>
       {predictedPeriods.map((date, index) => {
-        // Calculate period start date
-        const periodStartDate = new Date(date);
-
         // Calculate period end date
         const periodEndDate = new Date(date);
         periodEndDate.setDate(periodEndDate.getDate() + Number(periodDuration) - 1);
@@ -56,7 +53,7 @@ const PredictionSummary = React.memo(function PredictionSummary({
                 marginTop: 5
               }}
             >
-              {formatDate(periodStartDate, DateFormats.MonthDay)} - {formatDate(periodEndDate, DateFormats.MonthDay)}
+              {formatDate(date, DateFormats.MonthDay)} - {formatDate(periodEndDate, DateFormats.MonthDay)}
             </ThemedText>
           </ThemedView>
         );
@@ -77,9 +74,6 @@ const PredictionSummary = React.memo(function PredictionSummary({
         const fertileWindowStart = new Date(date);
         fertileWindowStart.setDate(fertileWindowStart.getDate() - 2);
 
-        // Calculate fertile window end (day of ovulation)
-        const fertileWindowEnd = new Date(date);
-
         return (
           <ThemedView
             key={index}
@@ -98,7 +92,7 @@ const PredictionSummary = React.memo(function PredictionSummary({
                 marginTop: 5
               }}
             >
-              Fertile Window: {formatDate(fertileWindowStart, DateFormats.MonthDay)} - {formatDate(fertileWindowEnd, DateFormats.MonthDay)}
+              Fertile Window: {formatDate(fertileWindowStart, DateFormats.MonthDay)} - {formatDate(date, DateFormats.MonthDay)}
             </ThemedText>
           </ThemedView>
         );
