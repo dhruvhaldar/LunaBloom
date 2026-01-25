@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback, useRef } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { Keyboard, Alert } from 'react-native';
 import { initLlama, LlamaContext } from 'llama.rn';
 import * as FileSystem from 'expo-file-system';
@@ -10,15 +10,8 @@ const MODEL_PATH = `${FileSystem.documentDirectory}${MODEL_FILENAME}`;
 const MODEL_SIZE_BYTES = 807690656; // Expected size from HF (exact bytes)
 
 export function useChatbot() {
-  const [question, setQuestion] = useState('');
   const [response, setResponse] = useState('');
   const [isLoading, setIsLoading] = useState(false);
-
-  // Ref to track question state for stable handleChat callback
-  const questionRef = useRef(question);
-  useEffect(() => {
-    questionRef.current = question;
-  }, [question]);
 
   const [isModelDownloaded, setIsModelDownloaded] = useState(false);
   const [isDownloading, setIsDownloading] = useState(false);
@@ -106,35 +99,29 @@ export function useChatbot() {
     }
   };
 
-  const handleChat = useCallback(async (questionText?: string) => {
+  const handleChat = useCallback(async (questionText: string): Promise<boolean> => {
     Keyboard.dismiss();
-    // Use ref to access latest state without adding it to dependency array
-    let textToAsk = typeof questionText === 'string' ? questionText : questionRef.current;
 
     // Security Validation
-    textToAsk = sanitizeInput(textToAsk);
+    let textToAsk = sanitizeInput(questionText);
     // Prevent prompt injection by removing role markers
     textToAsk = sanitizePromptInput(textToAsk);
 
-    if (!textToAsk) return;
+    if (!textToAsk) return false;
 
     if (!validateInputLength(textToAsk, MAX_INPUT_LENGTH)) {
       Alert.alert("Input too long", `Please limit your question to ${MAX_INPUT_LENGTH} characters.`);
-      return;
+      return false;
     }
 
     if (containsSuspiciousPatterns(textToAsk)) {
       Alert.alert("Invalid Input", "Your input contains invalid characters or patterns.");
-      return;
-    }
-
-    if (typeof questionText === 'string') {
-      setQuestion(textToAsk);
+      return false;
     }
 
     if (!llamaContext) {
       Alert.alert("AI Not Ready", "Please load the AI model first.");
-      return;
+      return false;
     }
 
     setIsLoading(true);
@@ -158,17 +145,17 @@ export function useChatbot() {
       );
 
       setResponse(result.text.trim());
+      return true;
     } catch (error) {
       console.error('Llama Error:', error instanceof Error ? error.message : String(error));
       setResponse('Error generating response.');
+      return false;
     } finally {
       setIsLoading(false);
     }
   }, [llamaContext]); // Only recreate if llamaContext changes
 
   return {
-    question,
-    setQuestion,
     response,
     isLoading,
     isModelDownloaded,

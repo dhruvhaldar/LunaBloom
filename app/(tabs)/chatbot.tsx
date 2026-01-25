@@ -1,9 +1,10 @@
-import React, { useMemo } from 'react';
-import { StyleSheet, View, Image, useColorScheme, TextInput, TouchableOpacity, ScrollView, ActivityIndicator, Platform } from 'react-native';
+import React, { useMemo, useRef, useCallback } from 'react';
+import { StyleSheet, View, Image, useColorScheme, TouchableOpacity, ScrollView, ActivityIndicator, Platform } from 'react-native';
 import { ThemedText } from '@/components/ThemedText';
 import { ThemedView } from '@/components/ThemedView';
 import ParallaxScrollView from '@/components/ParallaxScrollView';
 import { useChatbot } from '@/hooks/useChatbot'; // Expo automatically resolves .web.ts or .native.ts
+import { ChatInput, ChatInputHandle } from '@/components/ChatInput';
 
 // Optimization: Move static data outside component to prevent re-allocation on every render
 const suggestedQuestions = [
@@ -15,8 +16,6 @@ const suggestedQuestions = [
 
 export default function MenstruationScreen() {
   const {
-    question,
-    setQuestion,
     response,
     isLoading,
     isModelDownloaded,
@@ -28,6 +27,20 @@ export default function MenstruationScreen() {
     isReady,
     handleChat
   } = useChatbot();
+
+  // Ref for chat input state isolation
+  const chatInputRef = useRef<ChatInputHandle>(null);
+
+  // Wrapper for handleChat to clear input on success
+  const onSendChat = useCallback(async (text?: string) => {
+      const textToSend = text || chatInputRef.current?.getText() || '';
+      if (!textToSend.trim()) return;
+
+      const success = await handleChat(textToSend);
+      if (success) {
+          chatInputRef.current?.resetText();
+      }
+  }, [handleChat]);
 
   // Color Scheme
   const colorScheme = useColorScheme();
@@ -43,7 +56,7 @@ export default function MenstruationScreen() {
         <TouchableOpacity
           key={index}
           style={[styles.suggestionChip, { borderColor: textColor }]}
-          onPress={() => handleChat(q)}
+          onPress={() => onSendChat(q)}
           accessibilityLabel={`Ask: ${q}`}
           accessibilityRole="button"
         >
@@ -51,7 +64,7 @@ export default function MenstruationScreen() {
         </TouchableOpacity>
       ))}
     </View>
-  ), [textColor, handleChat]);
+  ), [textColor, onSendChat]);
 
   return (
     <ParallaxScrollView headerBackgroundColor={{ light: '#ffdde2', dark: '#151718' }} headerImage={<Image source={require('@/assets/images/history2.png')} style={styles.reactLogo} resizeMode="contain"/>}>
@@ -111,20 +124,16 @@ export default function MenstruationScreen() {
             </ScrollView>
 
             <View style={styles.inputContainer}>
-              <TextInput
-                style={[styles.input, { color: textColor }]}
-                placeholder="Ask a menstrual health question..."
+              <ChatInput
+                ref={chatInputRef}
+                textColor={textColor}
                 placeholderTextColor={placeholderTextColor + '90'}
-                value={question}
-                onChangeText={setQuestion}
-                editable={!isLoading}
-                accessibilityLabel="Ask a menstrual health question"
-                returnKeyType="send"
-                onSubmitEditing={() => handleChat()}
+                isLoading={isLoading}
+                onSubmit={(text) => onSendChat(text)}
               />
               <TouchableOpacity
                 style={styles.button}
-                onPress={() => handleChat()}
+                onPress={() => onSendChat()}
                 disabled={isLoading}
                 accessibilityLabel="Send question to AI assistant"
                 accessibilityRole="button"

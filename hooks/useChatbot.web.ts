@@ -1,4 +1,4 @@
-import { useState, useCallback, useRef, useEffect } from 'react';
+import { useState, useCallback } from 'react';
 import { Keyboard } from 'react-native';
 import { validateInputLength, sanitizeInput, sanitizePromptInput, containsSuspiciousPatterns, MAX_INPUT_LENGTH } from '@/utils/validation';
 
@@ -7,15 +7,8 @@ import { validateInputLength, sanitizeInput, sanitizePromptInput, containsSuspic
 // Given constraints, we provide a "Lite" version for web.
 
 export function useChatbot() {
-  const [question, setQuestion] = useState('');
   const [response, setResponse] = useState('');
   const [isLoading, setIsLoading] = useState(false);
-
-  // Ref to track question state for stable handleChat callback
-  const questionRef = useRef(question);
-  useEffect(() => {
-    questionRef.current = question;
-  }, [question]);
 
   // Web is always "ready" but has limited capability
   const isModelDownloaded = true;
@@ -27,49 +20,43 @@ export function useChatbot() {
   const downloadModel = async () => {};
   const initializeLlama = async () => {};
 
-  const handleChat = useCallback(async (questionText?: string) => {
+  const handleChat = useCallback(async (questionText: string): Promise<boolean> => {
     // Web implementation does not use Keyboard.dismiss() the same way, but it's safe to call if using react-native-web
     try {
         Keyboard.dismiss();
     } catch {}
 
-    // Use ref to access latest state without adding it to dependency array
-    let textToAsk = typeof questionText === 'string' ? questionText : questionRef.current;
-
     // Security Validation
-    textToAsk = sanitizeInput(textToAsk);
+    let textToAsk = sanitizeInput(questionText);
     // Prevent prompt injection by removing role markers
     textToAsk = sanitizePromptInput(textToAsk);
 
-    if (!textToAsk) return;
+    if (!textToAsk) return false;
 
     if (!validateInputLength(textToAsk, MAX_INPUT_LENGTH)) {
       if (typeof window !== 'undefined') window.alert(`Please limit your question to ${MAX_INPUT_LENGTH} characters.`);
-      return;
+      return false;
     }
 
     if (containsSuspiciousPatterns(textToAsk)) {
       if (typeof window !== 'undefined') window.alert("Your input contains invalid characters or patterns.");
-      return;
-    }
-
-    if (typeof questionText === 'string') {
-      setQuestion(textToAsk);
+      return false;
     }
 
     setIsLoading(true);
     setResponse('');
 
     // Simulate delay
-    setTimeout(() => {
-        setResponse("Web support for Local AI is currently limited. Please use the mobile app for the full offline AI experience.\n\nHowever, generalized advice: For cramps, try heat and hydration. For cycle tracking, consistency is key.");
-        setIsLoading(false);
-    }, 1500);
+    return new Promise((resolve) => {
+      setTimeout(() => {
+          setResponse("Web support for Local AI is currently limited. Please use the mobile app for the full offline AI experience.\n\nHowever, generalized advice: For cramps, try heat and hydration. For cycle tracking, consistency is key.");
+          setIsLoading(false);
+          resolve(true);
+      }, 1500);
+    });
   }, []); // Stable callback with no dependencies
 
   return {
-    question,
-    setQuestion,
     response,
     isLoading,
     isModelDownloaded,
