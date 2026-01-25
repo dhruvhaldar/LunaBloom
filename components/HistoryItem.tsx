@@ -69,10 +69,18 @@ const HistoryItem = React.memo(function HistoryItem({ item, onDelete, textColor,
     return item.selectedSymptoms.join(', ');
   }, [item.selectedSymptoms]);
 
+  const accessibilityLabel = useMemo(() => {
+    return `Entry for ${logDate}. Last Period: ${lastPeriodDate}. Cycle Length: ${item.cycleLength} days. Symptoms: ${symptomsString || 'None'}. Flow: ${item.selectedFlow || 'Not logged'}. Notes: ${item.notes || 'None'}.`;
+  }, [logDate, lastPeriodDate, item.cycleLength, symptomsString, item.selectedFlow, item.notes]);
+
   return (
     <View style={styles.entry}>
       <View style={styles.entryContent}>
-        <View style={styles.entryTextContainer}>
+        <View
+          style={styles.entryTextContainer}
+          accessible={true}
+          accessibilityLabel={accessibilityLabel}
+        >
           <Text style={{ color: textColor }}>Last Period: {lastPeriodDate}</Text>
           <Text style={{ color: textColor }}>Cycle Length: {item.cycleLength} days</Text>
           <Text style={{ color: textColor }}>Symptoms: {symptomsString}</Text>
