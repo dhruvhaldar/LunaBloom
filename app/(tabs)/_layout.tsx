@@ -1,13 +1,69 @@
 import { Tabs } from 'expo-router';
 import React, { useRef } from 'react';
-import { StyleSheet, TouchableOpacity, ViewStyle, Animated, View } from 'react-native';
+import { StyleSheet, TouchableOpacity, ViewStyle, Animated, View, Image } from 'react-native';
 
 import { IconSymbol } from '@/components/ui/IconSymbol';
 import TabBarBackground from '@/components/ui/TabBarBackground';
 import { Colors } from '@/constants/Colors';
 import { useColorScheme } from '@/hooks/useColorScheme';
 
-import { Image } from 'react-native';
+// Custom tab button component with animation
+// Optimization: Moved outside component to prevent re-definition on every render
+const AnimatedTabButton = ({ children, onPress, accessibilityLabel }: any) => {
+  const scaleAnim = useRef(new Animated.Value(1)).current;
+
+  const handlePressIn = () => {
+    Animated.spring(scaleAnim, {
+      toValue: 0.9,
+      useNativeDriver: true,
+      bounciness: 10,
+      speed: 80,
+    }).start();
+  };
+
+  const handlePressOut = () => {
+    Animated.spring(scaleAnim, {
+      toValue: 1,
+      useNativeDriver: true,
+      bounciness: 80,
+      speed: 0.4,
+    }).start();
+  };
+
+  return (
+    <TouchableOpacity
+      style={styles.tabButtonContainer}
+      onPress={onPress}
+      onPressIn={handlePressIn}
+      onPressOut={handlePressOut}
+      accessibilityLabel={accessibilityLabel}
+      hitSlop={{ top: 20, bottom: 20, left: 20, right: 20 }}
+    >
+      <Animated.View style={{
+        transform: [{ scale: scaleAnim }],
+        alignItems: 'center',
+        justifyContent: 'center',
+      }}>
+        {children}
+      </Animated.View>
+    </TouchableOpacity>
+  );
+};
+
+// Reusable Tab Icon Component
+// Optimization: Extracted to prevent inline function recreation and allow stable referencing
+const TabIcon = ({ color, focused, name, size = 29 }: { color: string, focused: boolean, name: React.ComponentProps<typeof IconSymbol>['name'], size?: number }) => (
+  <View style={styles.tabItemContainer}>
+    <IconSymbol
+      size={size}
+      name={name}
+      color={color}
+      style={{
+        opacity: focused ? 1 : 0.8
+      }}
+    />
+  </View>
+);
 
 export default function TabLayout() {
   const colorScheme = useColorScheme();
@@ -28,48 +84,6 @@ export default function TabLayout() {
     borderColor: borderColor,
     overflow: 'hidden',
     paddingHorizontal: 0,
-  };
-
-  // Custom tab button component with animation
-  const AnimatedTabButton = ({ children, onPress, accessibilityLabel }) => {
-    const scaleAnim = useRef(new Animated.Value(1)).current;
-
-    const handlePressIn = () => {
-      Animated.spring(scaleAnim, {
-        toValue: 0.9,
-        useNativeDriver: true,
-        bounciness: 10,
-        speed: 80,
-      }).start();
-    };
-
-    const handlePressOut = () => {
-      Animated.spring(scaleAnim, {
-        toValue: 1,
-        useNativeDriver: true,
-        bounciness: 80,
-        speed: 0.4,
-      }).start();
-    };
-
-    return (
-      <TouchableOpacity 
-        style={styles.tabButtonContainer}
-        onPress={onPress}
-        onPressIn={handlePressIn}
-        onPressOut={handlePressOut}
-        accessibilityLabel={accessibilityLabel}
-        hitSlop={{ top: 20, bottom: 20, left: 20, right: 20 }}
-      >
-        <Animated.View style={{ 
-          transform: [{ scale: scaleAnim }],
-          alignItems: 'center',
-          justifyContent: 'center',
-        }}>
-          {children}
-        </Animated.View>
-      </TouchableOpacity>
-    );
   };
 
   return (
@@ -95,17 +109,7 @@ export default function TabLayout() {
         options={{
           title: 'Home',
           tabBarIcon: ({ color, focused }) => (
-            <View style={styles.tabItemContainer}>
-              <IconSymbol 
-                size={tabBarButtonSize} 
-                name="house.fill" 
-                color={color}
-                style={{ 
-                  opacity: focused ? 1 : 0.8 
-                }} 
-              />
-              {focused}
-            </View>
+            <TabIcon color={color} focused={focused} name="house.fill" size={tabBarButtonSize} />
           ),
         }}
       />
@@ -116,17 +120,7 @@ export default function TabLayout() {
         options={{
           title: 'History',
           tabBarIcon: ({ color, focused }) => (
-            <View style={styles.tabItemContainer}>
-              <IconSymbol 
-                size={tabBarButtonSize} 
-                name="history.fill" 
-                color={color}
-                style={{ 
-                  opacity: focused ? 1 : 0.8 
-                }} 
-              />
-              {focused}
-            </View>
+            <TabIcon color={color} focused={focused} name="history.fill" size={tabBarButtonSize} />
           ),
         }}
       />
@@ -137,17 +131,7 @@ export default function TabLayout() {
         options={{
           title: 'Insights',
           tabBarIcon: ({ color, focused }) => (
-            <View style={styles.tabItemContainer}>
-              <IconSymbol 
-                size={tabBarButtonSize} 
-                name="bar-chart.fill" 
-                color={color}
-                style={{ 
-                  opacity: focused ? 1 : 0.8 
-                }} 
-              />
-              {focused}
-            </View>
+            <TabIcon color={color} focused={focused} name="bar-chart.fill" size={tabBarButtonSize} />
           ),
         }}
       />
@@ -160,37 +144,23 @@ export default function TabLayout() {
           tabBarIcon: ({ color, focused }) => (
             <View style={styles.tabItemContainer}>
               <Image source={require('@/assets/images/ai.png')} style={styles.tinyLogo}/>
-    </View>
+            </View>
           ),
         }}
       />
       
     {/* Settings Tab */}
-<Tabs.Screen
+    <Tabs.Screen
         name="settings"
         options={{
           title: 'Settings',
           tabBarIcon: ({ color, focused }) => (
-            <View style={styles.tabItemContainer}>
-              <IconSymbol 
-                size={tabBarButtonSize} 
-                name="settings.fill" 
-                color={color}
-                style={{ 
-                  opacity: focused ? 1 : 0.8 
-                }} 
-              />
-              {focused}
-            </View>
+            <TabIcon color={color} focused={focused} name="settings.fill" size={tabBarButtonSize} />
           ),
         }}
       />
 
     </Tabs>
-
-    
-
-    
   );
 }
 
