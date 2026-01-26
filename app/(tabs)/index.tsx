@@ -47,6 +47,21 @@ export default function HomeScreen() {
   const colorScheme = useColorScheme();
   const Parallaxheaderlightcolor = '#A8DADC';
   const Parallaxheaderdarkcolor = '#A8DADC';
+
+  // Optimization: Memoize header props to prevent re-rendering ParallaxScrollView header on every state change
+  const headerBackgroundColor = useMemo(() => ({
+    light: Parallaxheaderlightcolor,
+    dark: Parallaxheaderdarkcolor
+  }), [Parallaxheaderlightcolor, Parallaxheaderdarkcolor]);
+
+  const headerImage = useMemo(() => (
+    <Image
+      source={require('@/assets/images/LunaBloom_adaptive.png')}
+      style={styles.reactLogo}
+      resizeMode="contain"
+    />
+  ), []);
+
   const textColor = colorScheme === 'dark' ? '#F1FAEE' : '#1D3557';
   const sectionHeadingtextColor = colorScheme === 'dark' ? '#E63946' : '#1D3557';
   const symptomtextColor = colorScheme === 'dark' ? '#F1FAEE' : '#E63946';  
@@ -417,10 +432,9 @@ export default function HomeScreen() {
   ]);
 
   return (
-    <ParallaxScrollView headerBackgroundColor={{ light: Parallaxheaderlightcolor, dark: Parallaxheaderdarkcolor }}
-      headerImage={
-        <Image source={require('@/assets/images/LunaBloom_adaptive.png')} style={styles.reactLogo} resizeMode="contain"/>
-      }
+    <ParallaxScrollView
+      headerBackgroundColor={headerBackgroundColor}
+      headerImage={headerImage}
     >
       <ThemedView style={styles.container}>
         <ThemedText type="title" style={[styles.header, { color: textColor }]}>
