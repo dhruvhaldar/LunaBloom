@@ -2,6 +2,11 @@ import React, { createRef } from 'react';
 import { render, fireEvent, act } from '@testing-library/react-native';
 import { NotesInput, NotesInputHandle } from '../NotesInput';
 
+// Mock IconSymbol to avoid issues with vector icons
+jest.mock('@/components/ui/IconSymbol', () => ({
+  IconSymbol: () => 'IconSymbol',
+}));
+
 describe('NotesInput', () => {
   it('renders correctly', () => {
     const { getByPlaceholderText } = render(
@@ -66,5 +71,34 @@ describe('NotesInput', () => {
     });
 
     expect(ref.current?.getNotes()).toBe('');
+  });
+
+  it('clears text when clear button is pressed', () => {
+    const { getByPlaceholderText, getByLabelText, queryByLabelText, getByDisplayValue } = render(
+      <NotesInput
+        textColor="#000"
+        borderColor="#000"
+        placeholderTextColor="#666"
+        headingColor="#000"
+      />
+    );
+    const input = getByPlaceholderText('Record any additional notes...');
+
+    // Initial state: no clear button
+    expect(queryByLabelText('Clear notes')).toBeNull();
+
+    // Type text
+    fireEvent.changeText(input, 'Some text');
+    expect(getByDisplayValue('Some text')).toBeTruthy();
+
+    // Clear button should appear
+    const clearButton = getByLabelText('Clear notes');
+    expect(clearButton).toBeTruthy();
+
+    // Press clear button
+    fireEvent.press(clearButton);
+
+    // Text should be cleared (clear button disappears)
+    expect(queryByLabelText('Clear notes')).toBeNull();
   });
 });
