@@ -41,6 +41,8 @@ exports[`PredictionSummary renders correctly 1`] = `
       Predicted Periods
     </Text>
     <View
+      accessibilityLabel="Predicted period starting 1 Jan, ending 5 Jan"
+      accessible={true}
       style={
         [
           {
@@ -110,6 +112,8 @@ exports[`PredictionSummary renders correctly 1`] = `
       </Text>
     </View>
     <View
+      accessibilityLabel="Predicted period starting 1 Feb, ending 5 Feb"
+      accessible={true}
       style={
         [
           {
@@ -217,6 +221,8 @@ exports[`PredictionSummary renders correctly 1`] = `
       Predicted Ovulations
     </Text>
     <View
+      accessibilityLabel="Ovulation on 14 Jan. Fertile window from 12 Jan to 14 Jan"
+      accessible={true}
       style={
         [
           {
@@ -288,6 +294,8 @@ exports[`PredictionSummary renders correctly 1`] = `
       </Text>
     </View>
     <View
+      accessibilityLabel="Ovulation on 14 Feb. Fertile window from 12 Feb to 14 Feb"
+      accessible={true}
       style={
         [
           {
