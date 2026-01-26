@@ -35,10 +35,10 @@ export default function RootLayout() {
   // (it should be configured in server headers for real clickjacking protection).
   const cspContent = [
     "default-src 'self'",
-    "script-src 'self' 'unsafe-inline' https://cdn.jsdelivr.net", // 'unsafe-inline' needed for hydration/hmr
+    "script-src 'self' 'unsafe-inline'", // 'unsafe-inline' needed for hydration/hmr
     "style-src 'self' 'unsafe-inline'", // 'unsafe-inline' needed for CSS-in-JS
-    "img-src 'self' data: https://huggingface.co https://*.huggingface.co", // Allow images from HF (if any) and data URIs
-    "connect-src 'self' https://huggingface.co https://*.huggingface.co", // Allow fetching models
+    "img-src 'self' data:", // Allow data URIs
+    "connect-src 'self'",
     "font-src 'self'",
     "object-src 'none'",
     "base-uri 'self'",

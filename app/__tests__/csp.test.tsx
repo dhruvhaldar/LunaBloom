@@ -70,6 +70,8 @@ describe('Web Layout CSP', () => {
 
     expect(cspTag).toBeDefined();
     expect(cspTag?.props['content']).toContain("default-src 'self'");
-    expect(cspTag?.props['content']).toContain("connect-src 'self' https://huggingface.co");
+    expect(cspTag?.props['content']).toContain("connect-src 'self'");
+    expect(cspTag?.props['content']).not.toContain("https://cdn.jsdelivr.net");
+    expect(cspTag?.props['content']).not.toContain("https://huggingface.co");
   });
 });
