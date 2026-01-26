@@ -42,6 +42,8 @@ const PredictionSummary = React.memo(function PredictionSummary({
               styles.predictionItem,
               { borderColor: textColor, borderWidth: 1 }
             ]}
+            accessible={true}
+            accessibilityLabel={`Predicted period starting ${formatDate(date, DateFormats.MonthDay)}, ending ${formatDate(periodEndDate, DateFormats.MonthDay)}`}
           >
             <ThemedText style={{ color: textColor }}>
               {formatDate(date, DateFormats.MonthDay)}
@@ -81,6 +83,8 @@ const PredictionSummary = React.memo(function PredictionSummary({
               styles.predictionItem,
               { borderColor: textColor, borderWidth: 1 }
             ]}
+            accessible={true}
+            accessibilityLabel={`Ovulation on ${formatDate(date, DateFormats.MonthDay)}. Fertile window from ${formatDate(fertileWindowStart, DateFormats.MonthDay)} to ${formatDate(date, DateFormats.MonthDay)}`}
           >
             <ThemedText style={{ color: textColor }}>
               Ovulation: {formatDate(date, DateFormats.MonthDay)}
