@@ -11,6 +11,10 @@ export function useChatbot() {
   const [response, setResponse] = useState('');
   const [isLoading, setIsLoading] = useState(false);
 
+  // Security: Rate limiting to prevent DoS/spam
+  const lastRequestTime = useRef(0);
+  const MIN_REQUEST_INTERVAL = 2000; // 2 seconds
+
   // Ref to track question state for stable handleChat callback
   const questionRef = useRef(question);
   useEffect(() => {
@@ -32,6 +36,16 @@ export function useChatbot() {
     try {
         Keyboard.dismiss();
     } catch {}
+
+    // Security: Enforce rate limiting
+    const now = Date.now();
+    if (now - lastRequestTime.current < MIN_REQUEST_INTERVAL) {
+      if (typeof window !== 'undefined') {
+        window.alert("Slow down! Please wait a moment before sending another message.");
+      }
+      return;
+    }
+    lastRequestTime.current = now;
 
     // Use ref to access latest state without adding it to dependency array
     let textToAsk = typeof questionText === 'string' ? questionText : questionRef.current;

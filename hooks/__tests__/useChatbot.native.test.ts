@@ -150,6 +150,53 @@ describe('useChatbot Native Hook', () => {
     });
   });
 
+  it('enforces rate limiting', async () => {
+    const mockCompletion = jest.fn().mockResolvedValue({ text: 'Response' });
+    (initLlama as jest.Mock).mockResolvedValue({
+      completion: mockCompletion,
+    });
+
+    // Mock model exists
+    (FileSystem.getInfoAsync as jest.Mock).mockResolvedValue({
+      exists: true,
+      size: MODEL_SIZE_BYTES
+    });
+
+    const { result } = renderHook(() => useChatbot());
+
+    // Initialize
+    await waitFor(() => expect(result.current.isModelDownloaded).toBe(true));
+    await act(async () => {
+      await result.current.initializeLlama();
+    });
+    await waitFor(() => expect(result.current.isReady).toBe(true));
+
+    // First call: Should succeed
+    await act(async () => {
+      await result.current.handleChat('Hello 1');
+    });
+
+    // Second call (immediate): Should be blocked
+    await act(async () => {
+      await result.current.handleChat('Hello 2');
+    });
+
+    // Expect alert
+    expect(Alert.alert).toHaveBeenCalledWith(
+      "Slow down",
+      expect.stringContaining("wait a moment")
+    );
+
+    // Expect completion to only be called once (for the first request)
+    expect(mockCompletion).toHaveBeenCalledTimes(1);
+    expect(mockCompletion).toHaveBeenCalledWith(
+        expect.objectContaining({
+            prompt: expect.stringContaining('Hello 1')
+        }),
+        expect.any(Function)
+    );
+  });
+
   it('uses secure Llama 3 prompt format', async () => {
     const mockCompletion = jest.fn().mockResolvedValue({ text: 'Response' });
     (initLlama as jest.Mock).mockResolvedValue({
