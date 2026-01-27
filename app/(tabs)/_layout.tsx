@@ -9,6 +9,49 @@ import { useColorScheme } from '@/hooks/useColorScheme';
 
 import { Image } from 'react-native';
 
+// Custom tab button component with animation
+// Optimization: Moved outside TabLayout to prevent re-creation on every render
+const AnimatedTabButton = ({ children, onPress, accessibilityLabel }: { children: React.ReactNode, onPress?: any, accessibilityLabel?: string }) => {
+  const scaleAnim = useRef(new Animated.Value(1)).current;
+
+  const handlePressIn = () => {
+    Animated.spring(scaleAnim, {
+      toValue: 0.9,
+      useNativeDriver: true,
+      bounciness: 10,
+      speed: 80,
+    }).start();
+  };
+
+  const handlePressOut = () => {
+    Animated.spring(scaleAnim, {
+      toValue: 1,
+      useNativeDriver: true,
+      bounciness: 80,
+      speed: 0.4,
+    }).start();
+  };
+
+  return (
+    <TouchableOpacity
+      style={styles.tabButtonContainer}
+      onPress={onPress}
+      onPressIn={handlePressIn}
+      onPressOut={handlePressOut}
+      accessibilityLabel={accessibilityLabel}
+      hitSlop={{ top: 20, bottom: 20, left: 20, right: 20 }}
+    >
+      <Animated.View style={{
+        transform: [{ scale: scaleAnim }],
+        alignItems: 'center',
+        justifyContent: 'center',
+      }}>
+        {children}
+      </Animated.View>
+    </TouchableOpacity>
+  );
+};
+
 export default function TabLayout() {
   const colorScheme = useColorScheme();
   const borderColor = colorScheme === 'dark' ? '#F1FAEE' : '#1D3557';
@@ -28,48 +71,6 @@ export default function TabLayout() {
     borderColor: borderColor,
     overflow: 'hidden',
     paddingHorizontal: 0,
-  };
-
-  // Custom tab button component with animation
-  const AnimatedTabButton = ({ children, onPress, accessibilityLabel }) => {
-    const scaleAnim = useRef(new Animated.Value(1)).current;
-
-    const handlePressIn = () => {
-      Animated.spring(scaleAnim, {
-        toValue: 0.9,
-        useNativeDriver: true,
-        bounciness: 10,
-        speed: 80,
-      }).start();
-    };
-
-    const handlePressOut = () => {
-      Animated.spring(scaleAnim, {
-        toValue: 1,
-        useNativeDriver: true,
-        bounciness: 80,
-        speed: 0.4,
-      }).start();
-    };
-
-    return (
-      <TouchableOpacity 
-        style={styles.tabButtonContainer}
-        onPress={onPress}
-        onPressIn={handlePressIn}
-        onPressOut={handlePressOut}
-        accessibilityLabel={accessibilityLabel}
-        hitSlop={{ top: 20, bottom: 20, left: 20, right: 20 }}
-      >
-        <Animated.View style={{ 
-          transform: [{ scale: scaleAnim }],
-          alignItems: 'center',
-          justifyContent: 'center',
-        }}>
-          {children}
-        </Animated.View>
-      </TouchableOpacity>
-    );
   };
 
   return (
@@ -104,7 +105,6 @@ export default function TabLayout() {
                   opacity: focused ? 1 : 0.8 
                 }} 
               />
-              {focused}
             </View>
           ),
         }}
@@ -125,7 +125,6 @@ export default function TabLayout() {
                   opacity: focused ? 1 : 0.8 
                 }} 
               />
-              {focused}
             </View>
           ),
         }}
@@ -146,7 +145,6 @@ export default function TabLayout() {
                   opacity: focused ? 1 : 0.8 
                 }} 
               />
-              {focused}
             </View>
           ),
         }}
@@ -160,13 +158,13 @@ export default function TabLayout() {
           tabBarIcon: ({ color, focused }) => (
             <View style={styles.tabItemContainer}>
               <Image source={require('@/assets/images/ai.png')} style={styles.tinyLogo}/>
-    </View>
+            </View>
           ),
         }}
       />
       
     {/* Settings Tab */}
-<Tabs.Screen
+    <Tabs.Screen
         name="settings"
         options={{
           title: 'Settings',
@@ -180,17 +178,12 @@ export default function TabLayout() {
                   opacity: focused ? 1 : 0.8 
                 }} 
               />
-              {focused}
             </View>
           ),
         }}
       />
 
     </Tabs>
-
-    
-
-    
   );
 }
 
