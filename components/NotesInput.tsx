@@ -24,6 +24,7 @@ export const NotesInput = memo(forwardRef<NotesInputHandle, NotesInputProps>(({
   headingColor
 }, ref) => {
   const [notes, setNotes] = useState('');
+  const [isFocused, setIsFocused] = useState(false);
   const inputRef = useRef<TextInput>(null);
 
   useImperativeHandle(ref, () => ({
@@ -51,10 +52,19 @@ export const NotesInput = memo(forwardRef<NotesInputHandle, NotesInputProps>(({
       <View style={styles.inputContainer}>
         <TextInput
           ref={inputRef}
-          style={[styles.notesInput, { color: textColor, borderColor: borderColor }]}
+          style={[
+            styles.notesInput,
+            {
+              color: textColor,
+              borderColor: isFocused ? '#E63946' : borderColor,
+              borderWidth: isFocused ? 2 : 1,
+            },
+          ]}
           multiline
           value={notes}
           onChangeText={handleNotesChange}
+          onFocus={() => setIsFocused(true)}
+          onBlur={() => setIsFocused(false)}
           placeholder="Record any additional notes..."
           placeholderTextColor={placeholderTextColor}
           accessibilityLabel="Notes"
