@@ -237,6 +237,12 @@ export default function HomeScreen() {
       try {
         const existingEntries = await AsyncStorage.getItem('periodEntries');
         entries = existingEntries ? JSON.parse(existingEntries) : [];
+
+        // Security: Validate that entries is an array to ensure push works and prevent logic errors
+        if (!Array.isArray(entries)) {
+          console.warn('Corrupted data found (not an array), resetting entries.');
+          entries = [];
+        }
       } catch (parseError: any) {
         console.error('🚨 Error parsing period entries:', parseError instanceof Error ? parseError.message : String(parseError));
         entries = [];

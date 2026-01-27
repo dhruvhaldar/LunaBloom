@@ -61,8 +61,14 @@ export default function InsightsScreen() {
 
       if (storedEntries) {
         const parsedEntries = JSON.parse(storedEntries);
-        // Note: We're just setting entries here. Sorting and derivation happen in useMemo.
-        setEntries(parsedEntries);
+        // Security: Validate that parsed data is an array to prevent DoS (crash) in useMemo
+        if (Array.isArray(parsedEntries)) {
+          // Note: We're just setting entries here. Sorting and derivation happen in useMemo.
+          setEntries(parsedEntries);
+        } else {
+          console.error('Invalid format for periodEntries');
+          setEntries([]);
+        }
       } else {
         setEntries([]);
       }

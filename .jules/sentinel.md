@@ -27,3 +27,8 @@
 **Vulnerability:** The app read the entire backup file into memory using `FileSystem.readAsStringAsync` without checking its size, allowing attackers (or accidental users) to crash the app (OOM) with large files.
 **Learning:** `FileSystem.readAsStringAsync` is dangerous for untrusted files without size checks. Always check `fileInfo.size` first.
 **Prevention:** Enforce `MAX_BACKUP_FILE_SIZE` check using `FileSystem.getInfoAsync` before reading file content.
+
+## 2026-02-06 - DoS via Unvalidated Storage Data
+**Vulnerability:** The `InsightsScreen` crashed repeatedly because it parsed `periodEntries` from `AsyncStorage` and immediately assumed it was an array (using `.sort`, `.reduce`). If the storage contained a JSON object or other type (due to corruption or malicious modification), the app would throw an unhandled exception in `useMemo`, causing a persistent crash loop (DoS).
+**Learning:** Local storage (`AsyncStorage`) is "user input" and should not be trusted. Data types must be validated after parsing JSON.
+**Prevention:** Always check `Array.isArray(parsedData)` (or validate against a schema) before using data retrieved from storage. Implement a fallback mechanism (e.g., reset to empty array) if validation fails.
