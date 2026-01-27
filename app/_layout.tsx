@@ -7,11 +7,13 @@ import { useEffect } from 'react';
 import 'react-native-reanimated';
 
 import { useColorScheme } from '@/hooks/useColorScheme';
+import { useScreenProtection } from '@/hooks/useScreenProtection';
 
 SplashScreen.preventAutoHideAsync();
 
 // Change font here
 export default function RootLayout() {
+  useScreenProtection();
   const colorScheme = useColorScheme();
   const [loaded] = useFonts({
     SpaceMono: require('../assets/fonts/SpaceMono-Regular.ttf'),
