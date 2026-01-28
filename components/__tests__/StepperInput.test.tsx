@@ -57,4 +57,17 @@ describe('StepperInput', () => {
     fireEvent.press(decrementButton);
     expect(onChangeTextMock).not.toHaveBeenCalled();
   });
+
+  it('sets a safe maxLength to prevent DoS', () => {
+    const { getByLabelText } = render(
+      <StepperInput
+        value="100"
+        onChangeText={() => {}}
+        label="Test Input"
+      />
+    );
+
+    const input = getByLabelText('Test Input');
+    expect(input.props.maxLength).toBe(20);
+  });
 });
