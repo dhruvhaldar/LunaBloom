@@ -13,6 +13,7 @@ import PredictionSummary from '@/components/PredictionSummary';
 import { StepperInput } from '@/components/StepperInput';
 import SelectionButton from '@/components/SelectionButton';
 import { NotesInput, NotesInputHandle } from '@/components/NotesInput';
+import { PeriodStorage } from '@/utils/storage';
 
 
 export default function HomeScreen() {
@@ -235,7 +236,8 @@ export default function HomeScreen() {
       let entries = [];
       
       try {
-        const existingEntries = await AsyncStorage.getItem('periodEntries');
+        // Bolt Optimization: Use cached PeriodStorage for faster access
+        const existingEntries = await PeriodStorage.getEntries();
         entries = parseSafePeriodEntries(existingEntries);
       } catch (parseError: any) {
         console.error('🚨 Error retrieving period entries:', parseError instanceof Error ? parseError.message : String(parseError));
@@ -245,7 +247,9 @@ export default function HomeScreen() {
       entries.push(entry);
   
       try {
-        await AsyncStorage.setItem('periodEntries', JSON.stringify(entries));
+        // Bolt Optimization: Use cached PeriodStorage for saving
+        await PeriodStorage.saveEntries(JSON.stringify(entries));
+
         setSelectedFlow(null); // Reset new field
         setSelectedSymptoms([]);
         notesInputRef.current?.resetNotes();

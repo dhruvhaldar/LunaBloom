@@ -6,7 +6,9 @@ import {
   useColorScheme, 
   Dimensions 
 } from 'react-native';
-import AsyncStorage from '@react-native-async-storage/async-storage';
+// Remove direct AsyncStorage import
+// import AsyncStorage from '@react-native-async-storage/async-storage';
+import { PeriodStorage } from '@/utils/storage';
 import { ThemedText } from '@/components/ThemedText';
 import { ThemedView } from '@/components/ThemedView';
 import ParallaxScrollView from '@/components/ParallaxScrollView';
@@ -52,7 +54,8 @@ export default function InsightsScreen() {
 
   const fetchEntries = async () => {
     try {
-      const storedEntries = await AsyncStorage.getItem('periodEntries');
+      // Bolt Optimization: Use cached PeriodStorage to avoid disk reads on tab switch
+      const storedEntries = await PeriodStorage.getEntries();
 
       // Optimization: Only parse and update state if the data has actually changed
       if (storedEntries === lastFetchedEntriesRef.current) {
