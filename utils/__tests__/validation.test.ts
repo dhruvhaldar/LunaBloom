@@ -1,4 +1,4 @@
-import { sanitizeInput, sanitizePromptInput, containsSuspiciousPatterns, validateInputLength, isValidBackupEntry } from '../validation';
+import { sanitizeInput, sanitizePromptInput, containsSuspiciousPatterns, validateInputLength, isValidBackupEntry, parseSafePeriodEntries } from '../validation';
 
 describe('Validation Utils', () => {
   describe('sanitizeInput', () => {
@@ -133,6 +133,27 @@ describe('Validation Utils', () => {
         notes: '<script>alert(1)</script>'
       };
       expect(isValidBackupEntry(entry)).toBe(false);
+    });
+  });
+
+  describe('parseSafePeriodEntries', () => {
+    it('parses valid JSON array', () => {
+      const json = JSON.stringify([{ id: 1 }]);
+      expect(parseSafePeriodEntries(json)).toEqual([{ id: 1 }]);
+    });
+
+    it('returns empty array for null', () => {
+      expect(parseSafePeriodEntries(null)).toEqual([]);
+    });
+
+    it('returns empty array for invalid JSON', () => {
+      expect(parseSafePeriodEntries('invalid json')).toEqual([]);
+    });
+
+    it('returns empty array for non-array JSON', () => {
+      expect(parseSafePeriodEntries('{}')).toEqual([]);
+      expect(parseSafePeriodEntries('123')).toEqual([]);
+      expect(parseSafePeriodEntries('true')).toEqual([]);
     });
   });
 });
