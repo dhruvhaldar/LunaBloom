@@ -1,9 +1,10 @@
-import React, { useMemo } from 'react';
-import { StyleSheet, View, Image, useColorScheme, TextInput, TouchableOpacity, ScrollView, ActivityIndicator, Platform } from 'react-native';
+import React, { useMemo, useCallback } from 'react';
+import { StyleSheet, View, Image, useColorScheme, TextInput, TouchableOpacity, ScrollView, ActivityIndicator, Platform, Share, Alert } from 'react-native';
 import { ThemedText } from '@/components/ThemedText';
 import { ThemedView } from '@/components/ThemedView';
 import ParallaxScrollView from '@/components/ParallaxScrollView';
 import { useChatbot } from '@/hooks/useChatbot'; // Expo automatically resolves .web.ts or .native.ts
+import { IconSymbol } from '@/components/ui/IconSymbol';
 
 // Optimization: Move static data outside component to prevent re-allocation on every render
 const suggestedQuestions = [
@@ -53,6 +54,22 @@ export default function MenstruationScreen() {
     </View>
   ), [textColor, handleChat]);
 
+  const handleShare = useCallback(async () => {
+    if (!response) return;
+    try {
+      await Share.share({
+        message: response,
+      });
+    } catch (error: any) {
+      if (Platform.OS === 'web') {
+        window.alert('Sharing is not supported on this browser.');
+      } else {
+        Alert.alert('Error', 'Could not share response.');
+      }
+      console.error(error.message);
+    }
+  }, [response]);
+
   return (
     <ParallaxScrollView headerBackgroundColor={{ light: '#ffdde2', dark: '#151718' }} headerImage={<Image source={require('@/assets/images/history2.png')} style={styles.reactLogo} resizeMode="contain"/>}>
       <ThemedView style={styles.container}>
@@ -101,7 +118,18 @@ export default function MenstruationScreen() {
                   <ThemedText style={styles.loadingText}>Generating response...</ThemedText>
                 </View>
               ) : response ? (
-                <ThemedText style={styles.response}>{response}</ThemedText>
+                <View>
+                  <ThemedText style={styles.response}>{response}</ThemedText>
+                  <TouchableOpacity
+                    style={styles.shareButton}
+                    onPress={handleShare}
+                    accessibilityLabel="Share response"
+                    accessibilityRole="button"
+                  >
+                    <IconSymbol name="share" size={20} color={textColor} />
+                    <ThemedText style={[styles.shareButtonText, { color: textColor }]}>Share</ThemedText>
+                  </TouchableOpacity>
+                </View>
               ) : (
                 <View>
                   <ThemedText style={styles.placeholder}>AI assistant ready. Ask me anything!</ThemedText>
@@ -240,5 +268,16 @@ const styles = StyleSheet.create({
     fontSize: 16,
     fontStyle: 'italic',
     textAlign: 'center',
+  },
+  shareButton: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'flex-end',
+    marginTop: 10,
+    gap: 8,
+    padding: 8,
+  },
+  shareButtonText: {
+    fontWeight: '600',
   },
 });
