@@ -9,3 +9,7 @@
 ## 2025-10-28 - Efficient Stepper Inputs
 **Learning:** Default stepper inputs require repetitive tapping for large changes and manual deletion for replacing values, frustrating power users.
 **Action:** Enable `selectTextOnFocus` on the input for one-tap replacement and implement `onLongPress` timers for rapid increment/decrement, significantly reducing interaction cost.
+
+## 2025-10-29 - Preserving Focus on Clear
+**Learning:** Clearing an input programmatically often removes focus (especially on touch devices), forcing the user to tap again to type.
+**Action:** Always call `inputRef.current?.focus()` immediately after clearing the state to maintain the keyboard context and user flow.

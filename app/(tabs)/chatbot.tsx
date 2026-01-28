@@ -1,4 +1,4 @@
-import React, { useMemo, useCallback } from 'react';
+import React, { useMemo, useCallback, useRef } from 'react';
 import { StyleSheet, View, Image, useColorScheme, TextInput, TouchableOpacity, ScrollView, ActivityIndicator, Platform, Share, Alert } from 'react-native';
 import { ThemedText } from '@/components/ThemedText';
 import { ThemedView } from '@/components/ThemedView';
@@ -30,11 +30,18 @@ export default function MenstruationScreen() {
     handleChat
   } = useChatbot();
 
+  const inputRef = useRef<TextInput>(null);
+
   // Color Scheme
   const colorScheme = useColorScheme();
   const responseBackgroundColor = colorScheme === 'dark' ? '#457B9D' : '#A8DADC';
   const textColor = colorScheme === 'dark' ? '#F1FAEE' : '#1D3557';
   const placeholderTextColor = colorScheme === 'dark' ? '#F1FAEE' : '#1D3557';
+
+  const handleClear = useCallback(() => {
+    setQuestion('');
+    inputRef.current?.focus();
+  }, [setQuestion]);
 
   // Optimization: Memoize suggestions list to prevent re-rendering chips on every keystroke
   // handleChat is now stable from the hook, so this will only re-render if theme colors change
@@ -139,17 +146,31 @@ export default function MenstruationScreen() {
             </ScrollView>
 
             <View style={styles.inputContainer}>
-              <TextInput
-                style={[styles.input, { color: textColor }]}
-                placeholder="Ask a menstrual health question..."
-                placeholderTextColor={placeholderTextColor + '90'}
-                value={question}
-                onChangeText={setQuestion}
-                editable={!isLoading}
-                accessibilityLabel="Ask a menstrual health question"
-                returnKeyType="send"
-                onSubmitEditing={() => handleChat()}
-              />
+              <View style={styles.inputWrapper}>
+                <TextInput
+                  ref={inputRef}
+                  style={[styles.input, { color: textColor, paddingRight: 40, marginBottom: 0 }]}
+                  placeholder="Ask a menstrual health question..."
+                  placeholderTextColor={placeholderTextColor + '90'}
+                  value={question}
+                  onChangeText={setQuestion}
+                  editable={!isLoading}
+                  accessibilityLabel="Ask a menstrual health question"
+                  returnKeyType="send"
+                  onSubmitEditing={() => handleChat()}
+                />
+                {question.length > 0 && (
+                  <TouchableOpacity
+                    style={styles.clearButton}
+                    onPress={handleClear}
+                    accessibilityLabel="Clear question"
+                    accessibilityRole="button"
+                    hitSlop={{ top: 10, bottom: 10, left: 10, right: 10 }}
+                  >
+                    <IconSymbol name="xmark.circle.fill" size={20} color={placeholderTextColor} />
+                  </TouchableOpacity>
+                )}
+              </View>
               <TouchableOpacity
                 style={styles.button}
                 onPress={() => handleChat()}
@@ -228,6 +249,10 @@ const styles = StyleSheet.create({
   inputContainer: {
     marginTop: 10,
   },
+  inputWrapper: {
+    position: 'relative',
+    marginBottom: 15,
+  },
   input: {
     height: 60,
     borderColor: '#E63946',
@@ -236,6 +261,11 @@ const styles = StyleSheet.create({
     borderRadius: 8,
     marginBottom: 15,
     fontSize: 16,
+  },
+  clearButton: {
+    position: 'absolute',
+    right: 15,
+    top: 20,
   },
   button: {
     backgroundColor: '#E63946',
