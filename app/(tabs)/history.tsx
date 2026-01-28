@@ -116,6 +116,25 @@ export default function TabTwoScreen() {
       deleteIconColor={deleteIconColor}
     />
   ), [handleDelete, textColor, deleteIconColor]);
+
+  // Optimization: Stable key extractor
+  const keyExtractor = useCallback((item: HistoryEntry) => item.date, []);
+
+  // Optimization: Stable empty state action handler
+  const handleEmptyAction = useCallback(() => {
+    router.push('/');
+  }, [router]);
+
+  // Optimization: Memoize empty state component to prevent re-mounting/re-rendering
+  const emptyState = useMemo(() => (
+    <EmptyState
+      title="No Entries Yet"
+      message="Track your first period to start seeing your history here."
+      icon="history.fill"
+      actionLabel="Log Period"
+      onAction={handleEmptyAction}
+    />
+  ), [handleEmptyAction]);
  
   // Optimization: Memoize the list header to ensure referential stability.
   // This prevents the ParallaxFlatList (and underlying FlatList) from unmounting/remounting
@@ -154,18 +173,10 @@ export default function TabTwoScreen() {
       headerImage={headerImage}
       data={entries}
       renderItem={renderItem}
-      keyExtractor={(item) => item.date}
+      keyExtractor={keyExtractor}
       ListHeaderComponent={listHeader}
-      ListEmptyComponent={
-        <EmptyState
-          title="No Entries Yet"
-          message="Track your first period to start seeing your history here."
-          icon="history.fill"
-          actionLabel="Log Period"
-          onAction={() => router.push('/')}
-        />
-      }
-      contentContainerStyle={{ paddingHorizontal: 32, paddingBottom: 120 }}
+      ListEmptyComponent={emptyState}
+      contentContainerStyle={styles.listContent}
     />
   );
 }
@@ -215,5 +226,9 @@ const styles = StyleSheet.create({
     marginBottom: -50,
     marginTop: -50,
     marginLeft: 6,
-  }
+  },
+  listContent: {
+    paddingHorizontal: 32,
+    paddingBottom: 120,
+  },
 });
