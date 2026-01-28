@@ -3,7 +3,7 @@ import { StyleSheet, TouchableOpacity, Alert, useColorScheme, View, ActivityIndi
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import DateTimePicker from '@react-native-community/datetimepicker';
 import * as Haptics from 'expo-haptics';
-import { sanitizeInput, containsSuspiciousPatterns } from '@/utils/validation';
+import { sanitizeInput, containsSuspiciousPatterns, parseSafePeriodEntries } from '@/utils/validation';
 import { formatDate, DateFormats } from '@/utils/dateFormatter';
 import { ThemedText } from '@/components/ThemedText';
 import { ThemedView } from '@/components/ThemedView';
@@ -236,9 +236,9 @@ export default function HomeScreen() {
       
       try {
         const existingEntries = await AsyncStorage.getItem('periodEntries');
-        entries = existingEntries ? JSON.parse(existingEntries) : [];
+        entries = parseSafePeriodEntries(existingEntries);
       } catch (parseError: any) {
-        console.error('🚨 Error parsing period entries:', parseError instanceof Error ? parseError.message : String(parseError));
+        console.error('🚨 Error retrieving period entries:', parseError instanceof Error ? parseError.message : String(parseError));
         entries = [];
       }
   

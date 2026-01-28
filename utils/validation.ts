@@ -154,3 +154,19 @@ export const isValidBackupEntry = (entry: any): boolean => {
 
   return true;
 };
+
+/**
+ * Safely parses a JSON string into an array of period entries.
+ * Returns an empty array if parsing fails or result is not an array.
+ * @param json The JSON string to parse.
+ * @returns Array of entries.
+ */
+export const parseSafePeriodEntries = (json: string | null): any[] => {
+  if (!json) return [];
+  try {
+    const entries = JSON.parse(json);
+    return Array.isArray(entries) ? entries : [];
+  } catch {
+    return [];
+  }
+};

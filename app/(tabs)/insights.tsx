@@ -15,6 +15,7 @@ import { useFocusEffect, useRouter } from 'expo-router';
 import { EmptyState } from '@/components/ui/EmptyState';
 import { formatDate, DateFormats } from '@/utils/dateFormatter';
 import { HistoryEntry } from '@/components/HistoryItem';
+import { parseSafePeriodEntries } from '@/utils/validation';
 
 const screenWidth = Dimensions.get('window').width;
 
@@ -59,13 +60,10 @@ export default function InsightsScreen() {
       }
       lastFetchedEntriesRef.current = storedEntries;
 
-      if (storedEntries) {
-        const parsedEntries = JSON.parse(storedEntries);
-        // Note: We're just setting entries here. Sorting and derivation happen in useMemo.
-        setEntries(parsedEntries);
-      } else {
-        setEntries([]);
-      }
+      // Security: Safely parse entries to prevent DoS/Crashes if storage is corrupted
+      const parsedEntries = parseSafePeriodEntries(storedEntries);
+      // Note: We're just setting entries here. Sorting and derivation happen in useMemo.
+      setEntries(parsedEntries);
     } catch (error: any) {
       console.error('Error fetching entries:', error instanceof Error ? error.message : String(error));
     }
