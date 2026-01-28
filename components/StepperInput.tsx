@@ -1,5 +1,13 @@
-import React, { useCallback, memo } from 'react';
-import { StyleSheet, TextInput, TouchableOpacity, View, Platform, ViewStyle, StyleProp } from 'react-native';
+import React, { useCallback, memo, useRef, useEffect } from 'react';
+import {
+  StyleSheet,
+  TextInput,
+  TouchableOpacity,
+  View,
+  Platform,
+  ViewStyle,
+  StyleProp,
+} from 'react-native';
 import * as Haptics from 'expo-haptics';
 import { IconSymbol } from '@/components/ui/IconSymbol';
 import { useThemeColor } from '@/hooks/useThemeColor';
@@ -23,32 +31,60 @@ export const StepperInput = memo(function StepperInput({
   min = 0,
   max = 100,
   label,
-  style
+  style,
 }: StepperInputProps) {
   const textColor = useThemeColor({}, 'text');
   const borderColor = textColor;
 
-  const handleIncrement = useCallback(() => {
+  // Ref to track value for interval callbacks to avoid stale closures
+  const valueRef = useRef(value);
+  if (valueRef.current !== value) {
+    valueRef.current = value;
+  }
+
+  const timerRef = useRef<NodeJS.Timeout | null>(null);
+
+  const performIncrement = useCallback(() => {
     if (Platform.OS !== 'web') {
       Haptics.selectionAsync();
     }
-    const currentVal = parseInt(value, 10);
+    const currentVal = parseInt(valueRef.current, 10);
     const newValue = isNaN(currentVal) ? min : currentVal + 1;
     if (newValue <= max) {
       onChangeText(newValue.toString());
     }
-  }, [value, max, min, onChangeText]);
+  }, [max, min, onChangeText]);
 
-  const handleDecrement = useCallback(() => {
+  const performDecrement = useCallback(() => {
     if (Platform.OS !== 'web') {
       Haptics.selectionAsync();
     }
-    const currentVal = parseInt(value, 10);
+    const currentVal = parseInt(valueRef.current, 10);
     const newValue = isNaN(currentVal) ? min : currentVal - 1;
     if (newValue >= min) {
       onChangeText(newValue.toString());
     }
-  }, [value, min, onChangeText]);
+  }, [min, onChangeText]);
+
+  const startRapidIncrement = useCallback(() => {
+    timerRef.current = setInterval(performIncrement, 100);
+  }, [performIncrement]);
+
+  const startRapidDecrement = useCallback(() => {
+    timerRef.current = setInterval(performDecrement, 100);
+  }, [performDecrement]);
+
+  const stopTimer = useCallback(() => {
+    if (timerRef.current) {
+      clearInterval(timerRef.current);
+      timerRef.current = null;
+    }
+  }, []);
+
+  // Cleanup timer on unmount
+  useEffect(() => {
+    return () => stopTimer();
+  }, [stopTimer]);
 
   const numericValue = parseInt(value, 10);
   const isAtMin = !isNaN(numericValue) && numericValue <= min;
@@ -57,11 +93,14 @@ export const StepperInput = memo(function StepperInput({
   return (
     <View style={[styles.container, style]}>
       <TouchableOpacity
-        onPress={handleDecrement}
+        onPress={performDecrement}
+        onLongPress={startRapidDecrement}
+        onPressOut={stopTimer}
         style={[styles.button, { borderColor, opacity: isAtMin ? 0.5 : 1 }]}
         accessibilityRole="button"
         accessibilityLabel={`Decrease ${label}`}
         disabled={isAtMin}
+        delayLongPress={300}
       >
         <IconSymbol name="minus" size={20} color={textColor} />
       </TouchableOpacity>
@@ -75,14 +114,20 @@ export const StepperInput = memo(function StepperInput({
         accessibilityLabel={label}
         accessibilityRole="spinbutton"
         accessibilityValue={{ min, max, now: numericValue || 0 }}
+        selectTextOnFocus={true}
+        returnKeyType="done"
+        maxLength={3}
       />
 
       <TouchableOpacity
-        onPress={handleIncrement}
+        onPress={performIncrement}
+        onLongPress={startRapidIncrement}
+        onPressOut={stopTimer}
         style={[styles.button, { borderColor, opacity: isAtMax ? 0.5 : 1 }]}
         accessibilityRole="button"
         accessibilityLabel={`Increase ${label}`}
         disabled={isAtMax}
+        delayLongPress={300}
       >
         <IconSymbol name="plus" size={20} color={textColor} />
       </TouchableOpacity>
