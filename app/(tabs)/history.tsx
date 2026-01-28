@@ -1,6 +1,7 @@
 import React, { useState, useCallback, useRef, useMemo } from 'react';
 import { StyleSheet, View, Alert, useColorScheme, Platform, UIManager, Vibration, LayoutAnimation } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import { parseSafePeriodEntries } from '@/utils/validation';
 import { ThemedText } from '@/components/ThemedText';
 import ParallaxFlatList from '@/components/ParallaxFlatList';
 import { useFocusEffect, useRouter } from 'expo-router';
@@ -40,22 +41,13 @@ export default function TabTwoScreen() {
       lastFetchedEntriesRef.current = storedEntries;
 
       if (storedEntries !== null) {
-        try {
-          const parsedEntries = JSON.parse(storedEntries);
-          
-          if (Array.isArray(parsedEntries)) {
-            // Sort by lastPeriod in descending order (most recent first)
-            // Optimization: Use string comparison for ISO dates to avoid expensive Date object creation
-            parsedEntries.sort((a, b) => b.lastPeriod.localeCompare(a.lastPeriod));
-            setEntries(parsedEntries);
-          } else {
-            console.error('Fetched data is not an array');
-            setEntries([]);
-          }
-        } catch (parseError: any) {
-          console.error('Error parsing stored period entries:', parseError instanceof Error ? parseError.message : String(parseError));
-          setEntries([]);
-        }
+        // Security: Use safe parser to validate structure and filter malicious/malformed entries
+        const parsedEntries = parseSafePeriodEntries(storedEntries);
+
+        // Sort by lastPeriod in descending order (most recent first)
+        // Optimization: Use string comparison for ISO dates to avoid expensive Date object creation
+        parsedEntries.sort((a: any, b: any) => b.lastPeriod.localeCompare(a.lastPeriod));
+        setEntries(parsedEntries);
       } else {
         setEntries([]);
       }
