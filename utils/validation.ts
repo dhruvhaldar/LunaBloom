@@ -66,7 +66,8 @@ export const sanitizePromptInput = (text: string): string => {
 // Optimization: Define patterns once to avoid recreation on every validation call.
 // Global flag 'g' is removed to keep regexes stateless for shared use.
 const SUSPICIOUS_PATTERNS = [
-    /<script\b[^>]*>([\s\S]*?)<\/script>/im,
+    // Updated to handle whitespace in closing tag
+    /<script\b[^>]*>([\s\S]*?)<\/script\s*>/im,
     /javascript:/im,
     /vbscript:/im,
     /data:text\/html/im,
@@ -92,7 +93,22 @@ const SUSPICIOUS_PATTERNS = [
  * @returns True if the text contains suspicious patterns.
  */
 export const containsSuspiciousPatterns = (text: string): boolean => {
-    return SUSPICIOUS_PATTERNS.some(pattern => pattern.test(text));
+    if (SUSPICIOUS_PATTERNS.some(pattern => pattern.test(text))) return true;
+
+    // Security: Normalization check for obfuscated protocols
+    // Remove all whitespace and control characters to detect "j a v a s c r i p t :"
+    // eslint-disable-next-line no-control-regex
+    const normalized = text.replace(/[\s\x00-\x1F]/g, '').toLowerCase();
+
+    // Check for dangerous protocols in normalized text
+    // Note: 'data:text/html' checks specifically for HTML data URIs
+    if (normalized.includes('javascript:') ||
+        normalized.includes('vbscript:') ||
+        normalized.includes('data:text/html')) {
+        return true;
+    }
+
+    return false;
 };
 
 /**

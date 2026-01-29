@@ -63,6 +63,18 @@ describe('Validation Utils', () => {
     it('allows safe text', () => {
       expect(containsSuspiciousPatterns('Hello World')).toBe(false);
     });
+
+    it('detects javascript: URI with newline', () => {
+      expect(containsSuspiciousPatterns('java\nscript:alert(1)')).toBe(true);
+    });
+
+    it('detects javascript: URI with space', () => {
+      expect(containsSuspiciousPatterns('java script:alert(1)')).toBe(true);
+    });
+
+    it('detects obfuscated script tag', () => {
+      expect(containsSuspiciousPatterns('<script >alert(1)</script >')).toBe(true);
+    });
   });
 
   describe('validateInputLength', () => {
