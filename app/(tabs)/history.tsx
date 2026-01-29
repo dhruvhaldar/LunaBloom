@@ -7,6 +7,7 @@ import { useFocusEffect, useRouter } from 'expo-router';
 import { Image } from 'react-native';
 import HistoryItem, { HistoryEntry } from '@/components/HistoryItem';
 import { EmptyState } from '@/components/ui/EmptyState';
+import { parseSafePeriodEntries } from '@/utils/validation';
 
 export default function TabTwoScreen() {
   const router = useRouter();
@@ -39,26 +40,12 @@ export default function TabTwoScreen() {
       }
       lastFetchedEntriesRef.current = storedEntries;
 
-      if (storedEntries !== null) {
-        try {
-          const parsedEntries = JSON.parse(storedEntries);
-          
-          if (Array.isArray(parsedEntries)) {
-            // Sort by lastPeriod in descending order (most recent first)
-            // Optimization: Use string comparison for ISO dates to avoid expensive Date object creation
-            parsedEntries.sort((a, b) => b.lastPeriod.localeCompare(a.lastPeriod));
-            setEntries(parsedEntries);
-          } else {
-            console.error('Fetched data is not an array');
-            setEntries([]);
-          }
-        } catch (parseError: any) {
-          console.error('Error parsing stored period entries:', parseError instanceof Error ? parseError.message : String(parseError));
-          setEntries([]);
-        }
-      } else {
-        setEntries([]);
-      }
+      // Security: Safely parse entries to prevent DoS/Crashes if storage is corrupted
+      const parsedEntries = parseSafePeriodEntries(storedEntries);
+      // Sort by lastPeriod in descending order (most recent first)
+      // Optimization: Use string comparison for ISO dates to avoid expensive Date object creation
+      parsedEntries.sort((a, b) => b.lastPeriod.localeCompare(a.lastPeriod));
+      setEntries(parsedEntries);
     } catch (error: any) {
       console.error('Error fetching period entries:', error instanceof Error ? error.message : String(error));
     }

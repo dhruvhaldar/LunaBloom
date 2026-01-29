@@ -138,8 +138,30 @@ describe('Validation Utils', () => {
 
   describe('parseSafePeriodEntries', () => {
     it('parses valid JSON array', () => {
-      const json = JSON.stringify([{ id: 1 }]);
-      expect(parseSafePeriodEntries(json)).toEqual([{ id: 1 }]);
+      const validEntry = {
+        date: '2023-01-01T00:00:00.000Z',
+        lastPeriod: '2023-01-01T00:00:00.000Z',
+        cycleLength: 28,
+        selectedSymptoms: ['Cramps'],
+        selectedFlow: 'Normal',
+        notes: 'Test note'
+      };
+      const json = JSON.stringify([validEntry]);
+      expect(parseSafePeriodEntries(json)).toEqual([validEntry]);
+    });
+
+    it('filters out invalid entries', () => {
+      const validEntry = {
+        date: '2023-01-01T00:00:00.000Z',
+        lastPeriod: '2023-01-01T00:00:00.000Z',
+        cycleLength: 28,
+        selectedSymptoms: ['Cramps'],
+        selectedFlow: 'Normal',
+        notes: 'Test note'
+      };
+      const invalidEntry = { id: 1 }; // Missing required fields
+      const json = JSON.stringify([validEntry, invalidEntry]);
+      expect(parseSafePeriodEntries(json)).toEqual([validEntry]);
     });
 
     it('returns empty array for null', () => {
