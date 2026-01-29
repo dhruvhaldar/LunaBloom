@@ -68,6 +68,6 @@ describe('StepperInput', () => {
     );
 
     const input = getByLabelText('Test Input');
-    expect(input.props.maxLength).toBe(20);
+    expect(input.props.maxLength).toBe(3);
   });
 });

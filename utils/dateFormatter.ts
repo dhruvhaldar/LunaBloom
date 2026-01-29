@@ -21,10 +21,19 @@ export const formatDate = (
   options: Intl.DateTimeFormatOptions = DateFormats.ShortDate,
   locale: string = 'en-GB'
 ): string => {
-  // Handle invalid dates gracefully if needed, or let it throw
-  const dateObj = date instanceof Date ? date : new Date(date);
+  let timestamp: number;
 
-  if (isNaN(dateObj.getTime())) {
+  // Optimization: Avoid creating Date objects for primitive inputs to reduce allocations.
+  // This is particularly important for lists and charts where this is called repeatedly.
+  if (date instanceof Date) {
+    timestamp = date.getTime();
+  } else if (typeof date === 'string') {
+    timestamp = Date.parse(date);
+  } else {
+    timestamp = date; // Assume number
+  }
+
+  if (isNaN(timestamp)) {
     return 'Invalid Date';
   }
 
@@ -45,5 +54,5 @@ export const formatDate = (
     formatters.set(key, formatter);
   }
 
-  return formatter.format(dateObj);
+  return formatter.format(timestamp);
 };
