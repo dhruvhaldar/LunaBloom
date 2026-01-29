@@ -116,7 +116,6 @@ export const StepperInput = memo(function StepperInput({
         value={value}
         onChangeText={onChangeText}
         onBlur={onBlur}
-        maxLength={maxLength}
         accessibilityLabel={label}
         accessibilityRole="spinbutton"
         accessibilityValue={{ min, max, now: numericValue || 0 }}

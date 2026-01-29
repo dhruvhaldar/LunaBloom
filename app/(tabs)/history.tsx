@@ -130,7 +130,7 @@ export default function TabTwoScreen() {
     <EmptyState
       title="No Entries Yet"
       message="Track your first period to start seeing your history here."
-      icon="history.fill"
+      icon="clock.fill"
       actionLabel="Log Period"
       onAction={handleEmptyAction}
     />
