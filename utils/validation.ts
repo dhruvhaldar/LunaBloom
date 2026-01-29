@@ -165,7 +165,9 @@ export const parseSafePeriodEntries = (json: string | null): any[] => {
   if (!json) return [];
   try {
     const entries = JSON.parse(json);
-    return Array.isArray(entries) ? entries : [];
+    if (!Array.isArray(entries)) return [];
+    // Security: Filter out any entries that don't match the expected schema
+    return entries.filter(isValidBackupEntry);
   } catch {
     return [];
   }
