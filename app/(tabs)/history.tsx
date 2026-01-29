@@ -1,6 +1,8 @@
 import React, { useState, useCallback, useRef, useMemo } from 'react';
 import { StyleSheet, View, Alert, useColorScheme, Platform, UIManager, Vibration, LayoutAnimation } from 'react-native';
-import AsyncStorage from '@react-native-async-storage/async-storage';
+// Remove direct AsyncStorage import
+// import AsyncStorage from '@react-native-async-storage/async-storage';
+import { PeriodStorage } from '@/utils/storage';
 import { ThemedText } from '@/components/ThemedText';
 import ParallaxFlatList from '@/components/ParallaxFlatList';
 import { useFocusEffect, useRouter } from 'expo-router';
@@ -32,7 +34,8 @@ export default function TabTwoScreen() {
 
   const fetchEntries = async () => {
     try {
-      const storedEntries = await AsyncStorage.getItem('periodEntries');
+      // Bolt Optimization: Use cached PeriodStorage to avoid disk reads on tab switch
+      const storedEntries = await PeriodStorage.getEntries();
       
       // Optimization: Only parse and update state if the data has actually changed
       if (storedEntries === lastFetchedEntriesRef.current) {
@@ -75,7 +78,9 @@ export default function TabTwoScreen() {
                 // But setState is sync-ish in batching.
                 // We'll update storage immediately using the computed new array
                 const newEntriesString = JSON.stringify(updatedEntries);
-                AsyncStorage.setItem('periodEntries', newEntriesString).then(() => {
+
+                // Bolt Optimization: Use PeriodStorage to save and update cache
+                PeriodStorage.saveEntries(newEntriesString).then(() => {
                   // Update the ref to prevent the next fetch (e.g. on focus) from re-rendering if it matches
                   lastFetchedEntriesRef.current = newEntriesString;
                 }).catch(err =>
