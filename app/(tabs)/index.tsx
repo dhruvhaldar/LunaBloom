@@ -14,6 +14,7 @@ import { StepperInput } from '@/components/StepperInput';
 import SelectionButton from '@/components/SelectionButton';
 import { NotesInput, NotesInputHandle } from '@/components/NotesInput';
 import { PeriodStorage } from '@/utils/storage';
+import { IconSymbol } from '@/components/ui/IconSymbol';
 
 
 export default function HomeScreen() {
@@ -356,6 +357,7 @@ export default function HomeScreen() {
           accessibilityLabel={`Select last period start date. Current: ${formattedLastPeriod}`}
           accessibilityRole="button"
         >
+          <IconSymbol name="calendar" size={20} color={textColor} />
           <ThemedText style={[styles.dateText, { color: textColor }]}>
             {formattedLastPeriod}
           </ThemedText>
@@ -535,6 +537,9 @@ const styles = StyleSheet.create({
     padding: 8,
     borderWidth: 1,
     borderRadius: 8,
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 8,
   },
   dateText: {
     color: '#6b46c1',
