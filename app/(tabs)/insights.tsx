@@ -231,7 +231,7 @@ export default function InsightsScreen() {
             <EmptyState
               title="No Insights Yet"
               message="Log more periods to unlock trends and insights."
-              icon="bar-chart.fill"
+              icon="chart.bar.fill"
               actionLabel="Log Now"
               onAction={() => router.push('/')}
               style={{ marginTop: 10, padding: 20 }}
