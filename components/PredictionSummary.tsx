@@ -25,6 +25,32 @@ const PredictionSummary = React.memo(function PredictionSummary({
   // Further Optimization: Split sections into useMemo blocks so that changing periodDuration (which happens frequently on typing)
   // doesn't re-render the ovulation section.
 
+  // Bolt Optimization: Calculate days remaining separately to avoid re-calculation when periodDuration changes
+  const daysRemainingInfo = useMemo(() => {
+    if (predictedPeriods.length === 0) return { text: '', label: '' };
+
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+    const target = new Date(predictedPeriods[0]);
+    target.setHours(0, 0, 0, 0);
+    const diffTime = target.getTime() - today.getTime();
+    const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+
+    let text = '';
+    let label = '';
+    if (diffDays === 0) {
+      text = ' (Today)';
+      label = ', starting today';
+    } else if (diffDays === 1) {
+      text = ' (Tomorrow)';
+      label = ', starting tomorrow';
+    } else if (diffDays > 1) {
+      text = ` (in ${diffDays} days)`;
+      label = `, in ${diffDays} days`;
+    }
+    return { text, label };
+  }, [predictedPeriods]);
+
   const periodsSection = useMemo(() => (
     <ThemedView style={styles.section}>
       <ThemedText type="subtitle" style={{ color: predictedHeadingColor, marginBottom: 10, marginTop: 15 }}>
@@ -35,28 +61,9 @@ const PredictionSummary = React.memo(function PredictionSummary({
         const periodEndDate = new Date(date);
         periodEndDate.setDate(periodEndDate.getDate() + Number(periodDuration) - 1);
 
-        // Calculate days remaining for the next period
-        let daysRemainingText = '';
-        let daysRemainingLabel = '';
-        if (index === 0) {
-          const today = new Date();
-          today.setHours(0, 0, 0, 0);
-          const target = new Date(date);
-          target.setHours(0, 0, 0, 0);
-          const diffTime = target.getTime() - today.getTime();
-          const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
-
-          if (diffDays === 0) {
-            daysRemainingText = ' (Today)';
-            daysRemainingLabel = ', starting today';
-          } else if (diffDays === 1) {
-            daysRemainingText = ' (Tomorrow)';
-            daysRemainingLabel = ', starting tomorrow';
-          } else if (diffDays > 1) {
-            daysRemainingText = ` (in ${diffDays} days)`;
-            daysRemainingLabel = `, in ${diffDays} days`;
-          }
-        }
+        // Get pre-calculated days remaining for the first period
+        const { text: daysRemainingText, label: daysRemainingLabel } =
+          index === 0 ? daysRemainingInfo : { text: '', label: '' };
 
         return (
           <ThemedView
@@ -85,7 +92,7 @@ const PredictionSummary = React.memo(function PredictionSummary({
         );
       })}
     </ThemedView>
-  ), [predictedPeriods, periodDuration, predictedHeadingColor, textColor]);
+  ), [predictedPeriods, periodDuration, predictedHeadingColor, textColor, daysRemainingInfo]);
 
   const ovulationSection = useMemo(() => (
     <ThemedView style={styles.section}>

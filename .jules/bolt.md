@@ -29,3 +29,7 @@
 ## 2026-05-22 - Fragment Props Stability
 **Learning:** Passing an inline Fragment (e.g. `<>...</>`) or an inline element as a prop (like `ListHeaderComponent`) creates a new object reference on every render. For components like `FlatList`, this forces the header to unmount and remount, causing potential state loss and animation glitches.
 **Action:** Memoize the component passed to `ListHeaderComponent` (or similar props) using `useMemo` to ensure referential stability across re-renders.
+
+## 2026-01-30 - [Parallax Components Re-render Pattern]
+**Learning:** `ParallaxScrollView` and similar wrapper components re-render fully on every parent update because `children` are passed as new JSX elements. Even if internal headers are memoized, the scroll view and content wrapper re-render.
+**Action:** When using `ParallaxScrollView`, ensure heavy child components are memoized individually, as the wrapper itself provides no memoization for children.
