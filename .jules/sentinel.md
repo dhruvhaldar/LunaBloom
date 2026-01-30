@@ -27,3 +27,8 @@
 **Vulnerability:** The app read the entire backup file into memory using `FileSystem.readAsStringAsync` without checking its size, allowing attackers (or accidental users) to crash the app (OOM) with large files.
 **Learning:** `FileSystem.readAsStringAsync` is dangerous for untrusted files without size checks. Always check `fileInfo.size` first.
 **Prevention:** Enforce `MAX_BACKUP_FILE_SIZE` check using `FileSystem.getInfoAsync` before reading file content.
+
+## 2026-02-12 - Insecure Android Backup of Health Data
+**Vulnerability:** The Android configuration allowed automatic OS backups (`android:allowBackup="true"`), enabling extraction of unencrypted sensitive health data from `AsyncStorage` via ADB or cloud backups.
+**Learning:** Default framework configurations (like React Native/Expo defaults) often prioritize convenience over security. For health/finance apps, sticking to defaults for data backup is a privacy risk.
+**Prevention:** Explicitly disable backup (`android:allowBackup="false"`) or use `android:fullBackupContent` to exclude sensitive databases if `SecureStore` is not used.
