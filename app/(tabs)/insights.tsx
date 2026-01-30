@@ -136,6 +136,8 @@ export default function InsightsScreen() {
 
       acc.formattedData.push({
         y: cycleLength,
+        // Bolt Optimization: Pre-calculate label to avoid expensive string splitting in render loop
+        labelDate: lastPeriodStr,
         dateRange: `${lastPeriodStr} - ${predictedNextPeriodStr}`,
         date: lastPeriodDate,
         ovulationDay: ovDay,
@@ -204,7 +206,7 @@ export default function InsightsScreen() {
       dx={10}
       textAnchor="start"
       style={[{ fontSize: 13, fill: barColor }]}
-      text={({ datum }) => `${datum.dateRange.split(' - ')[0]} (${datum.y} days)`}
+      text={({ datum }) => `${datum.labelDate} (${datum.y} days)`}
     />
   ), [barColor]);
 
