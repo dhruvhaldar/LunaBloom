@@ -1,11 +1,12 @@
 import React, { useState, useEffect, useMemo } from 'react';
-import { StyleSheet, View, Alert, useColorScheme, TouchableOpacity, Image } from 'react-native';
+import { StyleSheet, View, Alert, useColorScheme, TouchableOpacity, Image, Platform } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { IconSymbol } from '@/components/ui/IconSymbol';
 import * as DocumentPicker from 'expo-document-picker';
 import * as FileSystem from 'expo-file-system';
 import * as Sharing from 'expo-sharing';
 import * as ScreenCapture from 'expo-screen-capture';
+import * as Haptics from 'expo-haptics';
 import { isValidBackupEntry, sanitizeInput, MAX_BACKUP_FILE_SIZE } from '@/utils/validation';
 import { ThemedText } from '@/components/ThemedText';
 import { ThemedView } from '@/components/ThemedView';
@@ -304,23 +305,53 @@ export default function SettingsScreen() {
                 <View style={styles.section}>
                     <ThemedText style={[styles.sectionTitle, { color: textColor }]}>Other Settings</ThemedText>
                     
-                    <View style={styles.settingRow}>
+                    <TouchableOpacity
+                        style={styles.settingRow}
+                        onPress={() => {
+                            if (Platform.OS !== 'web') {
+                                Haptics.selectionAsync();
+                            }
+                            handleLutealPhaseToggle(!lutealPhase);
+                        }}
+                        accessibilityRole="switch"
+                        accessibilityState={{ checked: lutealPhase }}
+                        accessibilityLabel="Luteal Phase Calculation"
+                    >
                         <ThemedText style={[styles.settingText, { color: textColor }]}>Luteal Phase Calculation</ThemedText>
-                        <Switch
-                            value={lutealPhase}
-                            onValueChange={handleLutealPhaseToggle}
-                            accessibilityLabel="Luteal Phase Calculation"
-                        />
-                    </View>
+                        <View pointerEvents="none">
+                            <Switch
+                                value={lutealPhase}
+                                onValueChange={() => {}} // Controlled by row onPress
+                                accessibilityLabel="" // Handled by row
+                                importantForAccessibility="no-hide-descendants" // Android
+                                accessible={false} // iOS/General
+                            />
+                        </View>
+                    </TouchableOpacity>
 
-                    <View style={styles.settingRow}>
+                    <TouchableOpacity
+                        style={styles.settingRow}
+                        onPress={() => {
+                            if (Platform.OS !== 'web') {
+                                Haptics.selectionAsync();
+                            }
+                            handleScreenshotToggle(!preventScreenshots);
+                        }}
+                        accessibilityRole="switch"
+                        accessibilityState={{ checked: preventScreenshots }}
+                        accessibilityLabel="Prevent Screenshots"
+                    >
                         <ThemedText style={[styles.settingText, { color: textColor }]}>Prevent Screenshots</ThemedText>
-                        <Switch
-                            value={preventScreenshots}
-                            onValueChange={handleScreenshotToggle}
-                            accessibilityLabel="Prevent Screenshots"
-                        />
-                    </View>
+                        <View pointerEvents="none">
+                            <Switch
+                                value={preventScreenshots}
+                                onValueChange={() => {}} // Controlled by row onPress
+                                accessibilityLabel="" // Handled by row
+                                importantForAccessibility="no-hide-descendants" // Android
+                                accessible={false} // iOS/General
+                            />
+                        </View>
+                    </TouchableOpacity>
                 </View>
 
                 {/* Backup Section */}
