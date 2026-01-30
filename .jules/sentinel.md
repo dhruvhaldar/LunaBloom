@@ -32,3 +32,8 @@
 **Vulnerability:** The Android configuration allowed automatic OS backups (`android:allowBackup="true"`), enabling extraction of unencrypted sensitive health data from `AsyncStorage` via ADB or cloud backups.
 **Learning:** Default framework configurations (like React Native/Expo defaults) often prioritize convenience over security. For health/finance apps, sticking to defaults for data backup is a privacy risk.
 **Prevention:** Explicitly disable backup (`android:allowBackup="false"`) or use `android:fullBackupContent` to exclude sensitive databases if `SecureStore` is not used.
+
+## 2026-02-18 - XSS Bypass via Input Obfuscation
+**Vulnerability:** The input validation used a "denylist" of regex patterns to detect malicious content (e.g., `javascript:`) but failed to normalize the input first. Attackers could bypass detection using whitespace or control characters (e.g., `j a v a s c r i p t :`).
+**Learning:** Denylists are inherently brittle. Regex checks against raw user input are easily bypassed by obfuscation unless the input is first canonicalized/normalized to a standard form.
+**Prevention:** Always normalize input (strip whitespace, control characters, unescape entities) before applying security filters. Better yet, use "allowlists" where possible or established sanitization libraries instead of custom regex.

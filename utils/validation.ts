@@ -92,7 +92,15 @@ const SUSPICIOUS_PATTERNS = [
  * @returns True if the text contains suspicious patterns.
  */
 export const containsSuspiciousPatterns = (text: string): boolean => {
-    return SUSPICIOUS_PATTERNS.some(pattern => pattern.test(text));
+    // Check original text first (fast path)
+    if (SUSPICIOUS_PATTERNS.some(pattern => pattern.test(text))) {
+        return true;
+    }
+
+    // Normalization: strip whitespace and control characters to prevent obfuscation
+    // e.g. "j a v a s c r i p t :" -> "javascript:"
+    const normalizedText = text.replace(/[\s\x00-\x1F]/g, '');
+    return SUSPICIOUS_PATTERNS.some(pattern => pattern.test(normalizedText));
 };
 
 /**

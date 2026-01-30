@@ -60,6 +60,15 @@ describe('Validation Utils', () => {
       expect(containsSuspiciousPatterns('<img src=x onerror=alert(1)>')).toBe(true);
     });
 
+    it('detects obfuscated javascript: URI (whitespace)', () => {
+      expect(containsSuspiciousPatterns('j a v a s c r i p t : alert(1)')).toBe(true);
+      expect(containsSuspiciousPatterns('java script:alert(1)')).toBe(true);
+    });
+
+    it('detects obfuscated script tags', () => {
+      expect(containsSuspiciousPatterns('< s c r i p t > alert(1) < / s c r i p t >')).toBe(true);
+    });
+
     it('allows safe text', () => {
       expect(containsSuspiciousPatterns('Hello World')).toBe(false);
     });
