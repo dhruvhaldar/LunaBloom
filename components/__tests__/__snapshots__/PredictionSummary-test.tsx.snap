@@ -41,7 +41,7 @@ exports[`PredictionSummary renders correctly 1`] = `
       Predicted Periods
     </Text>
     <View
-      accessibilityLabel="Predicted period starting 1 Jan, ending 5 Jan"
+      accessibilityLabel="Predicted period starting 1 Jan, in 5 days, ending 5 Jan"
       accessible={true}
       style={
         [
@@ -83,6 +83,28 @@ exports[`PredictionSummary renders correctly 1`] = `
         }
       >
         1 Jan
+        <Text
+          style={
+            [
+              {
+                "color": "#1D3557",
+              },
+              {
+                "fontSize": 16,
+                "lineHeight": 24,
+              },
+              undefined,
+              undefined,
+              undefined,
+              undefined,
+              {
+                "fontWeight": "bold",
+              },
+            ]
+          }
+        >
+           (in 5 days)
+        </Text>
       </Text>
       <Text
         style={
@@ -154,6 +176,26 @@ exports[`PredictionSummary renders correctly 1`] = `
         }
       >
         1 Feb
+        <Text
+          style={
+            [
+              {
+                "color": "#1D3557",
+              },
+              {
+                "fontSize": 16,
+                "lineHeight": 24,
+              },
+              undefined,
+              undefined,
+              undefined,
+              undefined,
+              {
+                "fontWeight": "bold",
+              },
+            ]
+          }
+        />
       </Text>
       <Text
         style={
