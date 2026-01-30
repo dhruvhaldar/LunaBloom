@@ -70,8 +70,25 @@ export default function MenstruationScreen() {
     }
   }, [response]);
 
+  // Optimization: Memoize header props to prevent re-rendering ParallaxScrollView header
+  const headerBackgroundColor = useMemo(() => ({
+    light: '#ffdde2',
+    dark: '#151718'
+  }), []);
+
+  const headerImage = useMemo(() => (
+    <Image
+      source={require('@/assets/images/history2.png')}
+      style={styles.reactLogo}
+      resizeMode="contain"
+    />
+  ), []);
+
   return (
-    <ParallaxScrollView headerBackgroundColor={{ light: '#ffdde2', dark: '#151718' }} headerImage={<Image source={require('@/assets/images/history2.png')} style={styles.reactLogo} resizeMode="contain"/>}>
+    <ParallaxScrollView
+      headerBackgroundColor={headerBackgroundColor}
+      headerImage={headerImage}
+    >
       <ThemedView style={styles.container}>
         <ThemedText type="title" style={styles.title}>MenstruAI 🩸 {Platform.OS === 'web' ? '(Web Lite)' : '(Local)'}</ThemedText>
 
