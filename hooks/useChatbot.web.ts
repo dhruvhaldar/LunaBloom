@@ -7,19 +7,12 @@ import { validateInputLength, sanitizeInput, sanitizePromptInput, containsSuspic
 // Given constraints, we provide a "Lite" version for web.
 
 export function useChatbot() {
-  const [question, setQuestion] = useState('');
   const [response, setResponse] = useState('');
   const [isLoading, setIsLoading] = useState(false);
 
   // Security: Rate limiting to prevent DoS/spam
   const lastRequestTime = useRef(0);
   const MIN_REQUEST_INTERVAL = 2000; // 2 seconds
-
-  // Ref to track question state for stable handleChat callback
-  const questionRef = useRef(question);
-  useEffect(() => {
-    questionRef.current = question;
-  }, [question]);
 
   // Web is always "ready" but has limited capability
   const isModelDownloaded = true;
@@ -31,7 +24,7 @@ export function useChatbot() {
   const downloadModel = async () => {};
   const initializeLlama = async () => {};
 
-  const handleChat = useCallback(async (questionText?: string) => {
+  const handleChat = useCallback(async (questionText: string) => {
     // Web implementation does not use Keyboard.dismiss() the same way, but it's safe to call if using react-native-web
     try {
         Keyboard.dismiss();
@@ -47,8 +40,7 @@ export function useChatbot() {
     }
     lastRequestTime.current = now;
 
-    // Use ref to access latest state without adding it to dependency array
-    let textToAsk = typeof questionText === 'string' ? questionText : questionRef.current;
+    let textToAsk = questionText;
 
     // Security Validation
     textToAsk = sanitizeInput(textToAsk);
@@ -67,10 +59,6 @@ export function useChatbot() {
       return;
     }
 
-    if (typeof questionText === 'string') {
-      setQuestion(textToAsk);
-    }
-
     setIsLoading(true);
     setResponse('');
 
@@ -82,8 +70,6 @@ export function useChatbot() {
   }, []); // Stable callback with no dependencies
 
   return {
-    question,
-    setQuestion,
     response,
     isLoading,
     isModelDownloaded,

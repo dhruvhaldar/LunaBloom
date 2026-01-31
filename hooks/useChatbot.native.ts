@@ -13,19 +13,12 @@ const MODEL_SIZE_BYTES = 807690656; // Expected size from HF (exact bytes)
 const MODEL_SHA256 = '1d0e9419ec4e12aef73ccf4ffd122703e94c48344a96bc7c5f0f2772c2152ce3';
 
 export function useChatbot() {
-  const [question, setQuestion] = useState('');
   const [response, setResponse] = useState('');
   const [isLoading, setIsLoading] = useState(false);
 
   // Security: Rate limiting to prevent DoS/battery drain
   const lastRequestTime = useRef(0);
   const MIN_REQUEST_INTERVAL = 2000; // 2 seconds
-
-  // Ref to track question state for stable handleChat callback
-  const questionRef = useRef(question);
-  useEffect(() => {
-    questionRef.current = question;
-  }, [question]);
 
   const [isModelDownloaded, setIsModelDownloaded] = useState(false);
   const [isDownloading, setIsDownloading] = useState(false);
@@ -126,7 +119,7 @@ export function useChatbot() {
     }
   };
 
-  const handleChat = useCallback(async (questionText?: string) => {
+  const handleChat = useCallback(async (questionText: string) => {
     Keyboard.dismiss();
 
     // Security: Enforce rate limiting
@@ -137,8 +130,7 @@ export function useChatbot() {
     }
     lastRequestTime.current = now;
 
-    // Use ref to access latest state without adding it to dependency array
-    let textToAsk = typeof questionText === 'string' ? questionText : questionRef.current;
+    let textToAsk = questionText;
 
     // Security Validation
     textToAsk = sanitizeInput(textToAsk);
@@ -155,10 +147,6 @@ export function useChatbot() {
     if (containsSuspiciousPatterns(textToAsk)) {
       Alert.alert("Invalid Input", "Your input contains invalid characters or patterns.");
       return;
-    }
-
-    if (typeof questionText === 'string') {
-      setQuestion(textToAsk);
     }
 
     if (!llamaContext) {
@@ -196,8 +184,6 @@ export function useChatbot() {
   }, [llamaContext]); // Only recreate if llamaContext changes
 
   return {
-    question,
-    setQuestion,
     response,
     isLoading,
     isModelDownloaded,

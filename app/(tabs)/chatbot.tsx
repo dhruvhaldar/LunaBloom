@@ -1,10 +1,11 @@
 import React, { useMemo, useCallback } from 'react';
-import { StyleSheet, View, Image, useColorScheme, TextInput, TouchableOpacity, ScrollView, ActivityIndicator, Platform, Share, Alert } from 'react-native';
+import { StyleSheet, View, Image, useColorScheme, TouchableOpacity, ScrollView, ActivityIndicator, Platform, Share, Alert } from 'react-native';
 import { ThemedText } from '@/components/ThemedText';
 import { ThemedView } from '@/components/ThemedView';
 import ParallaxScrollView from '@/components/ParallaxScrollView';
 import { useChatbot } from '@/hooks/useChatbot'; // Expo automatically resolves .web.ts or .native.ts
 import { IconSymbol } from '@/components/ui/IconSymbol';
+import { ChatInput } from '@/components/ChatInput';
 
 // Optimization: Move static data outside component to prevent re-allocation on every render
 const suggestedQuestions = [
@@ -16,8 +17,6 @@ const suggestedQuestions = [
 
 export default function MenstruationScreen() {
   const {
-    question,
-    setQuestion,
     response,
     isLoading,
     isModelDownloaded,
@@ -155,29 +154,12 @@ export default function MenstruationScreen() {
               )}
             </ScrollView>
 
-            <View style={styles.inputContainer}>
-              <TextInput
-                style={[styles.input, { color: textColor }]}
-                placeholder="Ask a menstrual health question..."
-                placeholderTextColor={placeholderTextColor + '90'}
-                value={question}
-                onChangeText={setQuestion}
-                editable={!isLoading}
-                accessibilityLabel="Ask a menstrual health question"
-                returnKeyType="send"
-                onSubmitEditing={() => handleChat()}
-              />
-              <TouchableOpacity
-                style={styles.button}
-                onPress={() => handleChat()}
-                disabled={isLoading}
-                accessibilityLabel="Send question to AI assistant"
-                accessibilityRole="button"
-                accessibilityState={{ disabled: isLoading, busy: isLoading }}
-              >
-                {isLoading ? <ActivityIndicator color="#F1FAEE" /> : <ThemedText style={styles.buttonText}>Ask 🔍</ThemedText>}
-              </TouchableOpacity>
-            </View>
+            <ChatInput
+              onSubmit={handleChat}
+              isLoading={isLoading}
+              textColor={textColor}
+              placeholderTextColor={placeholderTextColor + '90'}
+            />
           </>
         )}
       </ThemedView>
@@ -241,18 +223,6 @@ const styles = StyleSheet.create({
     padding: 10,
     borderRadius: 8,
     marginBottom: 16,
-  },
-  inputContainer: {
-    marginTop: 10,
-  },
-  input: {
-    height: 60,
-    borderColor: '#E63946',
-    borderWidth: 1,
-    paddingHorizontal: 15,
-    borderRadius: 8,
-    marginBottom: 15,
-    fontSize: 16,
   },
   button: {
     backgroundColor: '#E63946',
