@@ -8,6 +8,7 @@ import 'react-native-reanimated';
 
 import { useColorScheme } from '@/hooks/useColorScheme';
 import { useScreenProtection } from '@/hooks/useScreenProtection';
+import { initializeStorageProtection } from '@/utils/storage';
 
 SplashScreen.preventAutoHideAsync();
 
@@ -24,6 +25,12 @@ export default function RootLayout() {
       SplashScreen.hideAsync();
     }
   }, [loaded]);
+
+  // Security: Clear sensitive in-memory cache when backgrounded
+  useEffect(() => {
+    const cleanup = initializeStorageProtection();
+    return cleanup;
+  }, []);
 
   if (!loaded) {
     return null;
