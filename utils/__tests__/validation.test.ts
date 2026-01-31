@@ -63,6 +63,12 @@ describe('Validation Utils', () => {
     it('allows safe text', () => {
       expect(containsSuspiciousPatterns('Hello World')).toBe(false);
     });
+
+    // Vulnerability reproduction
+    it('detects obfuscated javascript: URI', () => {
+        expect(containsSuspiciousPatterns('java script:alert(1)')).toBe(true);
+        expect(containsSuspiciousPatterns('javascript :alert(1)')).toBe(true);
+    });
   });
 
   describe('validateInputLength', () => {
