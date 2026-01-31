@@ -55,6 +55,11 @@ const PredictionSummary = React.memo(function PredictionSummary({
           } else if (diffDays > 1) {
             daysRemainingText = ` (in ${diffDays} days)`;
             daysRemainingLabel = `, in ${diffDays} days`;
+          } else if (diffDays < 0) {
+            const absDays = Math.abs(diffDays);
+            const daysString = absDays === 1 ? 'day' : 'days';
+            daysRemainingText = ` (${absDays} ${daysString} late)`;
+            daysRemainingLabel = `, ${absDays} ${daysString} late`;
           }
         }
 
