@@ -1,5 +1,5 @@
 import React, { useState, useCallback, useRef, useMemo } from 'react';
-import { StyleSheet, View, Alert, useColorScheme, Platform, UIManager, Vibration, LayoutAnimation } from 'react-native';
+import { StyleSheet, View, Alert, useColorScheme, Platform, UIManager, Vibration, LayoutAnimation, ActivityIndicator } from 'react-native';
 // Remove direct AsyncStorage import
 // import AsyncStorage from '@react-native-async-storage/async-storage';
 import { PeriodStorage } from '@/utils/storage';
@@ -14,6 +14,7 @@ import { parseSafePeriodEntries } from '@/utils/validation';
 export default function TabTwoScreen() {
   const router = useRouter();
   const [entries, setEntries] = useState<HistoryEntry[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
   // Ref to store the raw string of the last fetched entries to avoid unnecessary re-parsing and re-renders
   const lastFetchedEntriesRef = useRef<string | null>(null);
   
@@ -51,6 +52,8 @@ export default function TabTwoScreen() {
       setEntries(parsedEntries);
     } catch (error: any) {
       console.error('Error fetching period entries:', error instanceof Error ? error.message : String(error));
+    } finally {
+      setIsLoading(false);
     }
   };
   
@@ -118,15 +121,26 @@ export default function TabTwoScreen() {
   }, [router]);
 
   // Optimization: Memoize empty state component to prevent re-mounting/re-rendering
-  const emptyState = useMemo(() => (
-    <EmptyState
-      title="No Entries Yet"
-      message="Track your first period to start seeing your history here."
-      icon="clock.fill"
-      actionLabel="Log Period"
-      onAction={handleEmptyAction}
-    />
-  ), [handleEmptyAction]);
+  const emptyState = useMemo(() => {
+    if (isLoading) {
+      return (
+        <View style={{ padding: 20, alignItems: 'center', gap: 10 }}>
+          <ActivityIndicator size="large" color={textColor} />
+          <ThemedText>Loading history...</ThemedText>
+        </View>
+      );
+    }
+
+    return (
+      <EmptyState
+        title="No Entries Yet"
+        message="Track your first period to start seeing your history here."
+        icon="clock.fill"
+        actionLabel="Log Period"
+        onAction={handleEmptyAction}
+      />
+    );
+  }, [isLoading, textColor, handleEmptyAction]);
  
   // Optimization: Memoize the list header to ensure referential stability.
   // This prevents the ParallaxFlatList (and underlying FlatList) from unmounting/remounting

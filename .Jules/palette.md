@@ -9,3 +9,7 @@
 ## 2025-10-28 - Efficient Stepper Inputs
 **Learning:** Default stepper inputs require repetitive tapping for large changes and manual deletion for replacing values, frustrating power users.
 **Action:** Enable `selectTextOnFocus` on the input for one-tap replacement and implement `onLongPress` timers for rapid increment/decrement, significantly reducing interaction cost.
+
+## 2025-10-29 - Loading States for Async Data
+**Learning:** Initial empty states (like "No Entries Yet") can be jarring if shown before data fetching completes, causing a "flash of empty content".
+**Action:** Implement an explicit `isLoading` state (initialized to `true`) and conditionally render a loading indicator until the async fetch completes (in `finally`), preserving the empty state for when data is truly absent.
