@@ -61,15 +61,19 @@ export const sanitizePromptInput = (text: string): string => {
   return sanitized;
 };
 
+const DANGEROUS_PROTOCOLS = [
+    /javascript:/im,
+    /vbscript:/im,
+    /data:text\/html/im,
+];
+
 // Defense-in-depth: Check for common XSS vectors and malicious patterns.
 // Note: This is not a complete XSS filter but catches common attempts.
 // Optimization: Define patterns once to avoid recreation on every validation call.
 // Global flag 'g' is removed to keep regexes stateless for shared use.
 const SUSPICIOUS_PATTERNS = [
     /<script\b[^>]*>([\s\S]*?)<\/script>/im,
-    /javascript:/im,
-    /vbscript:/im,
-    /data:text\/html/im,
+    ...DANGEROUS_PROTOCOLS,
     // Common dangerous event handlers (using word boundaries to avoid false positives)
     /\bonload\s*=/im,
     /\bonerror\s*=/im,
@@ -92,7 +96,17 @@ const SUSPICIOUS_PATTERNS = [
  * @returns True if the text contains suspicious patterns.
  */
 export const containsSuspiciousPatterns = (text: string): boolean => {
-    return SUSPICIOUS_PATTERNS.some(pattern => pattern.test(text));
+    // 1. Check original text against all patterns
+    if (SUSPICIOUS_PATTERNS.some(pattern => pattern.test(text))) {
+        return true;
+    }
+
+    // 2. Normalize: remove all whitespace and control characters
+    const normalized = text.replace(/[\s\x00-\x1F]/g, '');
+
+    // 3. Check for dangerous protocols in normalized text to detect obfuscation
+    // (e.g. "j a v a s c r i p t :")
+    return DANGEROUS_PROTOCOLS.some(pattern => pattern.test(normalized));
 };
 
 /**
