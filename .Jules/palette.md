@@ -9,3 +9,7 @@
 ## 2025-10-28 - Efficient Stepper Inputs
 **Learning:** Default stepper inputs require repetitive tapping for large changes and manual deletion for replacing values, frustrating power users.
 **Action:** Enable `selectTextOnFocus` on the input for one-tap replacement and implement `onLongPress` timers for rapid increment/decrement, significantly reducing interaction cost.
+
+## 2025-10-29 - Tappable Settings Rows
+**Learning:** Small toggle switches have poor touch targets, frustrating users and failing accessibility guidelines for motor impairments.
+**Action:** Wrap the entire settings row (label + switch) in a `TouchableOpacity`. Apply `accessibilityRole="switch"` to the wrapper and hide the internal switch from accessibility (`accessible={false}`, `pointerEvents="none"`), creating a large, single touch target that behaves natively.
