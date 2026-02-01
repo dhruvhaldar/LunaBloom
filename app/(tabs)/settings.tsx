@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useMemo } from 'react';
-import { StyleSheet, View, Alert, useColorScheme, TouchableOpacity, Image } from 'react-native';
+import { StyleSheet, View, Alert, useColorScheme, TouchableOpacity, Image, Platform } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import * as Haptics from 'expo-haptics';
 import { IconSymbol } from '@/components/ui/IconSymbol';
 import * as DocumentPicker from 'expo-document-picker';
 import * as FileSystem from 'expo-file-system';
@@ -304,23 +305,53 @@ export default function SettingsScreen() {
                 <View style={styles.section}>
                     <ThemedText style={[styles.sectionTitle, { color: textColor }]}>Other Settings</ThemedText>
                     
-                    <View style={styles.settingRow}>
+                    <TouchableOpacity
+                        style={styles.settingRow}
+                        onPress={() => {
+                            if (Platform.OS !== 'web') {
+                                Haptics.selectionAsync();
+                            }
+                            handleLutealPhaseToggle(!lutealPhase);
+                        }}
+                        activeOpacity={0.7}
+                        accessibilityRole="switch"
+                        accessibilityState={{ checked: lutealPhase }}
+                        accessibilityLabel="Luteal Phase Calculation"
+                    >
                         <ThemedText style={[styles.settingText, { color: textColor }]}>Luteal Phase Calculation</ThemedText>
-                        <Switch
-                            value={lutealPhase}
-                            onValueChange={handleLutealPhaseToggle}
-                            accessibilityLabel="Luteal Phase Calculation"
-                        />
-                    </View>
+                        <View pointerEvents="none">
+                            <Switch
+                                value={lutealPhase}
+                                onValueChange={() => {}}
+                                accessibilityLabel="Luteal Phase Calculation"
+                                accessible={false}
+                            />
+                        </View>
+                    </TouchableOpacity>
 
-                    <View style={styles.settingRow}>
+                    <TouchableOpacity
+                        style={styles.settingRow}
+                        onPress={() => {
+                            if (Platform.OS !== 'web') {
+                                Haptics.selectionAsync();
+                            }
+                            handleScreenshotToggle(!preventScreenshots);
+                        }}
+                        activeOpacity={0.7}
+                        accessibilityRole="switch"
+                        accessibilityState={{ checked: preventScreenshots }}
+                        accessibilityLabel="Prevent Screenshots"
+                    >
                         <ThemedText style={[styles.settingText, { color: textColor }]}>Prevent Screenshots</ThemedText>
-                        <Switch
-                            value={preventScreenshots}
-                            onValueChange={handleScreenshotToggle}
-                            accessibilityLabel="Prevent Screenshots"
-                        />
-                    </View>
+                        <View pointerEvents="none">
+                            <Switch
+                                value={preventScreenshots}
+                                onValueChange={() => {}}
+                                accessibilityLabel="Prevent Screenshots"
+                                accessible={false}
+                            />
+                        </View>
+                    </TouchableOpacity>
                 </View>
 
                 {/* Backup Section */}
