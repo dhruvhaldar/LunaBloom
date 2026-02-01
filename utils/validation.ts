@@ -121,8 +121,8 @@ export const containsSuspiciousPatterns = (text: string): boolean => {
  */
 const isValidDate = (dateString: string): boolean => {
   if (!dateString) return false;
-  const date = new Date(dateString);
-  return !isNaN(date.getTime());
+  // Optimization: use Date.parse to avoid object allocation
+  return !isNaN(Date.parse(dateString));
 };
 
 export const isValidBackupEntry = (entry: any): boolean => {
