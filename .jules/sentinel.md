@@ -32,3 +32,8 @@
 **Vulnerability:** The Android configuration allowed automatic OS backups (`android:allowBackup="true"`), enabling extraction of unencrypted sensitive health data from `AsyncStorage` via ADB or cloud backups.
 **Learning:** Default framework configurations (like React Native/Expo defaults) often prioritize convenience over security. For health/finance apps, sticking to defaults for data backup is a privacy risk.
 **Prevention:** Explicitly disable backup (`android:allowBackup="false"`) or use `android:fullBackupContent` to exclude sensitive databases if `SecureStore` is not used.
+
+## 2026-02-15 - XSS Risk in ExternalLink
+**Vulnerability:** The `ExternalLink` component blindly passed the `href` prop to `expo-router`'s `Link` component. On the web, this renders an `<a>` tag, allowing execution of `javascript:` URIs if an attacker can control the link target (DOM-based XSS).
+**Learning:** Wrapper components around navigation primitives often inherit their insecurities. Just because a component is named `ExternalLink` doesn't mean it only handles safe external URLs.
+**Prevention:** Explicitly validate protocols in link components. Allow only `http` and `https` schemes for "external" web links, and block or sanitize anything else.

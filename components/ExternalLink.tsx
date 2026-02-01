@@ -6,6 +6,17 @@ import { Platform } from 'react-native';
 type Props = Omit<ComponentProps<typeof Link>, 'href'> & { href: string };
 
 export function ExternalLink({ href, ...rest }: Props) {
+  // Security: Validate protocol to prevent XSS (e.g. javascript: schemes)
+  const isSafe = /^https?:\/\//i.test(href);
+
+  if (!isSafe) {
+    if (process.env.NODE_ENV !== 'production') {
+      console.warn(`Blocked potentially unsafe ExternalLink href: ${href}`);
+    }
+    // Render children safely without link wrapper
+    return <>{rest.children}</>;
+  }
+
   return (
     <Link
       target="_blank"
