@@ -121,8 +121,9 @@ export const containsSuspiciousPatterns = (text: string): boolean => {
  */
 const isValidDate = (dateString: string): boolean => {
   if (!dateString) return false;
-  const date = new Date(dateString);
-  return !isNaN(date.getTime());
+  // Bolt Optimization: Use Date.parse() to avoid allocating a Date object
+  // for every validation check (which happens 2x per entry).
+  return !isNaN(Date.parse(dateString));
 };
 
 export const isValidBackupEntry = (entry: any): boolean => {
