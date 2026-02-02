@@ -1,11 +1,9 @@
-## 2025-10-26 - Accessible Key-Value Metrics
-**Learning:** For key-value data (like metrics), screen readers often treat the label and value as separate traversable elements, increasing cognitive load.
-**Action:** Wrap the label and value in a parent `View` with `accessible={true}` and use a computed `accessibilityLabel` (e.g., "Average Cycle Length: 28 days") to present them as a single, cohesive unit.
+# Palette's Journal
 
-## 2025-10-27 - Grouping Complex List Items
-**Learning:** In FlatLists, items containing multiple text nodes (dates, tags, notes) force users to swipe repeatedly to parse a single entry, causing fatigue.
-**Action:** Wrap the item's content in a container with `accessible={true}` and construct a comprehensive `accessibilityLabel` that joins all data points into a natural sentence.
+## 2026-02-02 - ChatInput Disabled State
+**Learning:** Even if a button's logic prevents action (empty submission), the lack of visual feedback (disabled state) leads to "dead clicks" and user confusion. Users expect the interface to reflect the validity of their input immediately.
+**Action:** Always pair logical validation with visual state changes (opacity, color) on action buttons. Ensure `accessibilityState.disabled` matches the visual and functional state.
 
-## 2025-10-28 - Efficient Stepper Inputs
-**Learning:** Default stepper inputs require repetitive tapping for large changes and manual deletion for replacing values, frustrating power users.
-**Action:** Enable `selectTextOnFocus` on the input for one-tap replacement and implement `onLongPress` timers for rapid increment/decrement, significantly reducing interaction cost.
+## 2026-02-02 - Expo Web Testing Hydration
+**Learning:** Playwright tests on Expo Web can fail because elements (like placeholders) aren't immediately available even after navigation appears complete.
+**Action:** Use robust waiting strategies (wait for unique page text/element) or explicit timeouts when testing client-side hydrated apps like Expo Web.

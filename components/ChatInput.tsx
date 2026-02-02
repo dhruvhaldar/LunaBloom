@@ -32,6 +32,9 @@ export const ChatInput = forwardRef<ChatInputHandle, ChatInputProps>(({ onSubmit
     }
   };
 
+  const isInputEmpty = text.trim().length === 0;
+  const isDisabled = isLoading || isInputEmpty;
+
   return (
     <View style={styles.inputContainer}>
         <TextInput
@@ -46,12 +49,12 @@ export const ChatInput = forwardRef<ChatInputHandle, ChatInputProps>(({ onSubmit
             onSubmitEditing={handleSubmit}
         />
         <TouchableOpacity
-            style={styles.button}
+            style={[styles.button, isDisabled && styles.buttonDisabled]}
             onPress={handleSubmit}
-            disabled={isLoading}
+            disabled={isDisabled}
             accessibilityLabel="Send question to AI assistant"
             accessibilityRole="button"
-            accessibilityState={{ disabled: isLoading, busy: isLoading }}
+            accessibilityState={{ disabled: isDisabled, busy: isLoading }}
         >
             {isLoading ? <ActivityIndicator color="#F1FAEE" /> : <ThemedText style={styles.buttonText}>Ask 🔍</ThemedText>}
         </TouchableOpacity>
@@ -82,5 +85,8 @@ const styles = StyleSheet.create({
     color: 'white',
     fontWeight: 'bold',
     fontSize: 16,
+  },
+  buttonDisabled: {
+    opacity: 0.5,
   },
 });
