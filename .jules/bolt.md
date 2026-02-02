@@ -29,3 +29,7 @@
 ## 2026-05-22 - Fragment Props Stability
 **Learning:** Passing an inline Fragment (e.g. `<>...</>`) or an inline element as a prop (like `ListHeaderComponent`) creates a new object reference on every render. For components like `FlatList`, this forces the header to unmount and remount, causing potential state loss and animation glitches.
 **Action:** Memoize the component passed to `ListHeaderComponent` (or similar props) using `useMemo` to ensure referential stability across re-renders.
+
+## 2026-05-22 - Validation Allocation Optimization
+**Learning:** `new Date(string)` allocates a full object, which is expensive when validating large lists of dates. `Date.parse(string)` validates the format and returns a primitive timestamp (or NaN) without object allocation.
+**Action:** Use `Date.parse(dateString)` inside validation functions like `isValidDate` to reduce memory churn during batch processing.
