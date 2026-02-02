@@ -186,3 +186,13 @@ export const parseSafePeriodEntries = (json: string | null): any[] => {
     return [];
   }
 };
+
+/**
+ * Checks if a URL is a valid external URL (http/https).
+ * @param url The URL to check.
+ * @returns True if valid.
+ */
+export const isValidExternalUrl = (url: string): boolean => {
+  if (!url) return false;
+  return /^(https?:\/\/)/i.test(url);
+};
