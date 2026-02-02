@@ -1,4 +1,4 @@
-import { sanitizeInput, sanitizePromptInput, containsSuspiciousPatterns, validateInputLength, isValidBackupEntry, parseSafePeriodEntries } from '../validation';
+import { sanitizeInput, sanitizePromptInput, containsSuspiciousPatterns, validateInputLength, isValidBackupEntry, parseSafePeriodEntries, isValidExternalUrl } from '../validation';
 
 describe('Validation Utils', () => {
   describe('sanitizeInput', () => {
@@ -182,6 +182,36 @@ describe('Validation Utils', () => {
       expect(parseSafePeriodEntries('{}')).toEqual([]);
       expect(parseSafePeriodEntries('123')).toEqual([]);
       expect(parseSafePeriodEntries('true')).toEqual([]);
+    });
+  });
+
+  describe('isValidExternalUrl', () => {
+    it('allows http links', () => {
+      expect(isValidExternalUrl('http://example.com')).toBe(true);
+    });
+
+    it('allows https links', () => {
+      expect(isValidExternalUrl('https://example.com')).toBe(true);
+    });
+
+    it('rejects javascript:', () => {
+      expect(isValidExternalUrl('javascript:alert(1)')).toBe(false);
+    });
+
+    it('rejects file:', () => {
+      expect(isValidExternalUrl('file:///etc/passwd')).toBe(false);
+    });
+
+    it('rejects invalid schemes', () => {
+      expect(isValidExternalUrl('ftp://example.com')).toBe(false);
+    });
+
+    it('rejects relative urls', () => {
+      expect(isValidExternalUrl('/home')).toBe(false);
+    });
+
+    it('rejects empty', () => {
+      expect(isValidExternalUrl('')).toBe(false);
     });
   });
 });

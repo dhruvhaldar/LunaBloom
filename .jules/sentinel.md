@@ -32,3 +32,8 @@
 **Vulnerability:** The Android configuration allowed automatic OS backups (`android:allowBackup="true"`), enabling extraction of unencrypted sensitive health data from `AsyncStorage` via ADB or cloud backups.
 **Learning:** Default framework configurations (like React Native/Expo defaults) often prioritize convenience over security. For health/finance apps, sticking to defaults for data backup is a privacy risk.
 **Prevention:** Explicitly disable backup (`android:allowBackup="false"`) or use `android:fullBackupContent` to exclude sensitive databases if `SecureStore` is not used.
+
+## 2026-02-28 - Unrestricted URL Schemes in ExternalLink
+**Vulnerability:** The `ExternalLink` component blindly passed the `href` prop to `openBrowserAsync` (Native) or `Link` (Web), allowing potential execution of dangerous schemes like `javascript:` (XSS on Web) or `file:` (local file access on Native) if the URL was attacker-controlled.
+**Learning:** Helper components in Expo templates often default to convenience over security. Even if currently unused, they present a risk if later used with dynamic input.
+**Prevention:** Implement strict protocol validation (`http`/`https` only) in all link handling components. Use a centralized validator (`isValidExternalUrl`) to enforce this policy consistently.

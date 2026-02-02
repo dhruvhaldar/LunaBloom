@@ -186,3 +186,15 @@ export const parseSafePeriodEntries = (json: string | null): any[] => {
     return [];
   }
 };
+
+/**
+ * Validates if the given URL uses a safe protocol (http or https).
+ * This prevents Open Redirects and malicious deep links (e.g. javascript:, file:).
+ * @param url The URL to validate.
+ * @returns True if the URL is safe to open.
+ */
+export const isValidExternalUrl = (url: string): boolean => {
+  if (!url) return false;
+  // Use a regex to check the scheme at the beginning of the string
+  return /^(http|https):\/\//i.test(url);
+};
