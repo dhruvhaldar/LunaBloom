@@ -9,3 +9,7 @@
 ## 2025-10-28 - Efficient Stepper Inputs
 **Learning:** Default stepper inputs require repetitive tapping for large changes and manual deletion for replacing values, frustrating power users.
 **Action:** Enable `selectTextOnFocus` on the input for one-tap replacement and implement `onLongPress` timers for rapid increment/decrement, significantly reducing interaction cost.
+
+## 2025-10-29 - Disabled States for Chat Inputs
+**Learning:** Chat inputs often lack visual feedback when empty, leading users to repeatedly press "Send" thinking the app is unresponsive.
+**Action:** Disable the send button (visually and functionally) when the input is empty or whitespace-only, and ensure the `accessibilityState` reflects this to prevent confusion.
