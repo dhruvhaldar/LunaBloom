@@ -141,6 +141,7 @@ export default function InsightsScreen() {
         y: cycleLength,
         // Bolt Optimization: Pre-calculate label to avoid expensive string splitting in render loop
         labelDate: lastPeriodStr,
+        barLabel: `${lastPeriodStr} (${cycleLength} days)`,
         dateRange: `${lastPeriodStr} - ${predictedNextPeriodStr}`,
         date: lastPeriodTimestamp,
         ovulationDay: ovDay,
@@ -196,7 +197,7 @@ export default function InsightsScreen() {
   }, [entries]);
 
   // Optimization: Memoize chart props to prevent expensive re-renders
-  const getBarLabel = useCallback(({ datum }: any) => `${datum.y} days`, []);
+  const getBarLabel = useCallback(({ datum }: any) => datum.barLabel, []);
 
   const barStyle = useMemo(() => ({
     data: { fill: barColor },
@@ -209,7 +210,6 @@ export default function InsightsScreen() {
       dx={10}
       textAnchor="start"
       style={[{ fontSize: 13, fill: barColor }]}
-      text={({ datum }) => `${datum.labelDate} (${datum.y} days)`}
     />
   ), [barColor]);
 
