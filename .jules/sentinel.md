@@ -32,3 +32,8 @@
 **Vulnerability:** The Android configuration allowed automatic OS backups (`android:allowBackup="true"`), enabling extraction of unencrypted sensitive health data from `AsyncStorage` via ADB or cloud backups.
 **Learning:** Default framework configurations (like React Native/Expo defaults) often prioritize convenience over security. For health/finance apps, sticking to defaults for data backup is a privacy risk.
 **Prevention:** Explicitly disable backup (`android:allowBackup="false"`) or use `android:fullBackupContent` to exclude sensitive databases if `SecureStore` is not used.
+
+## 2026-02-18 - PHI in Memory (Cache Clearing)
+**Vulnerability:** Sensitive PHI stored in in-memory cache variable (`cachedEntries`) remained in RAM when the app was backgrounded, posing a risk of memory scraping or forensic analysis if the device is compromised while running the app.
+**Learning:** Even if data is protected at rest, data in memory is often overlooked. Mobile apps should practice "Memory Hygiene" by clearing sensitive buffers when not in use or when the app is not active.
+**Prevention:** Listen to `AppState` changes and explicitly wipe sensitive in-memory caches when the app transitions to the `background` state.

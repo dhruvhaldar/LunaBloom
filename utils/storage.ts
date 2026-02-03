@@ -1,4 +1,5 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import { AppState, AppStateStatus } from 'react-native';
 
 /**
  * PeriodStorage
@@ -37,4 +38,21 @@ export const PeriodStorage = {
   clearCache() {
     cachedEntries = null;
   }
+};
+
+/**
+ * Initializes security protection for storage.
+ * Listens to AppState changes and clears sensitive in-memory cache
+ * when the app goes to the background to prevent memory scraping/dumps.
+ */
+export const initializeStorageProtection = () => {
+  const subscription = AppState.addEventListener('change', (nextAppState: AppStateStatus) => {
+    if (nextAppState === 'background') {
+      PeriodStorage.clearCache();
+    }
+  });
+
+  return () => {
+    subscription.remove();
+  };
 };

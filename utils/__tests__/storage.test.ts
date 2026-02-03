@@ -1,10 +1,18 @@
-import { PeriodStorage } from '../storage';
+import { PeriodStorage, initializeStorageProtection } from '../storage';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import { AppState } from 'react-native';
 
 // Mock AsyncStorage
 jest.mock('@react-native-async-storage/async-storage', () => ({
   getItem: jest.fn(),
   setItem: jest.fn(),
+}));
+
+// Mock AppState
+jest.mock('react-native', () => ({
+  AppState: {
+    addEventListener: jest.fn(),
+  },
 }));
 
 describe('PeriodStorage', () => {
@@ -46,5 +54,40 @@ describe('PeriodStorage', () => {
     const result = await PeriodStorage.getEntries();
     expect(result).toBe(newData);
     expect(AsyncStorage.getItem).not.toHaveBeenCalled(); // Should not call getItem if cache is hit
+  });
+});
+
+describe('initializeStorageProtection', () => {
+  beforeEach(() => {
+    jest.clearAllMocks();
+    PeriodStorage.clearCache();
+  });
+
+  it('clears cache when AppState changes to background', () => {
+    const mockRemove = jest.fn();
+    // Use type assertion for the mock
+    (AppState.addEventListener as jest.Mock).mockReturnValue({ remove: mockRemove });
+
+    const spyClearCache = jest.spyOn(PeriodStorage, 'clearCache');
+
+    const cleanup = initializeStorageProtection();
+
+    expect(AppState.addEventListener).toHaveBeenCalledWith('change', expect.any(Function));
+
+    // Simulate background state
+    // Get the handler that was passed to addEventListener
+    const handler = (AppState.addEventListener as jest.Mock).mock.calls[0][1];
+
+    // Call it with 'active' -> should NOT clear
+    handler('active');
+    expect(spyClearCache).not.toHaveBeenCalled();
+
+    // Call it with 'background' -> should clear
+    handler('background');
+    expect(spyClearCache).toHaveBeenCalled();
+
+    // Verify cleanup
+    cleanup();
+    expect(mockRemove).toHaveBeenCalled();
   });
 });
