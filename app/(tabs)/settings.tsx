@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useMemo } from 'react';
 import { StyleSheet, View, Alert, useColorScheme, TouchableOpacity, Image } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import { PeriodStorage } from '@/utils/storage';
 import { IconSymbol } from '@/components/ui/IconSymbol';
 import * as DocumentPicker from 'expo-document-picker';
 import * as FileSystem from 'expo-file-system';
@@ -103,7 +104,7 @@ export default function SettingsScreen() {
 
     const backupData = async () => {
             try {
-              const existingEntries = await AsyncStorage.getItem('periodEntries');
+              const existingEntries = await PeriodStorage.getEntries();
               if (!existingEntries) {
                 Alert.alert('No data to backup', 'Please log at least one entry.');
                 return;
@@ -263,7 +264,7 @@ export default function SettingsScreen() {
             }
 
             // Store the entries in AsyncStorage
-            await AsyncStorage.setItem('periodEntries', JSON.stringify(sanitizedEntries));
+            await PeriodStorage.saveEntries(JSON.stringify(sanitizedEntries));
             
             Alert.alert(
                 '✅ Restore Successful',
