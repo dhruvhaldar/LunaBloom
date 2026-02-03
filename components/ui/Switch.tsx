@@ -1,9 +1,9 @@
 import React, { useEffect, useRef } from 'react';
-import { Animated, TouchableOpacity, StyleSheet, Platform, ColorValue } from 'react-native';
+import { Animated, TouchableOpacity, StyleSheet, Platform, ColorValue, TouchableOpacityProps } from 'react-native';
 import * as Haptics from 'expo-haptics';
 import { IconSymbol } from '@/components/ui/IconSymbol';
 
-interface SwitchProps {
+interface SwitchProps extends Omit<TouchableOpacityProps, 'value' | 'style' | 'onPress'> {
   value: boolean;
   onValueChange: (value: boolean) => void;
   accessibilityLabel: string;
@@ -17,6 +17,7 @@ export function Switch({
   accessibilityLabel,
   activeColor = '#457B9D',
   inactiveColor = '#3f3f3f',
+  ...props
 }: SwitchProps) {
   const animatedValue = useRef(new Animated.Value(value ? 1 : 0)).current;
 
@@ -56,6 +57,7 @@ export function Switch({
       accessibilityRole="switch"
       accessibilityState={{ checked: value }}
       accessibilityLabel={accessibilityLabel}
+      {...props}
     >
       <Animated.View style={[styles.container, { backgroundColor }]}>
         <Animated.View style={[styles.thumb, { transform: [{ translateX }] }]}>
