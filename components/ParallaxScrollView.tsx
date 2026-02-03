@@ -16,12 +16,16 @@ const HEADER_HEIGHT = 150;
 type Props = PropsWithChildren<{
   headerImage: ReactElement;
   headerBackgroundColor: { dark: string; light: string };
+  keyboardDismissMode?: 'none' | 'on-drag' | 'interactive';
+  keyboardShouldPersistTaps?: 'always' | 'never' | 'handled';
 }>;
 
 export default function ParallaxScrollView({
   children,
   headerImage,
   headerBackgroundColor,
+  keyboardDismissMode = 'on-drag',
+  keyboardShouldPersistTaps = 'handled',
 }: Props) {
   const colorScheme = useColorScheme() ?? 'light';
   const scrollRef = useAnimatedRef<Animated.ScrollView>();
@@ -61,7 +65,9 @@ export default function ParallaxScrollView({
         ref={scrollRef}
         scrollEventThrottle={16}
         scrollIndicatorInsets={{ bottom }}
-        contentContainerStyle={{ paddingBottom: bottom }}>
+        contentContainerStyle={{ paddingBottom: bottom }}
+        keyboardDismissMode={keyboardDismissMode}
+        keyboardShouldPersistTaps={keyboardShouldPersistTaps}>
         {header}
         <ThemedView style={styles.content}>{children}</ThemedView>
       </Animated.ScrollView>
