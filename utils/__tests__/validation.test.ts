@@ -1,4 +1,4 @@
-import { sanitizeInput, sanitizePromptInput, containsSuspiciousPatterns, validateInputLength, isValidBackupEntry, parseSafePeriodEntries } from '../validation';
+import { sanitizeInput, sanitizePromptInput, containsSuspiciousPatterns, validateInputLength, isValidBackupEntry, parseSafePeriodEntries, isValidExternalUrl } from '../validation';
 
 describe('Validation Utils', () => {
   describe('sanitizeInput', () => {
@@ -182,6 +182,40 @@ describe('Validation Utils', () => {
       expect(parseSafePeriodEntries('{}')).toEqual([]);
       expect(parseSafePeriodEntries('123')).toEqual([]);
       expect(parseSafePeriodEntries('true')).toEqual([]);
+    });
+  });
+
+  describe('isValidExternalUrl', () => {
+    it('accepts valid https url', () => {
+      expect(isValidExternalUrl('https://example.com')).toBe(true);
+    });
+
+    it('accepts valid http url', () => {
+      expect(isValidExternalUrl('http://example.com')).toBe(true);
+    });
+
+    it('rejects javascript protocol', () => {
+      expect(isValidExternalUrl('javascript:alert(1)')).toBe(false);
+    });
+
+    it('rejects file protocol', () => {
+      expect(isValidExternalUrl('file:///etc/passwd')).toBe(false);
+    });
+
+    it('rejects relative path', () => {
+      expect(isValidExternalUrl('/home/page')).toBe(false);
+    });
+
+    it('rejects empty string', () => {
+      expect(isValidExternalUrl('')).toBe(false);
+    });
+
+    it('handles mixed case', () => {
+      expect(isValidExternalUrl('HTTPS://EXAMPLE.COM')).toBe(true);
+    });
+
+    it('handles whitespace', () => {
+      expect(isValidExternalUrl('  https://example.com  ')).toBe(true);
     });
   });
 });
