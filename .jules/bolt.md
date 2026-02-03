@@ -33,3 +33,7 @@
 ## 2026-05-22 - Validation Allocation Optimization
 **Learning:** `new Date(string)` allocates a full object, which is expensive when validating large lists of dates. `Date.parse(string)` validates the format and returns a primitive timestamp (or NaN) without object allocation.
 **Action:** Use `Date.parse(dateString)` inside validation functions like `isValidDate` to reduce memory churn during batch processing.
+
+## 2026-02-03 - VictoryLabel Render Optimization
+**Learning:** In `VictoryNative`, defining a function for the `text` prop inside a `VictoryLabel` (used as `labelComponent`) causes string interpolation to run during every render cycle of the chart.
+**Action:** Pre-calculate the full display string in the data transformation layer (e.g., inside `useMemo`) and pass it as a property of the datum (e.g., `datum.barLabel`). This moves the cost out of the render loop.
