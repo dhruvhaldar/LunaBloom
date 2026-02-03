@@ -117,18 +117,21 @@ export default function InsightsScreen() {
       acc.sumCycleLength += cycleLength;
       acc.sumPeriodDuration += periodDuration;
 
-      const lastPeriodDate = new Date(entry.lastPeriod);
+      // Optimization: Use Date.parse() instead of new Date() to avoid object allocation in loop
+      const lastPeriodTimestamp = Date.parse(entry.lastPeriod);
 
       // Calculate Ovulation Day
       let ovDay = 14;
       if (entry.predictedNextOvulation) {
-        const predictedOvulationDate = new Date(entry.predictedNextOvulation);
-        ovDay = Math.floor((predictedOvulationDate.getTime() - lastPeriodDate.getTime()) / (1000 * 60 * 60 * 24));
+        const predictedOvulationTimestamp = Date.parse(entry.predictedNextOvulation);
+        // Optimization: Use timestamp subtraction directly
+        ovDay = Math.floor((predictedOvulationTimestamp - lastPeriodTimestamp) / (1000 * 60 * 60 * 24));
       }
       acc.sumOvulationDay += ovDay;
 
       // Format Data for Chart
-      const lastPeriodStr = formatDate(lastPeriodDate, DateFormats.MonthDay);
+      // Optimization: Pass timestamp to formatDate
+      const lastPeriodStr = formatDate(lastPeriodTimestamp, DateFormats.MonthDay);
       let predictedNextPeriodStr = 'N/A';
       if (entry.predictedNextPeriod) {
          predictedNextPeriodStr = formatDate(entry.predictedNextPeriod, DateFormats.MonthDay);
@@ -139,7 +142,7 @@ export default function InsightsScreen() {
         // Bolt Optimization: Pre-calculate label to avoid expensive string splitting in render loop
         labelDate: lastPeriodStr,
         dateRange: `${lastPeriodStr} - ${predictedNextPeriodStr}`,
-        date: lastPeriodDate,
+        date: lastPeriodTimestamp,
         ovulationDay: ovDay,
         x: sortedEntries.length - index // Calculate x directly: oldest (1) to newest (length)
       });
