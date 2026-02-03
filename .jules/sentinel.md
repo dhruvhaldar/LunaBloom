@@ -37,3 +37,8 @@
 **Vulnerability:** Sensitive PHI stored in in-memory cache variable (`cachedEntries`) remained in RAM when the app was backgrounded, posing a risk of memory scraping or forensic analysis if the device is compromised while running the app.
 **Learning:** Even if data is protected at rest, data in memory is often overlooked. Mobile apps should practice "Memory Hygiene" by clearing sensitive buffers when not in use or when the app is not active.
 **Prevention:** Listen to `AppState` changes and explicitly wipe sensitive in-memory caches when the app transitions to the `background` state.
+
+## 2026-03-08 - Incomplete XSS Deny-List
+**Vulnerability:** The input validation relied on a deny-list (`SUSPICIOUS_PATTERNS`) that missed critical XSS vectors like `<svg>` tags (which can execute scripts) and generic event handlers (only specific ones like `onload` were blocked).
+**Learning:** Deny-lists are inherently fragile and require constant maintenance. Attackers can bypass them using obscure HTML tags or attributes.
+**Prevention:** Significantly expanded the deny-list to include risky tags (`<svg>`, `<style>`, `<base>`) and implemented a regex that matches a broad class of event handlers (`on[event]=`) rather than a hardcoded list. Additionally, added input length limits (`maxLength`) on UI components as defense-in-depth against Denial of Service.

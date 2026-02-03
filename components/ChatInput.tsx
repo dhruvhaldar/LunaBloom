@@ -1,6 +1,7 @@
 import React, { useState, forwardRef, useImperativeHandle } from 'react';
 import { TextInput, View, TouchableOpacity, ActivityIndicator, StyleSheet } from 'react-native';
 import { ThemedText } from './ThemedText';
+import { MAX_INPUT_LENGTH } from '@/utils/validation';
 
 export interface ChatInputHandle {
   getText: () => string;
@@ -46,6 +47,7 @@ export const ChatInput = forwardRef<ChatInputHandle, ChatInputProps>(({ onSubmit
             accessibilityLabel="Ask a menstrual health question"
             returnKeyType="send"
             onSubmitEditing={handleSubmit}
+            maxLength={MAX_INPUT_LENGTH}
         />
         <TouchableOpacity
             style={[styles.button, isButtonDisabled && styles.buttonDisabled]}

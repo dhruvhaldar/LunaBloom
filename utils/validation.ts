@@ -74,20 +74,19 @@ const DANGEROUS_PROTOCOLS = [
 const SUSPICIOUS_PATTERNS = [
     /<script\b[^>]*>([\s\S]*?)<\/script>/im,
     ...DANGEROUS_PROTOCOLS,
-    // Common dangerous event handlers (using word boundaries to avoid false positives)
-    /\bonload\s*=/im,
-    /\bonerror\s*=/im,
-    /\bonclick\s*=/im,
-    /\bonmouseover\s*=/im,
-    /\bonfocus\s*=/im,
-    /\bonblur\s*=/im,
-    /\bonsubmit\s*=/im,
+    // Comprehensive event handler detection (common XSS vectors)
+    // Matches on[event] followed by =. The list includes high-risk DOM events.
+    /\bon(load|error|click|dblclick|mouse|key|input|change|focus|blur|submit|reset|select|scroll|resize|contextmenu|wheel|copy|cut|paste|drag|drop|animation|transition|toggle|page)\w*\s*=/im,
     // HTML tags that can execute code or load external resources
     /<\/?iframe\b[^>]*>/im,
     /<\/?object\b[^>]*>/im,
     /<\/?embed\b[^>]*>/im,
     /<\/?applet\b[^>]*>/im,
-    /<\/?meta\b[^>]*>/im
+    /<\/?meta\b[^>]*>/im,
+    /<\/?svg\b[^>]*>/im,
+    /<\/?style\b[^>]*>/im,
+    /<\/?link\b[^>]*>/im,
+    /<\/?base\b[^>]*>/im
 ];
 
 /**
