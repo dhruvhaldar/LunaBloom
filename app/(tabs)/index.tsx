@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useMemo, useCallback, useRef } from 'react';
-import { StyleSheet, TouchableOpacity, Alert, useColorScheme, View, ActivityIndicator, Keyboard } from 'react-native';
+import { StyleSheet, TouchableOpacity, Alert, useColorScheme, View, ActivityIndicator, Keyboard, Platform } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import DateTimePicker from '@react-native-community/datetimepicker';
 import * as Haptics from 'expo-haptics';
@@ -28,6 +28,7 @@ export default function HomeScreen() {
   const [lutealPhaseEnabled, setLutealPhaseEnabled] = useState(false);
   const [selectedFlow, setSelectedFlow] = useState<string | null>(null);
   const [isLogging, setIsLogging] = useState(false);
+  const [showSuccess, setShowSuccess] = useState(false);
 
   // Ref to track notes for stable callbacks
   const notesInputRef = useRef<NotesInputHandle>(null);
@@ -254,13 +255,12 @@ export default function HomeScreen() {
         setSelectedSymptoms([]);
         notesInputRef.current?.resetNotes();
         
-        await Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
+        if (Platform.OS !== 'web') {
+          await Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
+        }
 
-        Alert.alert(
-          "✅ Entry Logged!",
-          "Your period start has been successfully recorded. 🩸💖",
-          [{ text: "Great! 🎉" }]
-        );
+        setShowSuccess(true);
+        setTimeout(() => setShowSuccess(false), 2000);
       } catch (saveError: any) {
         console.error('❌ Error saving period entry:', saveError instanceof Error ? saveError.message : String(saveError));
         Alert.alert(
@@ -283,12 +283,16 @@ export default function HomeScreen() {
 
   // Handlers for selection to ensure stable references
   const handleToggleFlow = useCallback((flow: string) => {
-    Haptics.selectionAsync();
+    if (Platform.OS !== 'web') {
+      Haptics.selectionAsync();
+    }
     setSelectedFlow((prev) => (prev === flow ? null : flow));
   }, []);
 
   const handleToggleSymptom = useCallback((symptom: string) => {
-    Haptics.selectionAsync();
+    if (Platform.OS !== 'web') {
+      Haptics.selectionAsync();
+    }
     setSelectedSymptoms(prev =>
       prev.includes(symptom)
         ? prev.filter(s => s !== symptom)
@@ -466,22 +470,30 @@ export default function HomeScreen() {
         {/* Log Period Button */}
         {useMemo(() => (
           <TouchableOpacity
-            style={[styles.logButton, isLogging && styles.logButtonDisabled]}
+            style={[
+              styles.logButton,
+              isLogging && styles.logButtonDisabled,
+              showSuccess && { backgroundColor: '#198754' }
+            ]}
             onPress={logPeriod}
-            disabled={isLogging}
-            accessibilityLabel="Log Period Entry"
+            disabled={isLogging || showSuccess}
+            accessibilityLabel={showSuccess ? "Entry successfully logged" : "Log Period Entry"}
             accessibilityRole="button"
-            accessibilityState={{ disabled: isLogging, busy: isLogging }}
+            accessibilityState={{ disabled: isLogging || showSuccess, busy: isLogging }}
           >
             {isLogging ? (
               <ActivityIndicator color="#ffffff" />
+            ) : showSuccess ? (
+              <ThemedText style={styles.logButtonText} accessibilityLiveRegion="polite">
+                Entry Logged! 🎉
+              </ThemedText>
             ) : (
               <ThemedText style={styles.logButtonText}>
                 Log Period Entry 📖
               </ThemedText>
             )}
           </TouchableOpacity>
-        ), [isLogging, logPeriod])}
+        ), [isLogging, showSuccess, logPeriod])}
 
         {/* Predicted Periods */}
         <PredictionSummary
