@@ -37,3 +37,7 @@
 ## 2026-02-03 - VictoryLabel Render Optimization
 **Learning:** In `VictoryNative`, defining a function for the `text` prop inside a `VictoryLabel` (used as `labelComponent`) causes string interpolation to run during every render cycle of the chart.
 **Action:** Pre-calculate the full display string in the data transformation layer (e.g., inside `useMemo`) and pass it as a property of the datum (e.g., `datum.barLabel`). This moves the cost out of the render loop.
+
+## 2026-05-24 - Regex Consolidation for Security Validation
+**Learning:** Iterating through an array of 15+ regex patterns for every string validation is O(M*N) and creates significant overhead in tight loops. A single consolidated regex using alternation (`|`) leverages the regex engine's optimization and reduces the check to O(N).
+**Action:** Combine related regex patterns into a single `RegExp` (e.g., `/(pattern1|pattern2)/im`) when performing broad checks like XSS detection to minimize execution time.
