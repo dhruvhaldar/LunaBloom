@@ -8,19 +8,38 @@ import { AppState, AppStateStatus } from 'react-native';
  */
 
 let cachedEntries: string | null = null;
+// Bolt Optimization: Track pending promise to deduplicate concurrent requests
+let pendingGetEntriesPromise: Promise<string | null> | null = null;
 
 export const PeriodStorage = {
   /**
    * Retrieves period entries from cache or AsyncStorage.
    * If available in cache, returns immediately without async bridge call.
+   * If a fetch is already in progress, returns the existing promise (deduplication).
    */
   async getEntries(): Promise<string | null> {
     if (cachedEntries !== null) {
       return cachedEntries;
     }
-    const entries = await AsyncStorage.getItem('periodEntries');
-    cachedEntries = entries;
-    return entries;
+
+    // Bolt Optimization: If a request is already in flight, reuse it.
+    // This prevents multiple AsyncStorage calls when multiple components load simultaneously.
+    if (pendingGetEntriesPromise) {
+      return pendingGetEntriesPromise;
+    }
+
+    pendingGetEntriesPromise = (async () => {
+      try {
+        const entries = await AsyncStorage.getItem('periodEntries');
+        cachedEntries = entries;
+        return entries;
+      } finally {
+        // Clear the pending promise so future calls can retry if needed (though cache should handle it)
+        pendingGetEntriesPromise = null;
+      }
+    })();
+
+    return pendingGetEntriesPromise;
   },
 
   /**
@@ -37,6 +56,7 @@ export const PeriodStorage = {
    */
   clearCache() {
     cachedEntries = null;
+    pendingGetEntriesPromise = null;
   }
 };
 
