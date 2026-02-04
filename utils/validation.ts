@@ -61,33 +61,25 @@ export const sanitizePromptInput = (text: string): string => {
   return sanitized;
 };
 
-const DANGEROUS_PROTOCOLS = [
-    /javascript:/im,
-    /vbscript:/im,
-    /data:text\/html/im,
-];
+const DANGEROUS_PROTOCOLS_PATTERN = /(javascript:|vbscript:|data:text\/html)/im;
 
 // Defense-in-depth: Check for common XSS vectors and malicious patterns.
 // Note: This is not a complete XSS filter but catches common attempts.
-// Optimization: Define patterns once to avoid recreation on every validation call.
-// Global flag 'g' is removed to keep regexes stateless for shared use.
-const SUSPICIOUS_PATTERNS = [
-    /<script\b[^>]*>([\s\S]*?)<\/script>/im,
-    ...DANGEROUS_PROTOCOLS,
-    // Comprehensive event handler detection (common XSS vectors)
-    // Matches on[event] followed by =. The list includes high-risk DOM events.
-    /\bon(load|error|click|dblclick|mouse|key|input|change|focus|blur|submit|reset|select|scroll|resize|contextmenu|wheel|copy|cut|paste|drag|drop|animation|transition|toggle|page)\w*\s*=/im,
-    // HTML tags that can execute code or load external resources
-    /<\/?iframe\b[^>]*>/im,
-    /<\/?object\b[^>]*>/im,
-    /<\/?embed\b[^>]*>/im,
-    /<\/?applet\b[^>]*>/im,
-    /<\/?meta\b[^>]*>/im,
-    /<\/?svg\b[^>]*>/im,
-    /<\/?style\b[^>]*>/im,
-    /<\/?link\b[^>]*>/im,
-    /<\/?base\b[^>]*>/im
-];
+// Optimization: Merging multiple regexes into one reduces the number of passes over the string
+const SUSPICIOUS_PATTERN = new RegExp(
+    [
+        '<script\\b[^>]*>([\\s\\S]*?)<\\/script>',
+        'javascript:',
+        'vbscript:',
+        'data:text\\/html',
+        // Comprehensive event handler detection (common XSS vectors)
+        // Matches on[event] followed by =. The list includes high-risk DOM events.
+        '\\bon(load|error|click|dblclick|mouse|key|input|change|focus|blur|submit|reset|select|scroll|resize|contextmenu|wheel|copy|cut|paste|drag|drop|animation|transition|toggle|page)\\w*\\s*=',
+        // HTML tags that can execute code or load external resources
+        '<\\/?(iframe|object|embed|applet|meta|svg|style|link|base)\\b[^>]*>'
+    ].join('|'),
+    'im'
+);
 
 /**
  * Checks if the text contains potentially dangerous patterns (basic check).
@@ -95,8 +87,8 @@ const SUSPICIOUS_PATTERNS = [
  * @returns True if the text contains suspicious patterns.
  */
 export const containsSuspiciousPatterns = (text: string): boolean => {
-    // 1. Check original text against all patterns
-    if (SUSPICIOUS_PATTERNS.some(pattern => pattern.test(text))) {
+    // 1. Check original text against combined pattern
+    if (SUSPICIOUS_PATTERN.test(text)) {
         return true;
     }
 
@@ -105,7 +97,7 @@ export const containsSuspiciousPatterns = (text: string): boolean => {
 
     // 3. Check for dangerous protocols in normalized text to detect obfuscation
     // (e.g. "j a v a s c r i p t :")
-    return DANGEROUS_PROTOCOLS.some(pattern => pattern.test(normalized));
+    return DANGEROUS_PROTOCOLS_PATTERN.test(normalized);
 };
 
 /**
