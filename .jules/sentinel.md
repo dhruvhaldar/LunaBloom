@@ -42,3 +42,8 @@
 **Vulnerability:** The input validation relied on a deny-list (`SUSPICIOUS_PATTERNS`) that missed critical XSS vectors like `<svg>` tags (which can execute scripts) and generic event handlers (only specific ones like `onload` were blocked).
 **Learning:** Deny-lists are inherently fragile and require constant maintenance. Attackers can bypass them using obscure HTML tags or attributes.
 **Prevention:** Significantly expanded the deny-list to include risky tags (`<svg>`, `<style>`, `<base>`) and implemented a regex that matches a broad class of event handlers (`on[event]=`) rather than a hardcoded list. Additionally, added input length limits (`maxLength`) on UI components as defense-in-depth against Denial of Service.
+
+## 2026-03-20 - Obfuscated Validation Bypass
+**Vulnerability:** The security validation logic checked for malicious patterns (e.g., `<script>`) in raw text and dangerous protocols (e.g., `javascript:`) in normalized (whitespace-removed) text, but failed to check the normalized text against XSS patterns. This allowed attackers to bypass validation using obfuscation like `< s c r i p t >` or `o n l o a d =`.
+**Learning:** Attackers often use whitespace and control characters to break signature-based detection. Validating only the raw input is insufficient.
+**Prevention:** Apply security checks to both the raw input and a normalized version (stripped of whitespace and control characters) to catch obfuscated payloads.

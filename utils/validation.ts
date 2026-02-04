@@ -103,9 +103,10 @@ export const containsSuspiciousPatterns = (text: string): boolean => {
     // 2. Normalize: remove all whitespace and control characters
     const normalized = text.replace(/[\s\x00-\x1F]/g, '');
 
-    // 3. Check for dangerous protocols in normalized text to detect obfuscation
-    // (e.g. "j a v a s c r i p t :")
-    return DANGEROUS_PROTOCOLS.some(pattern => pattern.test(normalized));
+    // 3. Check normalized text against ALL suspicious patterns to detect obfuscation.
+    // This catches attacks like "j a v a s c r i p t :", "o n l o a d =", or "< s c r i p t >"
+    // where spaces/control characters are used to bypass the initial check.
+    return SUSPICIOUS_PATTERNS.some(pattern => pattern.test(normalized));
 };
 
 /**
