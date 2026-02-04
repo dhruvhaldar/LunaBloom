@@ -44,6 +44,26 @@ describe('PeriodStorage', () => {
     expect(AsyncStorage.getItem).toHaveBeenCalledTimes(1); // Call count remains 1
   });
 
+  it('deduplicates concurrent getEntries calls', async () => {
+    // Bolt Optimization Test: Verify deduplication
+    // Simulate a slow async operation
+    (AsyncStorage.getItem as jest.Mock).mockImplementation(() =>
+      new Promise(resolve => setTimeout(() => resolve('concurrent-data'), 10))
+    );
+
+    // Call getEntries twice concurrently
+    const promise1 = PeriodStorage.getEntries();
+    const promise2 = PeriodStorage.getEntries();
+
+    const [result1, result2] = await Promise.all([promise1, promise2]);
+
+    expect(result1).toBe('concurrent-data');
+    expect(result2).toBe('concurrent-data');
+
+    // Should only hit AsyncStorage once
+    expect(AsyncStorage.getItem).toHaveBeenCalledTimes(1);
+  });
+
   it('saveEntries updates cache and calls AsyncStorage', async () => {
     const newData = 'new-data';
     await PeriodStorage.saveEntries(newData);
