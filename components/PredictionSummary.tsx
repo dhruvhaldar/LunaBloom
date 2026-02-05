@@ -25,72 +25,78 @@ const PredictionSummary = React.memo(function PredictionSummary({
   // Further Optimization: Split sections into useMemo blocks so that changing periodDuration (which happens frequently on typing)
   // doesn't re-render the ovulation section.
 
-  const periodsSection = useMemo(() => (
-    <ThemedView style={styles.section}>
-      <ThemedText type="subtitle" style={{ color: predictedHeadingColor, marginBottom: 10, marginTop: 15 }}>
-        Predicted Periods
-      </ThemedText>
-      {predictedPeriods.map((date, index) => {
-        // Calculate period end date
-        const periodEndDate = new Date(date);
-        periodEndDate.setDate(periodEndDate.getDate() + Number(periodDuration) - 1);
+  const periodsSection = useMemo(() => {
+    // Bolt Optimization: Calculate expensive values once outside the map loop
+    const periodDurationNum = Number(periodDuration);
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+    const todayTime = today.getTime();
 
-        // Calculate days remaining for the next period
-        let daysRemainingText = '';
-        let daysRemainingLabel = '';
-        if (index === 0) {
-          const today = new Date();
-          today.setHours(0, 0, 0, 0);
-          const target = new Date(date);
-          target.setHours(0, 0, 0, 0);
-          const diffTime = target.getTime() - today.getTime();
-          const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+    return (
+      <ThemedView style={styles.section}>
+        <ThemedText type="subtitle" style={{ color: predictedHeadingColor, marginBottom: 10, marginTop: 15 }}>
+          Predicted Periods
+        </ThemedText>
+        {predictedPeriods.map((date, index) => {
+          // Calculate period end date
+          const periodEndDate = new Date(date);
+          periodEndDate.setDate(periodEndDate.getDate() + periodDurationNum - 1);
 
-          if (diffDays === 0) {
-            daysRemainingText = ' (Today)';
-            daysRemainingLabel = ', starting today';
-          } else if (diffDays === 1) {
-            daysRemainingText = ' (Tomorrow)';
-            daysRemainingLabel = ', starting tomorrow';
-          } else if (diffDays > 1) {
-            daysRemainingText = ` (in ${diffDays} days)`;
-            daysRemainingLabel = `, in ${diffDays} days`;
-          } else if (diffDays < 0) {
-            const absDays = Math.abs(diffDays);
-            const daysString = absDays === 1 ? 'day' : 'days';
-            daysRemainingText = ` (${absDays} ${daysString} late)`;
-            daysRemainingLabel = `, ${absDays} ${daysString} late`;
+          // Calculate days remaining for the next period
+          let daysRemainingText = '';
+          let daysRemainingLabel = '';
+          if (index === 0) {
+            const target = new Date(date);
+            target.setHours(0, 0, 0, 0);
+            const diffTime = target.getTime() - todayTime;
+            const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+
+            if (diffDays === 0) {
+              daysRemainingText = ' (Today)';
+              daysRemainingLabel = ', starting today';
+            } else if (diffDays === 1) {
+              daysRemainingText = ' (Tomorrow)';
+              daysRemainingLabel = ', starting tomorrow';
+            } else if (diffDays > 1) {
+              daysRemainingText = ` (in ${diffDays} days)`;
+              daysRemainingLabel = `, in ${diffDays} days`;
+            } else if (diffDays < 0) {
+              const absDays = Math.abs(diffDays);
+              const daysString = absDays === 1 ? 'day' : 'days';
+              daysRemainingText = ` (${absDays} ${daysString} late)`;
+              daysRemainingLabel = `, ${absDays} ${daysString} late`;
+            }
           }
-        }
 
-        return (
-          <ThemedView
-            key={index}
-            style={[
-              styles.predictionItem,
-              { borderColor: textColor, borderWidth: 1 }
-            ]}
-            accessible={true}
-            accessibilityLabel={`Predicted period starting ${formatDate(date, DateFormats.MonthDay)}${daysRemainingLabel}, ending ${formatDate(periodEndDate, DateFormats.MonthDay)}`}
-          >
-            <ThemedText style={{ color: textColor }}>
-              {formatDate(date, DateFormats.MonthDay)}
-              <ThemedText style={{ fontWeight: 'bold' }}>{daysRemainingText}</ThemedText>
-            </ThemedText>
-            <ThemedText
-              style={{
-                color: textColor,
-                fontSize: 12,
-                marginTop: 5
-              }}
+          return (
+            <ThemedView
+              key={index}
+              style={[
+                styles.predictionItem,
+                { borderColor: textColor, borderWidth: 1 }
+              ]}
+              accessible={true}
+              accessibilityLabel={`Predicted period starting ${formatDate(date, DateFormats.MonthDay)}${daysRemainingLabel}, ending ${formatDate(periodEndDate, DateFormats.MonthDay)}`}
             >
-              {formatDate(date, DateFormats.MonthDay)} - {formatDate(periodEndDate, DateFormats.MonthDay)}
-            </ThemedText>
-          </ThemedView>
-        );
-      })}
-    </ThemedView>
-  ), [predictedPeriods, periodDuration, predictedHeadingColor, textColor]);
+              <ThemedText style={{ color: textColor }}>
+                {formatDate(date, DateFormats.MonthDay)}
+                <ThemedText style={{ fontWeight: 'bold' }}>{daysRemainingText}</ThemedText>
+              </ThemedText>
+              <ThemedText
+                style={{
+                  color: textColor,
+                  fontSize: 12,
+                  marginTop: 5
+                }}
+              >
+                {formatDate(date, DateFormats.MonthDay)} - {formatDate(periodEndDate, DateFormats.MonthDay)}
+              </ThemedText>
+            </ThemedView>
+          );
+        })}
+      </ThemedView>
+    );
+  }, [predictedPeriods, periodDuration, predictedHeadingColor, textColor]);
 
   const ovulationSection = useMemo(() => (
     <ThemedView style={styles.section}>
