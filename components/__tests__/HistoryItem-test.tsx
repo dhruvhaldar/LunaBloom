@@ -32,14 +32,42 @@ describe('HistoryItem', () => {
       />
     );
 
-    // Verify individual texts are present (current behavior)
+    // Verify individual texts are present with icons
     // Note: 'Sept' is observed in test output for September in en-GB locale in this environment
-    expect(getByText(/Last Period: 25 Sept? 2023/)).toBeTruthy();
-    expect(getByText(/Cycle Length: 28 days/)).toBeTruthy();
-    expect(getByText(/Symptoms: Cramps, Headache/)).toBeTruthy();
-    expect(getByText(/Flow: Medium/)).toBeTruthy();
-    expect(getByText(/Notes: Feeling okay/)).toBeTruthy();
-    expect(getByText(/Log Date: 1 Oct 2023/)).toBeTruthy();
+    expect(getByText(/🗓️ Last Period: 25 Sept? 2023/)).toBeTruthy();
+    expect(getByText(/🔄 Cycle Length: 28 days/)).toBeTruthy();
+    expect(getByText(/🤒 Symptoms: Cramps, Headache/)).toBeTruthy();
+    expect(getByText(/🩸 Flow: Medium/)).toBeTruthy();
+    expect(getByText(/📝 Notes: Feeling okay/)).toBeTruthy();
+    expect(getByText(/🕒 Log Date: 1 Oct 2023/)).toBeTruthy();
+  });
+
+  it('hides notes when empty', () => {
+    const entryWithoutNotes = { ...mockEntry, notes: '' };
+    const { queryByText } = render(
+      <HistoryItem
+        item={entryWithoutNotes}
+        onDelete={mockOnDelete}
+        textColor="#000"
+        deleteIconColor="#f00"
+      />
+    );
+
+    expect(queryByText(/📝 Notes:/)).toBeNull();
+  });
+
+  it('shows "None" for empty symptoms', () => {
+    const entryWithoutSymptoms = { ...mockEntry, selectedSymptoms: [] };
+    const { getByText } = render(
+      <HistoryItem
+        item={entryWithoutSymptoms}
+        onDelete={mockOnDelete}
+        textColor="#000"
+        deleteIconColor="#f00"
+      />
+    );
+
+    expect(getByText(/🤒 Symptoms: None/)).toBeTruthy();
   });
 
   it('groups details into a single accessible element', () => {

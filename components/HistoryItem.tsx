@@ -81,12 +81,14 @@ const HistoryItem = React.memo(function HistoryItem({ item, onDelete, textColor,
           accessible={true}
           accessibilityLabel={accessibilityLabel}
         >
-          <Text style={{ color: textColor }}>Last Period: {lastPeriodDate}</Text>
-          <Text style={{ color: textColor }}>Cycle Length: {item.cycleLength} days</Text>
-          <Text style={{ color: textColor }}>Symptoms: {symptomsString}</Text>
-          <Text style={{ color: textColor }}>Flow: {item.selectedFlow || 'Not logged'}</Text>
-          <Text style={{ color: textColor }}>Notes: {item.notes}</Text>
-          <Text style={{ color: textColor }}>Log Date: {logDate}</Text>
+          <Text style={{ color: textColor }}>🗓️ Last Period: {lastPeriodDate}</Text>
+          <Text style={{ color: textColor }}>🔄 Cycle Length: {item.cycleLength} days</Text>
+          <Text style={{ color: textColor }}>🤒 Symptoms: {symptomsString || 'None'}</Text>
+          <Text style={{ color: textColor }}>🩸 Flow: {item.selectedFlow || 'Not logged'}</Text>
+          {item.notes ? (
+            <Text style={{ color: textColor }}>📝 Notes: {item.notes}</Text>
+          ) : null}
+          <Text style={{ color: textColor }}>🕒 Log Date: {logDate}</Text>
         </View>
 
         <TouchableOpacity

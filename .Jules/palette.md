@@ -13,3 +13,7 @@
 ## 2025-10-29 - Tappable Settings Rows
 **Learning:** Small toggle switches have poor touch targets, frustrating users and failing accessibility guidelines for motor impairments.
 **Action:** Wrap the entire settings row (label + switch) in a `TouchableOpacity`. Apply `accessibilityRole="switch"` to the wrapper and hide the internal switch from accessibility (`accessible={false}`, `pointerEvents="none"`), creating a large, single touch target that behaves natively.
+
+## 2025-10-30 - Visual Anchors in Lists
+**Learning:** Dense lists of text-based key-value pairs are difficult to scan quickly, leading to increased cognitive load for sighted users.
+**Action:** Prepend consistent icons (emojis) to labels to serve as visual anchors and conditionally render optional fields to reduce visual clutter, improving scannability without compromising accessibility.
