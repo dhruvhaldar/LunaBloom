@@ -140,6 +140,53 @@ describe('Validation Utils', () => {
       };
       expect(isValidBackupEntry(entry)).toBe(false);
     });
+
+    it('rejects cycleLength as string with non-numeric characters', () => {
+        const entry = {
+            date: '2023-01-01',
+            lastPeriod: '2023-01-01',
+            cycleLength: '28<script>',
+            selectedSymptoms: [],
+            notes: ''
+        };
+        expect(isValidBackupEntry(entry)).toBe(false);
+    });
+
+    it('validates periodDuration if present', () => {
+        const entry = {
+            date: '2023-01-01',
+            lastPeriod: '2023-01-01',
+            cycleLength: 28,
+            selectedSymptoms: [],
+            notes: '',
+            periodDuration: '5<script>'
+        };
+        expect(isValidBackupEntry(entry)).toBe(false);
+    });
+
+    it('accepts valid periodDuration', () => {
+        const entry = {
+            date: '2023-01-01',
+            lastPeriod: '2023-01-01',
+            cycleLength: 28,
+            selectedSymptoms: [],
+            notes: '',
+            periodDuration: 5
+        };
+        expect(isValidBackupEntry(entry)).toBe(true);
+    });
+
+    it('accepts valid periodDuration as string', () => {
+        const entry = {
+            date: '2023-01-01',
+            lastPeriod: '2023-01-01',
+            cycleLength: 28,
+            selectedSymptoms: [],
+            notes: '',
+            periodDuration: '5'
+        };
+        expect(isValidBackupEntry(entry)).toBe(true);
+    });
   });
 
   describe('parseSafePeriodEntries', () => {
