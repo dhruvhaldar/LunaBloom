@@ -245,7 +245,12 @@ export default function SettingsScreen() {
             // This prevents bypassing filters (like control characters) via backup restore
             const sanitizedEntries = validEntries.map((entry: any) => ({
                 ...entry,
-                notes: sanitizeInput(entry.notes)
+                // Defense-in-depth: Sanitize all string inputs even if they passed validation
+                notes: sanitizeInput(entry.notes),
+                selectedFlow: entry.selectedFlow ? sanitizeInput(entry.selectedFlow) : entry.selectedFlow,
+                selectedSymptoms: entry.selectedSymptoms.map((s: string) => sanitizeInput(s)),
+                cycleLength: typeof entry.cycleLength === 'string' ? sanitizeInput(entry.cycleLength) : entry.cycleLength,
+                periodDuration: typeof entry.periodDuration === 'string' ? sanitizeInput(entry.periodDuration) : entry.periodDuration
             }));
 
             if (invalidCount > 0) {

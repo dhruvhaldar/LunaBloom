@@ -9,6 +9,7 @@ export const MAX_SYMPTOM_LENGTH = 50;
 export const MAX_FLOW_LENGTH = 20;
 export const MAX_SYMPTOMS_COUNT = 50;
 export const MAX_CYCLE_LENGTH_DAYS = 365;
+export const MAX_PERIOD_DURATION_DAYS = 30;
 export const MAX_BACKUP_FILE_SIZE = 10 * 1024 * 1024; // 10MB
 
 /**
@@ -129,10 +130,23 @@ export const isValidBackupEntry = (entry: any): boolean => {
   let cLength = entry.cycleLength;
   if (typeof cLength === 'string') {
     if (cLength.length > 10) return false; // Fast fail for unreasonably long strings
+    // Security: Strict check to ensure no non-numeric characters (prevents injection of scripts/garbage)
+    if (!/^\d+$/.test(cLength)) return false;
     cLength = parseInt(cLength, 10);
   }
   // Must be a valid number within reasonable range
   if (typeof cLength !== 'number' || isNaN(cLength) || cLength < 0 || cLength > MAX_CYCLE_LENGTH_DAYS) return false;
+
+  // periodDuration validation (optional)
+  if (entry.periodDuration !== undefined && entry.periodDuration !== null) {
+      let pDuration = entry.periodDuration;
+      if (typeof pDuration === 'string') {
+          if (pDuration.length > 5) return false;
+          if (!/^\d+$/.test(pDuration)) return false;
+          pDuration = parseInt(pDuration, 10);
+      }
+      if (typeof pDuration !== 'number' || isNaN(pDuration) || pDuration < 1 || pDuration > MAX_PERIOD_DURATION_DAYS) return false;
+  }
 
   // selectedSymptoms validation
   if (!Array.isArray(entry.selectedSymptoms)) return false;
