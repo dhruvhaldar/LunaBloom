@@ -13,3 +13,7 @@
 ## 2025-10-29 - Tappable Settings Rows
 **Learning:** Small toggle switches have poor touch targets, frustrating users and failing accessibility guidelines for motor impairments.
 **Action:** Wrap the entire settings row (label + switch) in a `TouchableOpacity`. Apply `accessibilityRole="switch"` to the wrapper and hide the internal switch from accessibility (`accessible={false}`, `pointerEvents="none"`), creating a large, single touch target that behaves natively.
+
+## 2025-10-30 - Flash of Empty State
+**Learning:** When fetching data asynchronously, initializing with an empty array causes the "Empty State" component to render briefly before data arrives, creating a jarring experience.
+**Action:** Initialize with an `isLoading` state (true) and only render the "Empty State" component when `!isLoading && data.length === 0`.

@@ -4,7 +4,8 @@ import {
   View, 
   Image, 
   useColorScheme, 
-  Dimensions 
+  Dimensions,
+  ActivityIndicator
 } from 'react-native';
 // Remove direct AsyncStorage import
 // import AsyncStorage from '@react-native-async-storage/async-storage';
@@ -24,6 +25,7 @@ const screenWidth = Dimensions.get('window').width;
 export default function InsightsScreen() {
   const router = useRouter();
   const [entries, setEntries] = useState<HistoryEntry[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
   const lastFetchedEntriesRef = useRef<string | null>(null);
 
   // Color Scheme
@@ -69,6 +71,8 @@ export default function InsightsScreen() {
       setEntries(parsedEntries);
     } catch (error: any) {
       console.error('Error fetching entries:', error instanceof Error ? error.message : String(error));
+    } finally {
+      setIsLoading(false);
     }
   };
 
@@ -225,7 +229,11 @@ export default function InsightsScreen() {
         <ThemedView style={styles.sectionContainer}>
           <ThemedText type="subtitle" style={{ color: sectionHeadingtextColor, marginBottom: 10 }}> Previous Cycles </ThemedText>
           
-          {cycleData.length > 0 ? (  
+          {isLoading ? (
+            <View style={{ padding: 20, alignItems: 'center' }}>
+              <ActivityIndicator size="large" color="#E63946" />
+            </View>
+          ) : cycleData.length > 0 ? (
             <VictoryBar 
             data={cycleData} horizontal 
             barRatio={0.2} // Adjusted to make bars shorter
