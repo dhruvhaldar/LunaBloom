@@ -237,9 +237,11 @@ export default function HomeScreen() {
       let entries = [];
       
       try {
-        // Bolt Optimization: Use cached PeriodStorage for faster access
-        const existingEntries = await PeriodStorage.getEntries();
-        entries = parseSafePeriodEntries(existingEntries);
+        // Bolt Optimization: Use cached parsed entries directly from storage
+        // This reuses the in-memory cache and avoids redundant JSON parsing/validation
+        const existingEntries = await PeriodStorage.getParsedEntries();
+        // Create a shallow copy to safely mutate
+        entries = [...existingEntries];
       } catch (parseError: any) {
         console.error('🚨 Error retrieving period entries:', parseError instanceof Error ? parseError.message : String(parseError));
         entries = [];
