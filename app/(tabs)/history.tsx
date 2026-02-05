@@ -1,22 +1,28 @@
-import React, { useState, useCallback, useRef, useMemo } from 'react';
-import { StyleSheet, View, Alert, useColorScheme, Platform, UIManager, Vibration, LayoutAnimation } from 'react-native';
+import React, { useCallback, useMemo } from 'react';
+import { StyleSheet, View, Alert, useColorScheme, Platform, UIManager, Vibration, LayoutAnimation, ActivityIndicator } from 'react-native';
 // Remove direct AsyncStorage import
 // import AsyncStorage from '@react-native-async-storage/async-storage';
 import { PeriodStorage } from '@/utils/storage';
 import { ThemedText } from '@/components/ThemedText';
 import ParallaxFlatList from '@/components/ParallaxFlatList';
-import { useFocusEffect, useRouter } from 'expo-router';
+import { useRouter } from 'expo-router';
 import { Image } from 'react-native';
 import HistoryItem, { HistoryEntry } from '@/components/HistoryItem';
 import { EmptyState } from '@/components/ui/EmptyState';
-import { parseSafePeriodEntries } from '@/utils/validation';
+import { usePeriodEntries } from '@/hooks/usePeriodEntries';
 
 export default function TabTwoScreen() {
   const router = useRouter();
-  const [entries, setEntries] = useState<HistoryEntry[]>([]);
-  // Ref to store the raw string of the last fetched entries to avoid unnecessary re-parsing and re-renders
-  const lastFetchedEntriesRef = useRef<string | null>(null);
+  // Security: usePeriodEntries hook ensures PHI is cleared from memory when backgrounded
+  const { entries: rawEntries, isLoading, setEntries } = usePeriodEntries();
   
+  // Sort entries for display
+  const entries = useMemo(() => {
+    const sorted = [...rawEntries];
+    sorted.sort((a, b) => b.lastPeriod.localeCompare(a.lastPeriod));
+    return sorted;
+  }, [rawEntries]);
+
   // Color Scheme
   const colorScheme = useColorScheme();
   const Parallaxheaderlightcolor = '#A8DADC';
@@ -24,35 +30,6 @@ export default function TabTwoScreen() {
   const sectionHeadingtextColor = colorScheme === 'dark' ? '#E63946' : '#1D3557';
   const textColor = colorScheme === 'dark' ? '#F1FAEE' : '#1D3557';
   const deleteIconColor = colorScheme === 'dark' ? '#F1FAEE' : '#E63946';
-
-
-  useFocusEffect(
-    useCallback(() => {
-      fetchEntries();
-    }, [])
-  );
-
-  const fetchEntries = async () => {
-    try {
-      // Bolt Optimization: Use cached PeriodStorage to avoid disk reads on tab switch
-      const storedEntries = await PeriodStorage.getEntries();
-      
-      // Optimization: Only parse and update state if the data has actually changed
-      if (storedEntries === lastFetchedEntriesRef.current) {
-        return;
-      }
-      lastFetchedEntriesRef.current = storedEntries;
-
-      // Security: Safely parse entries to prevent DoS/Crashes if storage is corrupted
-      const parsedEntries = parseSafePeriodEntries(storedEntries);
-      // Sort by lastPeriod in descending order (most recent first)
-      // Optimization: Use string comparison for ISO dates to avoid expensive Date object creation
-      parsedEntries.sort((a, b) => b.lastPeriod.localeCompare(a.lastPeriod));
-      setEntries(parsedEntries);
-    } catch (error: any) {
-      console.error('Error fetching period entries:', error instanceof Error ? error.message : String(error));
-    }
-  };
   
   if (Platform.OS === 'android' && UIManager.setLayoutAnimationEnabledExperimental) {
     UIManager.setLayoutAnimationEnabledExperimental(true);
@@ -80,10 +57,7 @@ export default function TabTwoScreen() {
                 const newEntriesString = JSON.stringify(updatedEntries);
 
                 // Bolt Optimization: Use PeriodStorage to save and update cache
-                PeriodStorage.saveEntries(newEntriesString).then(() => {
-                  // Update the ref to prevent the next fetch (e.g. on focus) from re-rendering if it matches
-                  lastFetchedEntriesRef.current = newEntriesString;
-                }).catch(err =>
+                PeriodStorage.saveEntries(newEntriesString).catch(err =>
                   console.error('Failed to persist deletion', err instanceof Error ? err.message : String(err))
                 );
                 return updatedEntries;
@@ -98,7 +72,7 @@ export default function TabTwoScreen() {
         },
       ]
     );
-  }, []); // useCallback dependency array is empty because we use functional state update
+  }, [setEntries]);
 
   const renderItem = useCallback(({ item }: { item: HistoryEntry }) => (
     <HistoryItem
@@ -119,14 +93,18 @@ export default function TabTwoScreen() {
 
   // Optimization: Memoize empty state component to prevent re-mounting/re-rendering
   const emptyState = useMemo(() => (
-    <EmptyState
-      title="No Entries Yet"
-      message="Track your first period to start seeing your history here."
-      icon="clock.fill"
-      actionLabel="Log Period"
-      onAction={handleEmptyAction}
-    />
-  ), [handleEmptyAction]);
+    isLoading ? (
+       <ActivityIndicator size="large" color={textColor} style={{ marginTop: 20 }} />
+    ) : (
+      <EmptyState
+        title="No Entries Yet"
+        message="Track your first period to start seeing your history here."
+        icon="clock.fill"
+        actionLabel="Log Period"
+        onAction={handleEmptyAction}
+      />
+    )
+  ), [isLoading, textColor, handleEmptyAction]);
  
   // Optimization: Memoize the list header to ensure referential stability.
   // This prevents the ParallaxFlatList (and underlying FlatList) from unmounting/remounting

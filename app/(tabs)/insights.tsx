@@ -1,30 +1,29 @@
-import React, { useState, useCallback, useMemo, useRef } from 'react';
+import React, { useCallback, useMemo } from 'react';
 import { 
   StyleSheet, 
   View, 
   Image, 
   useColorScheme, 
-  Dimensions 
+  Dimensions,
+  ActivityIndicator
 } from 'react-native';
 // Remove direct AsyncStorage import
 // import AsyncStorage from '@react-native-async-storage/async-storage';
-import { PeriodStorage } from '@/utils/storage';
 import { ThemedText } from '@/components/ThemedText';
 import { ThemedView } from '@/components/ThemedView';
 import ParallaxScrollView from '@/components/ParallaxScrollView';
 import { VictoryBar, VictoryLabel } from 'victory-native';
-import { useFocusEffect, useRouter } from 'expo-router';
+import { useRouter } from 'expo-router';
 import { EmptyState } from '@/components/ui/EmptyState';
 import { formatDate, DateFormats } from '@/utils/dateFormatter';
-import { HistoryEntry } from '@/components/HistoryItem';
-import { parseSafePeriodEntries } from '@/utils/validation';
+import { usePeriodEntries } from '@/hooks/usePeriodEntries';
 
 const screenWidth = Dimensions.get('window').width;
 
 export default function InsightsScreen() {
   const router = useRouter();
-  const [entries, setEntries] = useState<HistoryEntry[]>([]);
-  const lastFetchedEntriesRef = useRef<string | null>(null);
+  // Security: usePeriodEntries hook ensures PHI is cleared from memory when backgrounded
+  const { entries, isLoading } = usePeriodEntries();
 
   // Color Scheme
   const colorScheme = useColorScheme();
@@ -45,32 +44,6 @@ export default function InsightsScreen() {
 
   const sectionHeadingtextColor = colorScheme === 'dark' ? '#E63946' : '#1D3557';
   const barColor = colorScheme === 'dark' ? '#F1FAEE' : '#457B9D';
-
-  useFocusEffect(
-    useCallback(() => {
-      fetchEntries();
-    }, [])
-  );
-
-  const fetchEntries = async () => {
-    try {
-      // Bolt Optimization: Use cached PeriodStorage to avoid disk reads on tab switch
-      const storedEntries = await PeriodStorage.getEntries();
-
-      // Optimization: Only parse and update state if the data has actually changed
-      if (storedEntries === lastFetchedEntriesRef.current) {
-        return;
-      }
-      lastFetchedEntriesRef.current = storedEntries;
-
-      // Security: Safely parse entries to prevent DoS/Crashes if storage is corrupted
-      const parsedEntries = parseSafePeriodEntries(storedEntries);
-      // Note: We're just setting entries here. Sorting and derivation happen in useMemo.
-      setEntries(parsedEntries);
-    } catch (error: any) {
-      console.error('Error fetching entries:', error instanceof Error ? error.message : String(error));
-    }
-  };
 
   // ⚡ Bolt: Derived State Optimization
   // Instead of syncing state with useEffect/functions, we derive expensive data during render.
@@ -221,103 +194,107 @@ export default function InsightsScreen() {
       <ThemedView style={styles.container}>
         <ThemedText type="title" style={[styles.title, { color: sectionHeadingtextColor }]}>Cycle Insights</ThemedText>
 
-        {/* Previous Cycles Section */}
-        <ThemedView style={styles.sectionContainer}>
-          <ThemedText type="subtitle" style={{ color: sectionHeadingtextColor, marginBottom: 10 }}> Previous Cycles </ThemedText>
-          
-          {cycleData.length > 0 ? (  
-            <VictoryBar 
-            data={cycleData} horizontal 
-            barRatio={0.2} // Adjusted to make bars shorter
-            labels={getBarLabel}
-            labelComponent={barLabelComponent}
-            style={barStyle}
-            width={screenWidth - 150} // Width of bar - 150 pixels
-            padding={{ top: 20, left: 5, right: 110, bottom: 20 }}
-          />
-          ) : (
-            <EmptyState
-              title="No Insights Yet"
-              message="Log more periods to unlock trends and insights."
-              icon="chart.bar.fill"
-              actionLabel="Log Now"
-              onAction={() => router.push('/')}
-              style={{ marginTop: 10, padding: 20 }}
-            />
-          )}
-        </ThemedView>
+        {isLoading ? (
+          <ActivityIndicator size="large" color={barColor} style={{ marginTop: 50 }} />
+        ) : (
+          <>
+            {/* Previous Cycles Section */}
+            <ThemedView style={styles.sectionContainer}>
+              <ThemedText type="subtitle" style={{ color: sectionHeadingtextColor, marginBottom: 10 }}> Previous Cycles </ThemedText>
 
-        
-        
-        {/* Key Metrics Section */}
-        <ThemedView style={styles.sectionContainer}>
-          <ThemedText type="subtitle" style={{ color: sectionHeadingtextColor, marginBottom: 10 }}>
-            Key Metrics 📊
-          </ThemedText>
-          <View style={styles.metricsContainer}>
-            <View
-              style={styles.metricItem}
-              accessible={true}
-              accessibilityLabel={`Average Cycle Length: ${isNaN(averageCycleLength) ? 'N/A' : `${averageCycleLength} days`}`}
-            >
-              <ThemedText>Avg. Cycle Length</ThemedText>
-              <ThemedText type="subtitle">
-                {isNaN(averageCycleLength) ? 'N/A' : `${averageCycleLength} days`}
+              {cycleData.length > 0 ? (
+                <VictoryBar
+                data={cycleData} horizontal
+                barRatio={0.2} // Adjusted to make bars shorter
+                labels={getBarLabel}
+                labelComponent={barLabelComponent}
+                style={barStyle}
+                width={screenWidth - 150} // Width of bar - 150 pixels
+                padding={{ top: 20, left: 5, right: 110, bottom: 20 }}
+              />
+              ) : (
+                <EmptyState
+                  title="No Insights Yet"
+                  message="Log more periods to unlock trends and insights."
+                  icon="chart.bar.fill"
+                  actionLabel="Log Now"
+                  onAction={() => router.push('/')}
+                  style={{ marginTop: 10, padding: 20 }}
+                />
+              )}
+            </ThemedView>
+
+            {/* Key Metrics Section */}
+            <ThemedView style={styles.sectionContainer}>
+              <ThemedText type="subtitle" style={{ color: sectionHeadingtextColor, marginBottom: 10 }}>
+                Key Metrics 📊
               </ThemedText>
-            </View>
+              <View style={styles.metricsContainer}>
+                <View
+                  style={styles.metricItem}
+                  accessible={true}
+                  accessibilityLabel={`Average Cycle Length: ${isNaN(averageCycleLength) ? 'N/A' : `${averageCycleLength} days`}`}
+                >
+                  <ThemedText>Avg. Cycle Length</ThemedText>
+                  <ThemedText type="subtitle">
+                    {isNaN(averageCycleLength) ? 'N/A' : `${averageCycleLength} days`}
+                  </ThemedText>
+                </View>
 
-            <View
-              style={styles.metricItem}
-              accessible={true}
-              accessibilityLabel={`Average Period Duration: ${isNaN(averagePeriodDuration) ? 'N/A' : `${averagePeriodDuration} days`}`}
-            >
-              <ThemedText>Avg. Period Duration</ThemedText>
-              <ThemedText type="subtitle">
-                {isNaN(averagePeriodDuration) ? 'N/A' : `${averagePeriodDuration} days`}
-              </ThemedText>
-            </View>
+                <View
+                  style={styles.metricItem}
+                  accessible={true}
+                  accessibilityLabel={`Average Period Duration: ${isNaN(averagePeriodDuration) ? 'N/A' : `${averagePeriodDuration} days`}`}
+                >
+                  <ThemedText>Avg. Period Duration</ThemedText>
+                  <ThemedText type="subtitle">
+                    {isNaN(averagePeriodDuration) ? 'N/A' : `${averagePeriodDuration} days`}
+                  </ThemedText>
+                </View>
 
-            <View
-              style={styles.metricItem}
-              accessible={true}
-              accessibilityLabel={`Average Ovulation Day: ${isNaN(averageOvulationDay) ? 'N/A' : `Day ${averageOvulationDay}`}`}
-            >
-              <ThemedText>Avg. Ovulation Day</ThemedText>
-              <ThemedText type="subtitle">
-                {isNaN(averageOvulationDay) ? 'N/A' : `Day ${averageOvulationDay}`}
-              </ThemedText>
-            </View>
+                <View
+                  style={styles.metricItem}
+                  accessible={true}
+                  accessibilityLabel={`Average Ovulation Day: ${isNaN(averageOvulationDay) ? 'N/A' : `Day ${averageOvulationDay}`}`}
+                >
+                  <ThemedText>Avg. Ovulation Day</ThemedText>
+                  <ThemedText type="subtitle">
+                    {isNaN(averageOvulationDay) ? 'N/A' : `Day ${averageOvulationDay}`}
+                  </ThemedText>
+                </View>
 
-            <View
-              style={styles.metricItem}
-              accessible={true}
-              accessibilityLabel={`Next Period Prediction: ${nextPeriodPrediction}`}
-            >
-              <ThemedText>Next Period Prediction</ThemedText>
-              <ThemedText type="subtitle">{nextPeriodPrediction}</ThemedText>
-            </View>
+                <View
+                  style={styles.metricItem}
+                  accessible={true}
+                  accessibilityLabel={`Next Period Prediction: ${nextPeriodPrediction}`}
+                >
+                  <ThemedText>Next Period Prediction</ThemedText>
+                  <ThemedText type="subtitle">{nextPeriodPrediction}</ThemedText>
+                </View>
 
-            <View
-              style={styles.metricItem}
-              accessible={true}
-              accessibilityLabel={`Next Ovulation Prediction: ${nextOvulationPrediction}`}
-            >
-              <ThemedText>Next Ovulation Prediction</ThemedText>
-              <ThemedText type="subtitle">{nextOvulationPrediction}</ThemedText>
-            </View>
+                <View
+                  style={styles.metricItem}
+                  accessible={true}
+                  accessibilityLabel={`Next Ovulation Prediction: ${nextOvulationPrediction}`}
+                >
+                  <ThemedText>Next Ovulation Prediction</ThemedText>
+                  <ThemedText type="subtitle">{nextOvulationPrediction}</ThemedText>
+                </View>
 
-            <View
-              style={styles.metricItem}
-              accessible={true}
-              accessibilityLabel={`Periods Tracked: ${entries.length}`}
-            >
-              <ThemedText>Periods Tracked</ThemedText>
-              <ThemedText type="subtitle">
-                {entries.length}
-              </ThemedText>
-            </View>
-          </View>
-        </ThemedView>
+                <View
+                  style={styles.metricItem}
+                  accessible={true}
+                  accessibilityLabel={`Periods Tracked: ${entries.length}`}
+                >
+                  <ThemedText>Periods Tracked</ThemedText>
+                  <ThemedText type="subtitle">
+                    {entries.length}
+                  </ThemedText>
+                </View>
+              </View>
+            </ThemedView>
+          </>
+        )}
 
       </ThemedView>
     </ParallaxScrollView>
