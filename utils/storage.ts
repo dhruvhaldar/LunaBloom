@@ -1,5 +1,6 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { AppState, AppStateStatus } from 'react-native';
+import { parseSafePeriodEntries } from './validation';
 
 /**
  * PeriodStorage
@@ -8,6 +9,8 @@ import { AppState, AppStateStatus } from 'react-native';
  */
 
 let cachedEntries: string | null = null;
+// Bolt Optimization: Cache parsed entries to avoid repeated JSON parsing and validation loops
+let cachedParsedEntries: any[] | null = null;
 // Bolt Optimization: Track pending promise to deduplicate concurrent requests
 let pendingGetEntriesPromise: Promise<string | null> | null = null;
 
@@ -43,11 +46,31 @@ export const PeriodStorage = {
   },
 
   /**
+   * Retrieves parsed period entries from cache, or parses them if needed.
+   * This avoids the O(N) cost of validation and JSON parsing on repeated access.
+   */
+  async getParsedEntries(): Promise<any[]> {
+    // Ensure the raw string cache is populated
+    await this.getEntries();
+
+    if (cachedParsedEntries !== null) {
+      return cachedParsedEntries;
+    }
+
+    // Parse and cache the result
+    // parseSafePeriodEntries handles null/empty strings gracefully returning []
+    cachedParsedEntries = parseSafePeriodEntries(cachedEntries);
+    return cachedParsedEntries;
+  },
+
+  /**
    * Saves period entries to AsyncStorage and updates the cache.
    * Ensures subsequent reads are consistent.
    */
   async saveEntries(entriesString: string): Promise<void> {
     cachedEntries = entriesString;
+    // Invalidate parsed cache as data has changed
+    cachedParsedEntries = null;
     await AsyncStorage.setItem('periodEntries', entriesString);
   },
 
@@ -56,6 +79,7 @@ export const PeriodStorage = {
    */
   clearCache() {
     cachedEntries = null;
+    cachedParsedEntries = null;
     pendingGetEntriesPromise = null;
   }
 };

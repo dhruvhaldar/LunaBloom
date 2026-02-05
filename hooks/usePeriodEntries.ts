@@ -1,31 +1,29 @@
 import { useState, useCallback, useRef, useEffect } from 'react';
 import { AppState, AppStateStatus } from 'react-native';
 import { PeriodStorage } from '@/utils/storage';
-import { parseSafePeriodEntries } from '@/utils/validation';
 import { useFocusEffect } from 'expo-router';
 import { HistoryEntry } from '@/components/HistoryItem';
 
 export function usePeriodEntries() {
   const [entries, setEntries] = useState<HistoryEntry[]>([]);
   const [isLoading, setIsLoading] = useState(true);
-  // Ref to store the raw string of the last fetched entries to avoid unnecessary re-parsing and re-renders
-  const lastFetchedEntriesRef = useRef<string | null>(null);
+  // Ref to store the reference of the last fetched entries array to avoid unnecessary re-renders
+  const lastFetchedEntriesRef = useRef<any[] | null>(null);
 
   const fetchEntries = useCallback(async () => {
     setIsLoading(true);
     try {
-      // Bolt Optimization: Use cached PeriodStorage to avoid disk reads on tab switch
-      const storedEntries = await PeriodStorage.getEntries();
+      // Bolt Optimization: Use cached parsed entries from storage directly
+      // This skips JSON parsing and validation if the data hasn't changed
+      const parsedEntries = await PeriodStorage.getParsedEntries();
 
-      // Optimization: Only parse and update state if the data has actually changed
-      if (storedEntries === lastFetchedEntriesRef.current) {
+      // Optimization: Only update state if the array reference has changed
+      if (parsedEntries === lastFetchedEntriesRef.current) {
         setIsLoading(false);
         return;
       }
-      lastFetchedEntriesRef.current = storedEntries;
+      lastFetchedEntriesRef.current = parsedEntries;
 
-      // Security: Safely parse entries to prevent DoS/Crashes if storage is corrupted
-      const parsedEntries = parseSafePeriodEntries(storedEntries);
       setEntries(parsedEntries);
     } catch (error: any) {
       console.error('Error fetching period entries:', error instanceof Error ? error.message : String(error));

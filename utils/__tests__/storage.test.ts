@@ -1,6 +1,8 @@
 import { PeriodStorage, initializeStorageProtection } from '../storage';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { AppState } from 'react-native';
+// Mock validation to avoid strict schema checks in storage tests
+import { parseSafePeriodEntries } from '../validation';
 
 // Mock AsyncStorage
 jest.mock('@react-native-async-storage/async-storage', () => ({
@@ -13,6 +15,11 @@ jest.mock('react-native', () => ({
   AppState: {
     addEventListener: jest.fn(),
   },
+}));
+
+// Mock validation
+jest.mock('../validation', () => ({
+  parseSafePeriodEntries: jest.fn(),
 }));
 
 describe('PeriodStorage', () => {
@@ -74,6 +81,47 @@ describe('PeriodStorage', () => {
     const result = await PeriodStorage.getEntries();
     expect(result).toBe(newData);
     expect(AsyncStorage.getItem).not.toHaveBeenCalled(); // Should not call getItem if cache is hit
+  });
+
+  it('getParsedEntries caches parsed result and returns reference', async () => {
+    const rawData = '["test"]';
+    const parsedData = ['test'];
+    (AsyncStorage.getItem as jest.Mock).mockResolvedValue(rawData);
+    (parseSafePeriodEntries as jest.Mock).mockReturnValue(parsedData);
+
+    // First call: gets string, parses it
+    const result1 = await PeriodStorage.getParsedEntries();
+    expect(result1).toBe(parsedData);
+    expect(AsyncStorage.getItem).toHaveBeenCalledTimes(1);
+    expect(parseSafePeriodEntries).toHaveBeenCalledWith(rawData);
+
+    // Second call: should return cached array reference without re-parsing
+    const result2 = await PeriodStorage.getParsedEntries();
+    expect(result2).toBe(result1); // Reference equality!
+    expect(parseSafePeriodEntries).toHaveBeenCalledTimes(1);
+  });
+
+  it('saveEntries invalidates parsed cache', async () => {
+    const rawData = '["old"]';
+    const parsedDataOld = ['old'];
+    const parsedDataNew = ['new'];
+
+    (AsyncStorage.getItem as jest.Mock).mockResolvedValue(rawData);
+    (parseSafePeriodEntries as jest.Mock).mockReturnValueOnce(parsedDataOld).mockReturnValueOnce(parsedDataNew);
+
+    // Populate cache
+    await PeriodStorage.getParsedEntries();
+    expect(parseSafePeriodEntries).toHaveBeenCalledTimes(1);
+
+    // Save new data
+    const newData = '["new"]';
+    await PeriodStorage.saveEntries(newData);
+
+    // getParsedEntries should re-parse
+    const result = await PeriodStorage.getParsedEntries();
+    expect(result).toBe(parsedDataNew);
+    expect(parseSafePeriodEntries).toHaveBeenCalledTimes(2);
+    expect(parseSafePeriodEntries).toHaveBeenCalledWith(newData);
   });
 });
 
