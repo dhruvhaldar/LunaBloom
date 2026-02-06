@@ -42,3 +42,8 @@
 **Vulnerability:** The input validation relied on a deny-list (`SUSPICIOUS_PATTERNS`) that missed critical XSS vectors like `<svg>` tags (which can execute scripts) and generic event handlers (only specific ones like `onload` were blocked).
 **Learning:** Deny-lists are inherently fragile and require constant maintenance. Attackers can bypass them using obscure HTML tags or attributes.
 **Prevention:** Significantly expanded the deny-list to include risky tags (`<svg>`, `<style>`, `<base>`) and implemented a regex that matches a broad class of event handlers (`on[event]=`) rather than a hardcoded list. Additionally, added input length limits (`maxLength`) on UI components as defense-in-depth against Denial of Service.
+
+## 2026-03-12 - Mixed Content (HTTP) Allowed in External Links
+**Vulnerability:** The `isValidExternalUrl` utility allowed `http://` URLs, permitting unencrypted communication and potential Man-in-the-Middle (MitM) attacks where the destination page could be spoofed or traffic intercepted.
+**Learning:** While `http` seems harmless for external links, it degrades the security posture of the application and exposes users to network-level attacks. In 2026, HTTPS should be mandatory.
+**Prevention:** Updated validation logic to enforce `https://` scheme exclusively for all external links.

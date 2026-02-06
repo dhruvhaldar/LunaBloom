@@ -193,8 +193,8 @@ export const parseSafePeriodEntries = (json: string | null): any[] => {
 };
 
 /**
- * Validates if a URL is safe to open (HTTP/HTTPS only).
- * Rejects potentially dangerous schemes like javascript:, file:, vbscript:.
+ * Validates if a URL is safe to open (HTTPS only).
+ * Rejects potentially dangerous schemes like javascript:, file:, vbscript: and insecure http:.
  * @param url The URL to check.
  * @returns True if the URL is safe.
  */
@@ -202,6 +202,6 @@ export const isValidExternalUrl = (url: string): boolean => {
   if (!url) return false;
   // Trim whitespace
   const trimmedUrl = url.trim();
-  // Check if it starts with http:// or https:// (case insensitive)
-  return /^https?:\/\//i.test(trimmedUrl);
+  // Check if it starts with https:// (case insensitive)
+  return /^https:\/\//i.test(trimmedUrl);
 };

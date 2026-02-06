@@ -237,8 +237,8 @@ describe('Validation Utils', () => {
       expect(isValidExternalUrl('https://example.com')).toBe(true);
     });
 
-    it('accepts valid http url', () => {
-      expect(isValidExternalUrl('http://example.com')).toBe(true);
+    it('rejects http url (insecure)', () => {
+      expect(isValidExternalUrl('http://example.com')).toBe(false);
     });
 
     it('rejects javascript protocol', () => {
