@@ -1,5 +1,5 @@
 import React, { useState, forwardRef, useImperativeHandle } from 'react';
-import { TextInput, View, TouchableOpacity, ActivityIndicator, StyleSheet } from 'react-native';
+import { TextInput, View, TouchableOpacity, ActivityIndicator, StyleSheet, Platform } from 'react-native';
 import { ThemedText } from './ThemedText';
 import { MAX_INPUT_LENGTH } from '@/utils/validation';
 
@@ -18,6 +18,7 @@ interface ChatInputProps {
 
 export const ChatInput = forwardRef<ChatInputHandle, ChatInputProps>(({ onSubmit, isLoading, textColor, placeholderTextColor }, ref) => {
   const [text, setText] = useState('');
+  const [isFocused, setIsFocused] = useState(false);
 
   useImperativeHandle(ref, () => ({
     getText: () => text,
@@ -38,13 +39,27 @@ export const ChatInput = forwardRef<ChatInputHandle, ChatInputProps>(({ onSubmit
   return (
     <View style={styles.inputContainer}>
         <TextInput
-            style={[styles.input, { color: textColor }]}
+            style={[
+                styles.input,
+                {
+                    color: textColor,
+                    borderWidth: isFocused ? 2 : 1,
+                    ...Platform.select({
+                        web: {
+                            outlineStyle: 'none'
+                        }
+                    })
+                }
+            ]}
             placeholder="Ask a menstrual health question..."
             placeholderTextColor={placeholderTextColor}
             value={text}
             onChangeText={setText}
+            onFocus={() => setIsFocused(true)}
+            onBlur={() => setIsFocused(false)}
             editable={!isLoading}
             accessibilityLabel="Ask a menstrual health question"
+            accessibilityHint="Double tap to enter text. Submit sends the question."
             returnKeyType="send"
             onSubmitEditing={handleSubmit}
             maxLength={MAX_INPUT_LENGTH}
@@ -62,6 +77,8 @@ export const ChatInput = forwardRef<ChatInputHandle, ChatInputProps>(({ onSubmit
     </View>
   );
 });
+
+ChatInput.displayName = 'ChatInput';
 
 const styles = StyleSheet.create({
   inputContainer: {
