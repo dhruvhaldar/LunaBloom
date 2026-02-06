@@ -71,6 +71,14 @@ export default function ParallaxFlatList<T>({
     </>
   ), [headerBackgroundColor, colorScheme, headerAnimatedStyle, headerImage, ListHeaderComponent]);
 
+  // Bolt Optimization: Memoize the empty component wrapper to prevent unmounting/remounting
+  // of the empty state on every render of the list.
+  const emptyComponent = useMemo(() => (
+    <ThemedView style={styles.content}>
+      {ListEmptyComponent}
+    </ThemedView>
+  ), [ListEmptyComponent]);
+
   return (
     <ThemedView style={styles.container}>
       <Animated.FlatList
@@ -96,11 +104,7 @@ export default function ParallaxFlatList<T>({
             // We can rely on the background color of the outer ThemedView.
             null
         }
-        ListEmptyComponent={
-            <ThemedView style={styles.content}>
-                {ListEmptyComponent}
-            </ThemedView>
-        }
+        ListEmptyComponent={emptyComponent}
       />
     </ThemedView>
   );
