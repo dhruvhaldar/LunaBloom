@@ -106,27 +106,52 @@ describe('ChatInput', () => {
     );
     const input = getByPlaceholderText('Ask a menstrual health question...');
 
-    // Initial state (blurred)
-    // Check if flat style object contains borderWidth: 1
-    // Note: styles are often flattened in tests, checking the style array/object
-    // Depending on how style prop is constructed, it might be an array.
-    // The component uses [styles.input, { color, borderWidth }]
-    // So the last element should contain the dynamic borderWidth.
-
     const flatStyle = [input.props.style].flat();
     const dynamicStyle = flatStyle[flatStyle.length - 1];
     expect(dynamicStyle.borderWidth).toBe(1);
 
-    // Focus
     fireEvent(input, 'focus');
     const focusedStyle = [input.props.style].flat();
     const focusedDynamicStyle = focusedStyle[focusedStyle.length - 1];
     expect(focusedDynamicStyle.borderWidth).toBe(2);
 
-    // Blur
     fireEvent(input, 'blur');
     const blurredStyle = [input.props.style].flat();
     const blurredDynamicStyle = blurredStyle[blurredStyle.length - 1];
     expect(blurredDynamicStyle.borderWidth).toBe(1);
+  });
+
+  it('shows clear button when text is present and clears it on press', () => {
+    const { getByRole, queryByRole, getByPlaceholderText } = render(
+      <ChatInput
+        onSubmit={mockOnSubmit}
+        isLoading={false}
+        textColor="#000"
+        placeholderTextColor="#666"
+      />
+    );
+    const input = getByPlaceholderText('Ask a menstrual health question...');
+
+    // Initially clear button should not be present
+    expect(queryByRole('button', { name: 'Clear question' })).toBeNull();
+
+    // Type text
+    fireEvent.changeText(input, 'Some text');
+
+    // Clear button should appear
+    const clearButton = getByRole('button', { name: 'Clear question' });
+    expect(clearButton).toBeTruthy();
+
+    // Press clear button
+    fireEvent.press(clearButton);
+
+    // Text should be cleared
+    // Note: in React Native Testing Library, verifying value prop might need re-query or check state effect
+    // But since fireEvent.press triggers state update, render should re-render.
+    // However, `input` variable is a reference to the element node from previous render.
+    // We should probably check input.props.value if it's updated.
+    // Or check that button disappeared.
+
+    expect(queryByRole('button', { name: 'Clear question' })).toBeNull();
   });
 });

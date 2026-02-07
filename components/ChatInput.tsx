@@ -1,6 +1,7 @@
-import React, { useState, forwardRef, useImperativeHandle } from 'react';
+import React, { useState, forwardRef, useImperativeHandle, useRef, useCallback } from 'react';
 import { TextInput, View, TouchableOpacity, ActivityIndicator, StyleSheet, Platform } from 'react-native';
 import { ThemedText } from './ThemedText';
+import { IconSymbol } from '@/components/ui/IconSymbol';
 import { MAX_INPUT_LENGTH } from '@/utils/validation';
 
 export interface ChatInputHandle {
@@ -19,6 +20,7 @@ interface ChatInputProps {
 export const ChatInput = forwardRef<ChatInputHandle, ChatInputProps>(({ onSubmit, isLoading, textColor, placeholderTextColor }, ref) => {
   const [text, setText] = useState('');
   const [isFocused, setIsFocused] = useState(false);
+  const inputRef = useRef<TextInput>(null);
 
   useImperativeHandle(ref, () => ({
     getText: () => text,
@@ -36,34 +38,55 @@ export const ChatInput = forwardRef<ChatInputHandle, ChatInputProps>(({ onSubmit
     }
   };
 
+  const handleClear = useCallback(() => {
+    setText('');
+    inputRef.current?.focus();
+  }, []);
+
   return (
     <View style={styles.inputContainer}>
-        <TextInput
-            style={[
-                styles.input,
-                {
-                    color: textColor,
-                    borderWidth: isFocused ? 2 : 1,
-                    ...Platform.select({
-                        web: {
-                            outlineStyle: 'none'
-                        }
-                    })
-                }
-            ]}
-            placeholder="Ask a menstrual health question..."
-            placeholderTextColor={placeholderTextColor}
-            value={text}
-            onChangeText={setText}
-            onFocus={() => setIsFocused(true)}
-            onBlur={() => setIsFocused(false)}
-            editable={!isLoading}
-            accessibilityLabel="Ask a menstrual health question"
-            accessibilityHint="Double tap to enter text. Submit sends the question."
-            returnKeyType="send"
-            onSubmitEditing={handleSubmit}
-            maxLength={MAX_INPUT_LENGTH}
-        />
+        <View style={styles.inputWrapper}>
+          <TextInput
+              ref={inputRef}
+              style={[
+                  styles.input,
+                  {
+                      color: textColor,
+                      borderWidth: isFocused ? 2 : 1,
+                      paddingRight: 40, // Add padding for clear button
+                      ...Platform.select({
+                          web: {
+                              outlineStyle: 'none'
+                          }
+                      })
+                  }
+              ]}
+              placeholder="Ask a menstrual health question..."
+              placeholderTextColor={placeholderTextColor}
+              value={text}
+              onChangeText={setText}
+              onFocus={() => setIsFocused(true)}
+              onBlur={() => setIsFocused(false)}
+              editable={!isLoading}
+              accessibilityLabel="Ask a menstrual health question"
+              accessibilityHint="Double tap to enter text. Submit sends the question."
+              returnKeyType="send"
+              onSubmitEditing={handleSubmit}
+              maxLength={MAX_INPUT_LENGTH}
+          />
+          {text.length > 0 && !isLoading && (
+            <TouchableOpacity
+              style={styles.clearButton}
+              onPress={handleClear}
+              accessibilityLabel="Clear question"
+              accessibilityRole="button"
+              hitSlop={{ top: 10, bottom: 10, left: 10, right: 10 }}
+            >
+              <IconSymbol name="xmark.circle.fill" size={20} color={placeholderTextColor} />
+            </TouchableOpacity>
+          )}
+        </View>
+
         <TouchableOpacity
             style={[styles.button, isButtonDisabled && styles.buttonDisabled]}
             onPress={handleSubmit}
@@ -84,14 +107,24 @@ const styles = StyleSheet.create({
   inputContainer: {
     marginTop: 10,
   },
+  inputWrapper: {
+    position: 'relative',
+    marginBottom: 15,
+  },
   input: {
     height: 60,
     borderColor: '#E63946',
     borderWidth: 1,
     paddingHorizontal: 15,
     borderRadius: 8,
-    marginBottom: 15,
     fontSize: 16,
+    marginBottom: 0, // Reset default margin since it's on wrapper now
+  },
+  clearButton: {
+    position: 'absolute',
+    right: 10,
+    top: 15, // Vertically centered (60 - 30) / 2
+    padding: 5,
   },
   button: {
     backgroundColor: '#E63946',
