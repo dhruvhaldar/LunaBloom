@@ -17,3 +17,7 @@
 ## 2025-10-30 - Visual Anchors in Lists
 **Learning:** Dense lists of text-based key-value pairs are difficult to scan quickly, leading to increased cognitive load for sighted users.
 **Action:** Prepend consistent icons (emojis) to labels to serve as visual anchors and conditionally render optional fields to reduce visual clutter, improving scannability without compromising accessibility.
+
+## 2025-11-01 - Input Clear Button Pattern
+**Learning:** Long text inputs (like chat or notes) are tedious to clear via backspace, especially on mobile.
+**Action:** Implement an absolute-positioned "Clear" button inside the input container that only appears when text is present, ensuring it clears content and refocuses the field for immediate re-typing.
