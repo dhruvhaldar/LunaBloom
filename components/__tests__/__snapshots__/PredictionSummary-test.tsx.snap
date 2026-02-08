@@ -98,6 +98,7 @@ exports[`PredictionSummary renders correctly 1`] = `
               undefined,
               undefined,
               {
+                "color": "#000",
                 "fontWeight": "bold",
               },
             ]
@@ -191,6 +192,7 @@ exports[`PredictionSummary renders correctly 1`] = `
               undefined,
               undefined,
               {
+                "color": "#000",
                 "fontWeight": "bold",
               },
             ]
@@ -263,7 +265,7 @@ exports[`PredictionSummary renders correctly 1`] = `
       Predicted Ovulations
     </Text>
     <View
-      accessibilityLabel="Ovulation on 14 Jan. Fertile window from 12 Jan to 14 Jan"
+      accessibilityLabel="Ovulation on 14 Jan. Fertile window from 9 Jan to 14 Jan"
       accessible={true}
       style={
         [
@@ -330,13 +332,13 @@ exports[`PredictionSummary renders correctly 1`] = `
         }
       >
         Fertile Window:
-        12 Jan
+        9 Jan
          -
         14 Jan
       </Text>
     </View>
     <View
-      accessibilityLabel="Ovulation on 14 Feb. Fertile window from 12 Feb to 14 Feb"
+      accessibilityLabel="Ovulation on 14 Feb. Fertile window from 9 Feb to 14 Feb"
       accessible={true}
       style={
         [
@@ -403,7 +405,7 @@ exports[`PredictionSummary renders correctly 1`] = `
         }
       >
         Fertile Window:
-        12 Feb
+        9 Feb
          -
         14 Feb
       </Text>

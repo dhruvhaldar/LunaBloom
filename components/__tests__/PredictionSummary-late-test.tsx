@@ -37,7 +37,7 @@ describe('PredictionSummary Late Logic', () => {
     // but looking at previous output or code:
     // `Predicted period starting ${formatDate(date, DateFormats.MonthDay)}${daysRemainingLabel}, ending ${formatDate(periodEndDate, DateFormats.MonthDay)}`
 
-    const a11yLabel = screen.getByLabelText(/Predicted period starting .*2 days late/i);
+    const a11yLabel = screen.getByLabelText(/Predicted period starting .*Warning: 2 days late/i);
     expect(a11yLabel).toBeTruthy();
   });
 
@@ -57,7 +57,7 @@ describe('PredictionSummary Late Logic', () => {
     const lateText = screen.getByText(/1 day late/i);
     expect(lateText).toBeTruthy();
 
-    const a11yLabel = screen.getByLabelText(/Predicted period starting .*1 day late/i);
+    const a11yLabel = screen.getByLabelText(/Predicted period starting .*Warning: 1 day late/i);
     expect(a11yLabel).toBeTruthy();
   });
 });
