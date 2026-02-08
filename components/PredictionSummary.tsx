@@ -45,6 +45,7 @@ const PredictionSummary = React.memo(function PredictionSummary({
           // Calculate days remaining for the next period
           let daysRemainingText = '';
           let daysRemainingLabel = '';
+          let isLate = false;
           if (index === 0) {
             const target = new Date(date);
             target.setHours(0, 0, 0, 0);
@@ -61,26 +62,32 @@ const PredictionSummary = React.memo(function PredictionSummary({
               daysRemainingText = ` (in ${diffDays} days)`;
               daysRemainingLabel = `, in ${diffDays} days`;
             } else if (diffDays < 0) {
+              isLate = true;
               const absDays = Math.abs(diffDays);
               const daysString = absDays === 1 ? 'day' : 'days';
               daysRemainingText = ` (${absDays} ${daysString} late)`;
-              daysRemainingLabel = `, ${absDays} ${daysString} late`;
+              daysRemainingLabel = `, Warning: ${absDays} ${daysString} late`;
             }
           }
+
+          const lateColor = '#E63946';
+          const itemBorderColor = isLate ? lateColor : textColor;
+          const itemBorderWidth = isLate ? 2 : 1;
+          const daysTextColor = isLate ? lateColor : textColor;
 
           return (
             <ThemedView
               key={index}
               style={[
                 styles.predictionItem,
-                { borderColor: textColor, borderWidth: 1 }
+                { borderColor: itemBorderColor, borderWidth: itemBorderWidth }
               ]}
               accessible={true}
               accessibilityLabel={`Predicted period starting ${formatDate(date, DateFormats.MonthDay)}${daysRemainingLabel}, ending ${formatDate(periodEndDate, DateFormats.MonthDay)}`}
             >
               <ThemedText style={{ color: textColor }}>
                 {formatDate(date, DateFormats.MonthDay)}
-                <ThemedText style={{ fontWeight: 'bold' }}>{daysRemainingText}</ThemedText>
+                <ThemedText style={{ fontWeight: 'bold', color: daysTextColor }}>{daysRemainingText}</ThemedText>
               </ThemedText>
               <ThemedText
                 style={{
@@ -109,7 +116,7 @@ const PredictionSummary = React.memo(function PredictionSummary({
       {predictedOvulations.map((date, index) => {
         // Calculate fertile window start (5 days before ovulation)
         const fertileWindowStart = new Date(date);
-        fertileWindowStart.setDate(fertileWindowStart.getDate() - 2);
+        fertileWindowStart.setDate(fertileWindowStart.getDate() - 5);
 
         return (
           <ThemedView
