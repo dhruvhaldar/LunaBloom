@@ -6,6 +6,7 @@ import ParallaxScrollView from '@/components/ParallaxScrollView';
 import { useChatbot } from '@/hooks/useChatbot'; // Expo automatically resolves .web.ts or .native.ts
 import { IconSymbol } from '@/components/ui/IconSymbol';
 import { ChatInput } from '@/components/ChatInput';
+import { EmptyState } from '@/components/ui/EmptyState';
 
 // Optimization: Move static data outside component to prevent re-allocation on every render
 const suggestedQuestions = [
@@ -148,7 +149,12 @@ export default function MenstruationScreen() {
                 </View>
               ) : (
                 <View>
-                  <ThemedText style={styles.placeholder}>AI assistant ready. Ask me anything!</ThemedText>
+                  <EmptyState
+                    title="MenstruAI Assistant"
+                    message="I'm here to help with your menstrual health questions."
+                    icon="chat.fill"
+                    style={{ marginTop: 20 }}
+                  />
                   {suggestionsList}
                 </View>
               )}
@@ -238,11 +244,6 @@ const styles = StyleSheet.create({
   response: {
     fontSize: 16,
     lineHeight: 24,
-  },
-  placeholder: {
-    fontSize: 16,
-    lineHeight: 24,
-    textAlign: 'center',
   },
   loadingContainer: {
     flex: 1,
