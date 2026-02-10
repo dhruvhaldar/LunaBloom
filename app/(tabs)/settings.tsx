@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useMemo } from 'react';
-import { StyleSheet, View, Alert, useColorScheme, TouchableOpacity, Image } from 'react-native';
+import { StyleSheet, View, Alert, useColorScheme, TouchableOpacity, Image, ActivityIndicator } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { PeriodStorage } from '@/utils/storage';
 import { IconSymbol } from '@/components/ui/IconSymbol';
@@ -34,6 +34,7 @@ export default function SettingsScreen() {
     // Add state for the two toggles
     const [lutealPhase, setLutealPhase] = useState(false);
     const [preventScreenshots, setPreventScreenshots] = useState(false);
+    const [isImporting, setIsImporting] = useState(false);
 
     // Load saved settings
     useEffect(() => {
@@ -209,6 +210,7 @@ export default function SettingsScreen() {
                 return;
             }
 
+            setIsImporting(true);
             const file = result.assets[0];
             fileUri = file.uri;
 
@@ -282,6 +284,7 @@ export default function SettingsScreen() {
                 'There was an error restoring your backup. Please try again.'
             );
         } finally {
+            setIsImporting(false);
             // Security Cleanup: Delete the temporary file imported to cache
             if (fileUri) {
                 try {
@@ -353,21 +356,29 @@ export default function SettingsScreen() {
                     <View style={styles.actionButtonsContainer}>
                         <TouchableOpacity
                             onPress={restoreData}
-                            style={[styles.actionButton, { backgroundColor: '#457B9D' }]}
+                            disabled={isImporting}
+                            style={[styles.actionButton, { backgroundColor: '#457B9D', opacity: isImporting ? 0.7 : 1 }]}
                             accessibilityRole="button"
                             accessibilityLabel="Import data from file"
                             accessibilityHint="Restores your period history from a backup file"
+                            accessibilityState={{ busy: isImporting, disabled: isImporting }}
                         >
-                            <IconSymbol name="square.and.arrow.down" size={20} color="#FFFFFF" style={{ marginRight: 8 }} />
-                            <ThemedText style={styles.actionButtonText}>Import</ThemedText>
+                            {isImporting ? (
+                                <ActivityIndicator color="#FFFFFF" style={{ marginRight: 8 }} />
+                            ) : (
+                                <IconSymbol name="square.and.arrow.down" size={20} color="#FFFFFF" style={{ marginRight: 8 }} />
+                            )}
+                            <ThemedText style={styles.actionButtonText}>{isImporting ? 'Importing...' : 'Import'}</ThemedText>
                         </TouchableOpacity>
 
                         <TouchableOpacity
                             onPress={backupData}
-                            style={[styles.actionButton, { backgroundColor: '#E63946' }]}
+                            disabled={isImporting}
+                            style={[styles.actionButton, { backgroundColor: '#E63946', opacity: isImporting ? 0.7 : 1 }]}
                             accessibilityRole="button"
                             accessibilityLabel="Export data to file"
                             accessibilityHint="Creates a backup file of your period history"
+                            accessibilityState={{ disabled: isImporting }}
                         >
                             <IconSymbol name="square.and.arrow.up" size={20} color="#FFFFFF" style={{ marginRight: 8 }} />
                             <ThemedText style={styles.actionButtonText}>Export</ThemedText>
