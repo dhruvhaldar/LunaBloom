@@ -1,7 +1,8 @@
 import React, { useMemo } from 'react';
-import { StyleSheet, View, Text, TouchableOpacity } from 'react-native';
+import { StyleSheet, View, TouchableOpacity } from 'react-native';
 import { IconSymbol } from '@/components/ui/IconSymbol';
 import { formatDate } from '@/utils/dateFormatter';
+import { ThemedText } from '@/components/ThemedText';
 
 // Define the shape of an entry based on usage in history.tsx
 export interface HistoryEntry {
@@ -70,7 +71,12 @@ const HistoryItem = React.memo(function HistoryItem({ item, onDelete, textColor,
   }, [item.selectedSymptoms]);
 
   const accessibilityLabel = useMemo(() => {
-    return `Entry for ${lastPeriodDate}. Cycle Length: ${item.cycleLength} days. Symptoms: ${symptomsString || 'None'}. Flow: ${item.selectedFlow || 'Not logged'}. Notes: ${item.notes || 'None'}. Log Date: ${logDate}`;
+    let label = `Entry for ${lastPeriodDate}. Cycle Length: ${item.cycleLength} days.`;
+    if (symptomsString) label += ` Symptoms: ${symptomsString}.`;
+    if (item.selectedFlow) label += ` Flow: ${item.selectedFlow}.`;
+    if (item.notes) label += ` Notes: ${item.notes}.`;
+    label += ` Log Date: ${logDate}`;
+    return label;
   }, [lastPeriodDate, item.cycleLength, symptomsString, item.selectedFlow, item.notes, logDate]);
 
   return (
@@ -81,14 +87,18 @@ const HistoryItem = React.memo(function HistoryItem({ item, onDelete, textColor,
           accessible={true}
           accessibilityLabel={accessibilityLabel}
         >
-          <Text style={{ color: textColor }}>🗓️ Last Period: {lastPeriodDate}</Text>
-          <Text style={{ color: textColor }}>🔄 Cycle Length: {item.cycleLength} days</Text>
-          <Text style={{ color: textColor }}>🤒 Symptoms: {symptomsString || 'None'}</Text>
-          <Text style={{ color: textColor }}>🩸 Flow: {item.selectedFlow || 'Not logged'}</Text>
-          {item.notes ? (
-            <Text style={{ color: textColor }}>📝 Notes: {item.notes}</Text>
+          <ThemedText style={{ color: textColor }}>🗓️ Last Period: {lastPeriodDate}</ThemedText>
+          <ThemedText style={{ color: textColor }}>🔄 Cycle Length: {item.cycleLength} days</ThemedText>
+          {symptomsString ? (
+             <ThemedText style={{ color: textColor }}>🤒 Symptoms: {symptomsString}</ThemedText>
           ) : null}
-          <Text style={{ color: textColor }}>🕒 Log Date: {logDate}</Text>
+          {item.selectedFlow ? (
+             <ThemedText style={{ color: textColor }}>🩸 Flow: {item.selectedFlow}</ThemedText>
+          ) : null}
+          {item.notes ? (
+            <ThemedText style={{ color: textColor }}>📝 Notes: {item.notes}</ThemedText>
+          ) : null}
+          <ThemedText style={{ color: textColor }}>🕒 Log Date: {logDate}</ThemedText>
         </View>
 
         <TouchableOpacity

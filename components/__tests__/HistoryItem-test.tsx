@@ -56,9 +56,9 @@ describe('HistoryItem', () => {
     expect(queryByText(/📝 Notes:/)).toBeNull();
   });
 
-  it('shows "None" for empty symptoms', () => {
+  it('hides "Symptoms" row when empty', () => {
     const entryWithoutSymptoms = { ...mockEntry, selectedSymptoms: [] };
-    const { getByText } = render(
+    const { queryByText } = render(
       <HistoryItem
         item={entryWithoutSymptoms}
         onDelete={mockOnDelete}
@@ -67,7 +67,21 @@ describe('HistoryItem', () => {
       />
     );
 
-    expect(getByText(/🤒 Symptoms: None/)).toBeTruthy();
+    expect(queryByText(/🤒 Symptoms:/)).toBeNull();
+  });
+
+  it('hides "Flow" row when null', () => {
+    const entryWithoutFlow = { ...mockEntry, selectedFlow: null };
+    const { queryByText } = render(
+      <HistoryItem
+        item={entryWithoutFlow}
+        onDelete={mockOnDelete}
+        textColor="#000"
+        deleteIconColor="#f00"
+      />
+    );
+
+    expect(queryByText(/🩸 Flow:/)).toBeNull();
   });
 
   it('groups details into a single accessible element', () => {
@@ -84,6 +98,26 @@ describe('HistoryItem', () => {
     // Using regex to handle potential date format differences (Sep vs Sept)
     const expectedLabelRegex = /Entry for 25 Sept? 2023\. Cycle Length: 28 days\. Symptoms: Cramps, Headache\. Flow: Medium\. Notes: Feeling okay\. Log Date: 1 Oct 2023/;
 
+    expect(getByLabelText(expectedLabelRegex)).toBeTruthy();
+  });
+
+  it('generates concise accessibility label when fields are missing', () => {
+    const sparseEntry = {
+      ...mockEntry,
+      selectedSymptoms: [],
+      selectedFlow: null,
+      notes: '',
+    };
+    const { getByLabelText } = render(
+      <HistoryItem
+        item={sparseEntry}
+        onDelete={mockOnDelete}
+        textColor="#000"
+        deleteIconColor="#f00"
+      />
+    );
+
+    const expectedLabelRegex = /Entry for 25 Sept? 2023\. Cycle Length: 28 days\. Log Date: 1 Oct 2023/;
     expect(getByLabelText(expectedLabelRegex)).toBeTruthy();
   });
 });
