@@ -1,4 +1,4 @@
-import React, { useMemo, useCallback } from 'react';
+import React, { useMemo, useCallback, useRef } from 'react';
 import { StyleSheet, View, Image, useColorScheme, TouchableOpacity, ScrollView, ActivityIndicator, Platform, Share, Alert } from 'react-native';
 import { ThemedText } from '@/components/ThemedText';
 import { ThemedView } from '@/components/ThemedView';
@@ -84,6 +84,8 @@ export default function MenstruationScreen() {
     />
   ), []);
 
+  const scrollViewRef = useRef<ScrollView>(null);
+
   return (
     <ParallaxScrollView
       headerBackgroundColor={headerBackgroundColor}
@@ -126,8 +128,10 @@ export default function MenstruationScreen() {
         ) : (
           <>
             <ScrollView
+              ref={scrollViewRef}
               style={[styles.responseContainer, { backgroundColor: responseBackgroundColor }]}
               accessibilityLiveRegion="polite"
+              onContentSizeChange={() => scrollViewRef.current?.scrollToEnd({ animated: true })}
             >
               {isLoading ? (
                 <View style={styles.loadingContainer}>

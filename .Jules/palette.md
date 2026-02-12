@@ -21,3 +21,7 @@
 ## 2025-11-01 - Input Clear Button Pattern
 **Learning:** Long text inputs (like chat or notes) are tedious to clear via backspace, especially on mobile.
 **Action:** Implement an absolute-positioned "Clear" button inside the input container that only appears when text is present, ensuring it clears content and refocuses the field for immediate re-typing.
+
+## 2025-11-02 - Chat Auto-Scroll Behavior
+**Learning:** In chat interfaces, users expect new messages (especially streamed AI responses) to be immediately visible without manual scrolling.
+**Action:** Use `onContentSizeChange` on the ScrollView to trigger `scrollToEnd({ animated: true })`, ensuring the view always follows the conversation flow as content grows.
