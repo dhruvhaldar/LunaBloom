@@ -25,3 +25,7 @@
 ## 2025-11-02 - Chat Auto-Scroll Behavior
 **Learning:** In chat interfaces, users expect new messages (especially streamed AI responses) to be immediately visible without manual scrolling.
 **Action:** Use `onContentSizeChange` on the ScrollView to trigger `scrollToEnd({ animated: true })`, ensuring the view always follows the conversation flow as content grows.
+
+## 2026-02-13 - Character Count Feedback
+**Learning:** `maxLength` on inputs prevents excess text but leaves users guessing the limit until they hit it, causing frustration when typing long messages.
+**Action:** Add a dynamic `current/max` character count indicator that appears on typing and changes color near the limit (90%) to provide proactive feedback and reduce frustration.

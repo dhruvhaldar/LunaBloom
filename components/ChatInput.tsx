@@ -85,6 +85,19 @@ export const ChatInput = forwardRef<ChatInputHandle, ChatInputProps>(({ onSubmit
               <IconSymbol name="xmark.circle.fill" size={20} color={placeholderTextColor} />
             </TouchableOpacity>
           )}
+          {text.length > 0 && (
+            <ThemedText
+              style={{
+                textAlign: 'right',
+                fontSize: 12,
+                marginTop: 4,
+                marginRight: 5,
+                color: text.length > MAX_INPUT_LENGTH * 0.9 ? '#E63946' : placeholderTextColor,
+              }}
+            >
+              {text.length}/{MAX_INPUT_LENGTH}
+            </ThemedText>
+          )}
         </View>
 
         <TouchableOpacity

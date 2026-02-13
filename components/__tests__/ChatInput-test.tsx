@@ -154,4 +154,25 @@ describe('ChatInput', () => {
 
     expect(queryByRole('button', { name: 'Clear question' })).toBeNull();
   });
+
+  it('shows character count when text is present', () => {
+    const { getByPlaceholderText, getByText, queryByText } = render(
+      <ChatInput
+        onSubmit={mockOnSubmit}
+        isLoading={false}
+        textColor="#000"
+        placeholderTextColor="#666"
+      />
+    );
+    const input = getByPlaceholderText('Ask a menstrual health question...');
+
+    // Initially no count
+    expect(queryByText(/500/)).toBeNull();
+
+    // Type text
+    fireEvent.changeText(input, 'Hello');
+
+    // Count should appear
+    expect(getByText('5/500')).toBeTruthy();
+  });
 });
