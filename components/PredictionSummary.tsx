@@ -105,46 +105,76 @@ const PredictionSummary = React.memo(function PredictionSummary({
     );
   }, [predictedPeriods, periodDuration, predictedHeadingColor, textColor]);
 
-  const ovulationSection = useMemo(() => (
-    <ThemedView style={styles.section}>
-      <ThemedText
-        type="subtitle"
-        style={{ color: predictedHeadingColor, marginBottom: 10 }}
-      >
-        Predicted Ovulations
-      </ThemedText>
-      {predictedOvulations.map((date, index) => {
-        // Calculate fertile window start (5 days before ovulation)
-        const fertileWindowStart = new Date(date);
-        fertileWindowStart.setDate(fertileWindowStart.getDate() - 5);
+  const ovulationSection = useMemo(() => {
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+    const todayTime = today.getTime();
 
-        return (
-          <ThemedView
-            key={index}
-            style={[
-              styles.predictionItem,
-              { borderColor: textColor, borderWidth: 1 }
-            ]}
-            accessible={true}
-            accessibilityLabel={`Ovulation on ${formatDate(date, DateFormats.MonthDay)}. Fertile window from ${formatDate(fertileWindowStart, DateFormats.MonthDay)} to ${formatDate(date, DateFormats.MonthDay)}`}
-          >
-            <ThemedText style={{ color: textColor }}>
-              Ovulation: {formatDate(date, DateFormats.MonthDay)}
-            </ThemedText>
-            <ThemedText
-              style={{
-                color: textColor,
-                fontSize: 12,
-                marginTop: 5
-              }}
+    return (
+      <ThemedView style={styles.section}>
+        <ThemedText
+          type="subtitle"
+          style={{ color: predictedHeadingColor, marginBottom: 10 }}
+        >
+          Predicted Ovulations
+        </ThemedText>
+        {predictedOvulations.map((date, index) => {
+          // Calculate fertile window start (5 days before ovulation)
+          const fertileWindowStart = new Date(date);
+          fertileWindowStart.setDate(fertileWindowStart.getDate() - 5);
+
+          // Calculate days remaining to ovulation
+          const target = new Date(date);
+          target.setHours(0, 0, 0, 0);
+          const diffTime = target.getTime() - todayTime;
+          const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+
+          let statusText = '';
+          let statusLabel = '';
+          let statusColor = textColor;
+
+          if (diffDays === 0) {
+            statusText = ' (Today! 🥚)';
+            statusLabel = ', Today is ovulation day';
+            statusColor = '#E63946'; // Red/Warning color for importance
+          } else if (diffDays > 0 && diffDays <= 5) {
+            statusText = ' (High Chance 🌟)';
+            statusLabel = ', High chance of fertility';
+            statusColor = '#2a9d8f'; // Green/Success color for fertility
+          } else if (diffDays > 5) {
+            statusText = ` (in ${diffDays} days)`;
+            statusLabel = `, in ${diffDays} days`;
+          }
+
+          return (
+            <ThemedView
+              key={index}
+              style={[
+                styles.predictionItem,
+                { borderColor: textColor, borderWidth: 1 }
+              ]}
+              accessible={true}
+              accessibilityLabel={`Ovulation on ${formatDate(date, DateFormats.MonthDay)}${statusLabel}. Fertile window from ${formatDate(fertileWindowStart, DateFormats.MonthDay)} to ${formatDate(date, DateFormats.MonthDay)}`}
             >
-              Fertile Window: {formatDate(fertileWindowStart, DateFormats.MonthDay)} - {formatDate(date, DateFormats.MonthDay)}
-            </ThemedText>
-          </ThemedView>
-        );
-      })}
-    </ThemedView>
-  ), [predictedOvulations, predictedHeadingColor, textColor]); // Independent of periodDuration
+              <ThemedText style={{ color: textColor }}>
+                Ovulation: {formatDate(date, DateFormats.MonthDay)}
+                <ThemedText style={{ fontWeight: 'bold', color: statusColor }}>{statusText}</ThemedText>
+              </ThemedText>
+              <ThemedText
+                style={{
+                  color: textColor,
+                  fontSize: 12,
+                  marginTop: 5
+                }}
+              >
+                Fertile Window: {formatDate(fertileWindowStart, DateFormats.MonthDay)} - {formatDate(date, DateFormats.MonthDay)}
+              </ThemedText>
+            </ThemedView>
+          );
+        })}
+      </ThemedView>
+    );
+  }, [predictedOvulations, predictedHeadingColor, textColor]); // Independent of periodDuration
 
   return (
     <>
