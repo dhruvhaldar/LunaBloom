@@ -265,7 +265,7 @@ exports[`PredictionSummary renders correctly 1`] = `
       Predicted Ovulations
     </Text>
     <View
-      accessibilityLabel="Ovulation on 14 Jan. Fertile window from 9 Jan to 14 Jan"
+      accessibilityLabel="Ovulation on 14 Jan, in 18 days. Fertile window from 9 Jan to 14 Jan"
       accessible={true}
       style={
         [
@@ -308,6 +308,29 @@ exports[`PredictionSummary renders correctly 1`] = `
       >
         Ovulation:
         14 Jan
+        <Text
+          style={
+            [
+              {
+                "color": "#1D3557",
+              },
+              {
+                "fontSize": 16,
+                "lineHeight": 24,
+              },
+              undefined,
+              undefined,
+              undefined,
+              undefined,
+              {
+                "color": "#000",
+                "fontWeight": "bold",
+              },
+            ]
+          }
+        >
+           (in 18 days)
+        </Text>
       </Text>
       <Text
         style={
@@ -338,7 +361,7 @@ exports[`PredictionSummary renders correctly 1`] = `
       </Text>
     </View>
     <View
-      accessibilityLabel="Ovulation on 14 Feb. Fertile window from 9 Feb to 14 Feb"
+      accessibilityLabel="Ovulation on 14 Feb, in 49 days. Fertile window from 9 Feb to 14 Feb"
       accessible={true}
       style={
         [
@@ -381,6 +404,29 @@ exports[`PredictionSummary renders correctly 1`] = `
       >
         Ovulation:
         14 Feb
+        <Text
+          style={
+            [
+              {
+                "color": "#1D3557",
+              },
+              {
+                "fontSize": 16,
+                "lineHeight": 24,
+              },
+              undefined,
+              undefined,
+              undefined,
+              undefined,
+              {
+                "color": "#000",
+                "fontWeight": "bold",
+              },
+            ]
+          }
+        >
+           (in 49 days)
+        </Text>
       </Text>
       <Text
         style={
