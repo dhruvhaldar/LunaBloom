@@ -1,5 +1,5 @@
-import React, { memo } from 'react';
-import { StyleSheet, View, TouchableOpacity, StyleProp, ViewStyle } from 'react-native';
+import React, { memo, useRef, useEffect } from 'react';
+import { StyleSheet, View, TouchableOpacity, Animated } from 'react-native';
 import { IconSymbol } from '@/components/ui/IconSymbol';
 import { ThemedText } from '@/components/ThemedText';
 
@@ -14,7 +14,28 @@ interface SelectionButtonProps {
     textColor: string;
   };
   accessibilityLabel: string;
+  accessibilityHint?: string;
 }
+
+// Helper component for animating icon entry
+const AnimatedIcon = ({ children }: { children: React.ReactNode }) => {
+  const scale = useRef(new Animated.Value(0)).current;
+
+  useEffect(() => {
+    Animated.spring(scale, {
+      toValue: 1,
+      friction: 5,
+      tension: 40,
+      useNativeDriver: true,
+    }).start();
+  }, [scale]);
+
+  return (
+    <Animated.View style={{ transform: [{ scale }] }}>
+      {children}
+    </Animated.View>
+  );
+};
 
 const SelectionButton = memo(function SelectionButton({
   label,
@@ -23,6 +44,7 @@ const SelectionButton = memo(function SelectionButton({
   type,
   colors,
   accessibilityLabel,
+  accessibilityHint,
 }: SelectionButtonProps) {
   return (
     <TouchableOpacity
@@ -35,15 +57,18 @@ const SelectionButton = memo(function SelectionButton({
       accessibilityRole={type}
       accessibilityState={{ checked: isSelected }}
       accessibilityLabel={accessibilityLabel}
+      accessibilityHint={accessibilityHint}
     >
       <View style={styles.content}>
         {isSelected && (
-          <IconSymbol
-            name="checkmark"
-            size={16}
-            color={colors.textColor}
-            style={styles.icon}
-          />
+          <AnimatedIcon>
+            <IconSymbol
+              name="checkmark"
+              size={16}
+              color={colors.textColor}
+              style={styles.icon}
+            />
+          </AnimatedIcon>
         )}
         <ThemedText
           style={[
