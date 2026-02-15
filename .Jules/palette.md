@@ -29,3 +29,7 @@
 ## 2026-02-13 - Character Count Feedback
 **Learning:** `maxLength` on inputs prevents excess text but leaves users guessing the limit until they hit it, causing frustration when typing long messages.
 **Action:** Add a dynamic `current/max` character count indicator that appears on typing and changes color near the limit (90%) to provide proactive feedback and reduce frustration.
+
+## 2026-02-26 - Animated Micro-Interactions
+**Learning:** Static checkbox/radio selection states can feel lifeless and lack immediate visual feedback, leading to uncertainty about whether the action was registered.
+**Action:** Implement a spring-based scale animation for the selection indicator (icon) to provide delightful visual confirmation, and add `accessibilityHint` to clarify the action's effect (e.g., "Logs this symptom").

@@ -68,4 +68,22 @@ describe('SelectionButton', () => {
     expect(mockToggle).toHaveBeenCalledWith('Test Option');
     expect(mockToggle).toHaveBeenCalledTimes(1);
   });
+
+  it('passes accessibilityHint to TouchableOpacity', () => {
+    const hint = 'Double tap to select';
+    const { getByRole } = render(
+      <SelectionButton
+        label="Test Option"
+        isSelected={false}
+        onToggle={mockToggle}
+        type="checkbox"
+        colors={colors}
+        accessibilityLabel="Test Option"
+        accessibilityHint={hint}
+      />
+    );
+
+    const button = getByRole('checkbox');
+    expect(button.props.accessibilityHint).toBe(hint);
+  });
 });
