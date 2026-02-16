@@ -23,6 +23,7 @@ export function EmptyState({ title, message, icon, actionLabel, onAction, style 
   const fadeAnim = useRef(new Animated.Value(0)).current;
   const scaleAnim = useRef(new Animated.Value(0.8)).current;
   const slideAnim = useRef(new Animated.Value(20)).current;
+  const floatAnim = useRef(new Animated.Value(0)).current;
 
   useEffect(() => {
     Animated.parallel([
@@ -44,13 +45,41 @@ export function EmptyState({ title, message, icon, actionLabel, onAction, style 
         useNativeDriver: true,
         easing: Easing.out(Easing.cubic),
       }),
-    ]).start();
-  }, [fadeAnim, scaleAnim, slideAnim]);
+    ]).start(() => {
+      // Start floating animation after entry
+      Animated.loop(
+        Animated.sequence([
+          Animated.timing(floatAnim, {
+            toValue: -10,
+            duration: 2000,
+            easing: Easing.inOut(Easing.ease),
+            useNativeDriver: true,
+          }),
+          Animated.timing(floatAnim, {
+            toValue: 0,
+            duration: 2000,
+            easing: Easing.inOut(Easing.ease),
+            useNativeDriver: true,
+          }),
+        ])
+      ).start();
+    });
+  }, [fadeAnim, scaleAnim, slideAnim, floatAnim]);
 
   return (
     <ThemedView style={[styles.container, style]}>
       {icon && (
-        <Animated.View style={{ opacity: fadeAnim, transform: [{ scale: scaleAnim }] }}>
+        <Animated.View
+          style={{
+            opacity: fadeAnim,
+            transform: [
+              { scale: scaleAnim },
+              { translateY: floatAnim }
+            ]
+          }}
+          accessibilityRole="image"
+          accessibilityLabel={`${title} illustration`}
+        >
           <IconSymbol
             name={icon}
             size={80}
