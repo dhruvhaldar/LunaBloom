@@ -42,32 +42,31 @@ const PredictionSummary = React.memo(function PredictionSummary({
           const periodEndDate = new Date(date);
           periodEndDate.setDate(periodEndDate.getDate() + periodDurationNum - 1);
 
-          // Calculate days remaining for the next period
+          // Calculate days remaining
           let daysRemainingText = '';
           let daysRemainingLabel = '';
           let isLate = false;
-          if (index === 0) {
-            const target = new Date(date);
-            target.setHours(0, 0, 0, 0);
-            const diffTime = target.getTime() - todayTime;
-            const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
 
-            if (diffDays === 0) {
-              daysRemainingText = ' (Today)';
-              daysRemainingLabel = ', starting today';
-            } else if (diffDays === 1) {
-              daysRemainingText = ' (Tomorrow)';
-              daysRemainingLabel = ', starting tomorrow';
-            } else if (diffDays > 1) {
-              daysRemainingText = ` (in ${diffDays} days)`;
-              daysRemainingLabel = `, in ${diffDays} days`;
-            } else if (diffDays < 0) {
-              isLate = true;
-              const absDays = Math.abs(diffDays);
-              const daysString = absDays === 1 ? 'day' : 'days';
-              daysRemainingText = ` (${absDays} ${daysString} late)`;
-              daysRemainingLabel = `, Warning: ${absDays} ${daysString} late`;
-            }
+          const target = new Date(date);
+          target.setHours(0, 0, 0, 0);
+          const diffTime = target.getTime() - todayTime;
+          const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+
+          if (diffDays === 0) {
+            daysRemainingText = ' (Today)';
+            daysRemainingLabel = ', starting today';
+          } else if (diffDays === 1) {
+            daysRemainingText = ' (Tomorrow)';
+            daysRemainingLabel = ', starting tomorrow';
+          } else if (diffDays > 1) {
+            daysRemainingText = ` (in ${diffDays} days)`;
+            daysRemainingLabel = `, in ${diffDays} days`;
+          } else if (diffDays < 0) {
+            isLate = true;
+            const absDays = Math.abs(diffDays);
+            const daysString = absDays === 1 ? 'day' : 'days';
+            daysRemainingText = ` (${absDays} ${daysString} late)`;
+            daysRemainingLabel = `, Warning: ${absDays} ${daysString} late`;
           }
 
           const lateColor = '#E63946';
