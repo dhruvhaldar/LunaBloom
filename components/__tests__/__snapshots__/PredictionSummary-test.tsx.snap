@@ -135,7 +135,7 @@ exports[`PredictionSummary renders correctly 1`] = `
       </Text>
     </View>
     <View
-      accessibilityLabel="Predicted period starting 1 Feb, ending 5 Feb"
+      accessibilityLabel="Predicted period starting 1 Feb, in 36 days, ending 5 Feb"
       accessible={true}
       style={
         [
@@ -197,7 +197,9 @@ exports[`PredictionSummary renders correctly 1`] = `
               },
             ]
           }
-        />
+        >
+           (in 36 days)
+        </Text>
       </Text>
       <Text
         style={
