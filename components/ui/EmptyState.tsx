@@ -26,7 +26,8 @@ export function EmptyState({ title, message, icon, actionLabel, onAction, style 
   const floatAnim = useRef(new Animated.Value(0)).current;
 
   useEffect(() => {
-    Animated.parallel([
+    let loopAnimation: Animated.CompositeAnimation | null = null;
+    const entryAnimation = Animated.parallel([
       Animated.timing(fadeAnim, {
         toValue: 1,
         duration: 800,
@@ -45,29 +46,43 @@ export function EmptyState({ title, message, icon, actionLabel, onAction, style 
         useNativeDriver: true,
         easing: Easing.out(Easing.cubic),
       }),
-    ]).start(() => {
-      // Start floating animation after entry
-      Animated.loop(
-        Animated.sequence([
-          Animated.timing(floatAnim, {
-            toValue: -10,
-            duration: 2000,
-            easing: Easing.inOut(Easing.ease),
-            useNativeDriver: true,
-          }),
-          Animated.timing(floatAnim, {
-            toValue: 0,
-            duration: 2000,
-            easing: Easing.inOut(Easing.ease),
-            useNativeDriver: true,
-          }),
-        ])
-      ).start();
+    ]);
+
+    entryAnimation.start(({ finished }) => {
+      if (finished) {
+        // Start floating animation after entry
+        loopAnimation = Animated.loop(
+          Animated.sequence([
+            Animated.timing(floatAnim, {
+              toValue: -10,
+              duration: 2000,
+              easing: Easing.inOut(Easing.ease),
+              useNativeDriver: true,
+            }),
+            Animated.timing(floatAnim, {
+              toValue: 0,
+              duration: 2000,
+              easing: Easing.inOut(Easing.ease),
+              useNativeDriver: true,
+            }),
+          ])
+        );
+        loopAnimation.start();
+      }
     });
+
+    return () => {
+      entryAnimation.stop();
+      loopAnimation?.stop();
+    };
   }, [fadeAnim, scaleAnim, slideAnim, floatAnim]);
 
   return (
-    <ThemedView style={[styles.container, style]}>
+    <ThemedView
+      style={[styles.container, style]}
+      testID="empty-state-container"
+      accessibilityLiveRegion="polite"
+    >
       {icon && (
         <Animated.View
           style={{
