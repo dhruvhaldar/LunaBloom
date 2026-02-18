@@ -43,7 +43,7 @@ describe('EmptyState', () => {
 
   it('renders action button and handles press', () => {
     const onAction = jest.fn();
-    const { getByText, getByRole } = render(
+    const { getByRole } = render(
       <EmptyState
         title="No Data"
         message="Message"
