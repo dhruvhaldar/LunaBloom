@@ -11,34 +11,36 @@ import { Image } from 'react-native';
 
 // Custom tab button component with animation
 // Optimization: Moved outside TabLayout to prevent re-creation on every render
-const AnimatedTabButton = ({ children, onPress, accessibilityLabel }: { children: React.ReactNode, onPress?: any, accessibilityLabel?: string }) => {
+const AnimatedTabButton = (props: any) => {
+  const { children, onPressIn, onPressOut, ...rest } = props;
   const scaleAnim = useRef(new Animated.Value(1)).current;
 
-  const handlePressIn = () => {
+  const handlePressIn = (e: any) => {
     Animated.spring(scaleAnim, {
       toValue: 0.9,
       useNativeDriver: true,
       bounciness: 10,
       speed: 80,
     }).start();
+    onPressIn?.(e);
   };
 
-  const handlePressOut = () => {
+  const handlePressOut = (e: any) => {
     Animated.spring(scaleAnim, {
       toValue: 1,
       useNativeDriver: true,
       bounciness: 80,
       speed: 0.4,
     }).start();
+    onPressOut?.(e);
   };
 
   return (
     <TouchableOpacity
-      style={styles.tabButtonContainer}
-      onPress={onPress}
+      {...rest}
       onPressIn={handlePressIn}
       onPressOut={handlePressOut}
-      accessibilityLabel={accessibilityLabel}
+      style={styles.tabButtonContainer}
       hitSlop={{ top: 20, bottom: 20, left: 20, right: 20 }}
     >
       <Animated.View style={{
