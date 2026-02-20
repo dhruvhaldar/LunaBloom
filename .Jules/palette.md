@@ -33,3 +33,7 @@
 ## 2026-02-26 - Animated Micro-Interactions
 **Learning:** Static checkbox/radio selection states can feel lifeless and lack immediate visual feedback, leading to uncertainty about whether the action was registered.
 **Action:** Implement a spring-based scale animation for the selection indicator (icon) to provide delightful visual confirmation, and add `accessibilityHint` to clarify the action's effect (e.g., "Logs this symptom").
+
+## 2026-03-01 - Haptic Limit Feedback
+**Learning:** Visual-only character limits (like red text) are missed by users focused on the keyboard or when typing quickly.
+**Action:** Combine visual feedback (color change) with distinct haptic feedback (e.g., `Haptics.notificationAsync(Warning)`) when the user attempts to type past the limit to reinforce the constraint.
