@@ -1,5 +1,6 @@
 import React, { useState, useCallback, useImperativeHandle, forwardRef, memo, useRef } from 'react';
-import { TextInput, StyleSheet, TouchableOpacity, View } from 'react-native';
+import { TextInput, StyleSheet, TouchableOpacity, View, Platform } from 'react-native';
+import * as Haptics from 'expo-haptics';
 import { ThemedView } from '@/components/ThemedView';
 import { ThemedText } from '@/components/ThemedText';
 import { IconSymbol } from '@/components/ui/IconSymbol';
@@ -34,6 +35,9 @@ export const NotesInput = memo(forwardRef<NotesInputHandle, NotesInputProps>(({
 
   const handleNotesChange = useCallback((text: string) => {
     if (!validateInputLength(text, MAX_NOTES_LENGTH)) {
+        if (Platform.OS !== 'web') {
+          Haptics.notificationAsync(Haptics.NotificationFeedbackType.Warning);
+        }
         return;
     }
     setNotes(text);
@@ -84,7 +88,12 @@ export const NotesInput = memo(forwardRef<NotesInputHandle, NotesInputProps>(({
         )}
       </View>
       <ThemedText
-        style={{ color: textColor, fontSize: 10, textAlign: 'right' }}
+        style={{
+          color: notes.length > MAX_NOTES_LENGTH * 0.9 ? '#E63946' : textColor,
+          fontSize: 10,
+          textAlign: 'right',
+          fontWeight: notes.length > MAX_NOTES_LENGTH * 0.9 ? 'bold' : 'normal',
+        }}
         accessibilityLabel={`${notes.length} characters used out of ${MAX_NOTES_LENGTH}`}
       >
         {notes.length}/{MAX_NOTES_LENGTH}
