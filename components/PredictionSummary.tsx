@@ -1,8 +1,9 @@
 import React, { useMemo } from 'react';
-import { StyleSheet } from 'react-native';
+import { StyleSheet, View } from 'react-native';
 import { ThemedText } from '@/components/ThemedText';
 import { ThemedView } from '@/components/ThemedView';
 import { formatDate, DateFormats } from '@/utils/dateFormatter';
+import { IconSymbol } from '@/components/ui/IconSymbol';
 
 interface PredictionSummaryProps {
   predictedPeriods: Date[];
@@ -73,30 +74,38 @@ const PredictionSummary = React.memo(function PredictionSummary({
           const itemBorderColor = isLate ? lateColor : textColor;
           const itemBorderWidth = isLate ? 2 : 1;
           const daysTextColor = isLate ? lateColor : textColor;
+          const backgroundColor = isLate ? 'rgba(230, 57, 70, 0.1)' : undefined;
 
           return (
             <ThemedView
               key={index}
               style={[
                 styles.predictionItem,
-                { borderColor: itemBorderColor, borderWidth: itemBorderWidth }
+                { borderColor: itemBorderColor, borderWidth: itemBorderWidth, backgroundColor }
               ]}
               accessible={true}
               accessibilityLabel={`Predicted period starting ${formatDate(date, DateFormats.MonthDay)}${daysRemainingLabel}, ending ${formatDate(periodEndDate, DateFormats.MonthDay)}`}
             >
-              <ThemedText style={{ color: textColor }}>
-                {formatDate(date, DateFormats.MonthDay)}
-                <ThemedText style={{ fontWeight: 'bold', color: daysTextColor }}>{daysRemainingText}</ThemedText>
-              </ThemedText>
-              <ThemedText
-                style={{
-                  color: textColor,
-                  fontSize: 12,
-                  marginTop: 5
-                }}
-              >
-                {formatDate(date, DateFormats.MonthDay)} - {formatDate(periodEndDate, DateFormats.MonthDay)}
-              </ThemedText>
+              <View style={styles.row}>
+                {isLate && (
+                  <IconSymbol name="calendar.badge.exclamationmark" size={24} color={lateColor} style={{ marginRight: 10 }} />
+                )}
+                <View style={{ flex: 1 }}>
+                  <ThemedText style={{ color: textColor }}>
+                    {formatDate(date, DateFormats.MonthDay)}
+                    <ThemedText style={{ fontWeight: 'bold', color: daysTextColor }}>{daysRemainingText}</ThemedText>
+                  </ThemedText>
+                  <ThemedText
+                    style={{
+                      color: textColor,
+                      fontSize: 12,
+                      marginTop: 5
+                    }}
+                  >
+                    {formatDate(date, DateFormats.MonthDay)} - {formatDate(periodEndDate, DateFormats.MonthDay)}
+                  </ThemedText>
+                </View>
+              </View>
             </ThemedView>
           );
         })}
@@ -131,43 +140,59 @@ const PredictionSummary = React.memo(function PredictionSummary({
           let statusText = '';
           let statusLabel = '';
           let statusColor = textColor;
+          let backgroundColor: string | undefined = undefined;
+          let iconName: 'exclamationmark.triangle.fill' | 'sparkles' | undefined = undefined;
 
           if (diffDays === 0) {
             statusText = ' (Today! 🥚)';
             statusLabel = ', Today is ovulation day';
             statusColor = '#E63946'; // Red/Warning color for importance
+            backgroundColor = 'rgba(230, 57, 70, 0.1)';
+            iconName = 'exclamationmark.triangle.fill';
           } else if (diffDays > 0 && diffDays <= 5) {
             statusText = ' (High Chance 🌟)';
             statusLabel = ', High chance of fertility';
             statusColor = '#2a9d8f'; // Green/Success color for fertility
+            backgroundColor = 'rgba(42, 157, 143, 0.1)';
+            iconName = 'sparkles';
           } else if (diffDays > 5) {
             statusText = ` (in ${diffDays} days)`;
             statusLabel = `, in ${diffDays} days`;
           }
+
+          const itemBorderColor = iconName ? statusColor : textColor;
+          const itemBorderWidth = iconName ? 2 : 1;
 
           return (
             <ThemedView
               key={index}
               style={[
                 styles.predictionItem,
-                { borderColor: textColor, borderWidth: 1 }
+                { borderColor: itemBorderColor, borderWidth: itemBorderWidth, backgroundColor }
               ]}
               accessible={true}
               accessibilityLabel={`Ovulation on ${formatDate(date, DateFormats.MonthDay)}${statusLabel}. Fertile window from ${formatDate(fertileWindowStart, DateFormats.MonthDay)} to ${formatDate(date, DateFormats.MonthDay)}`}
             >
-              <ThemedText style={{ color: textColor }}>
-                Ovulation: {formatDate(date, DateFormats.MonthDay)}
-                <ThemedText style={{ fontWeight: 'bold', color: statusColor }}>{statusText}</ThemedText>
-              </ThemedText>
-              <ThemedText
-                style={{
-                  color: textColor,
-                  fontSize: 12,
-                  marginTop: 5
-                }}
-              >
-                Fertile Window: {formatDate(fertileWindowStart, DateFormats.MonthDay)} - {formatDate(date, DateFormats.MonthDay)}
-              </ThemedText>
+              <View style={styles.row}>
+                {iconName && (
+                  <IconSymbol name={iconName} size={24} color={statusColor} style={{ marginRight: 10 }} />
+                )}
+                <View style={{ flex: 1 }}>
+                  <ThemedText style={{ color: textColor }}>
+                    Ovulation: {formatDate(date, DateFormats.MonthDay)}
+                    <ThemedText style={{ fontWeight: 'bold', color: statusColor }}>{statusText}</ThemedText>
+                  </ThemedText>
+                  <ThemedText
+                    style={{
+                      color: textColor,
+                      fontSize: 12,
+                      marginTop: 5
+                    }}
+                  >
+                    Fertile Window: {formatDate(fertileWindowStart, DateFormats.MonthDay)} - {formatDate(date, DateFormats.MonthDay)}
+                  </ThemedText>
+                </View>
+              </View>
             </ThemedView>
           );
         })}
@@ -193,6 +218,10 @@ const styles = StyleSheet.create({
     padding: 12,
     borderRadius: 8,
     marginBottom: 8,
+  },
+  row: {
+    flexDirection: 'row',
+    alignItems: 'center',
   },
 });
 
