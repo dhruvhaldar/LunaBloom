@@ -55,6 +55,7 @@ exports[`PredictionSummary renders correctly 1`] = `
               "padding": 12,
             },
             {
+              "backgroundColor": undefined,
               "borderColor": "#000",
               "borderWidth": 1,
             },
@@ -62,77 +63,94 @@ exports[`PredictionSummary renders correctly 1`] = `
         ]
       }
     >
-      <Text
+      <View
         style={
-          [
-            {
-              "color": "#1D3557",
-            },
-            {
-              "fontSize": 16,
-              "lineHeight": 24,
-            },
-            undefined,
-            undefined,
-            undefined,
-            undefined,
-            {
-              "color": "#000",
-            },
-          ]
+          {
+            "alignItems": "center",
+            "flexDirection": "row",
+          }
         }
       >
-        1 Jan
-        <Text
+        <View
           style={
-            [
-              {
-                "color": "#1D3557",
-              },
-              {
-                "fontSize": 16,
-                "lineHeight": 24,
-              },
-              undefined,
-              undefined,
-              undefined,
-              undefined,
-              {
-                "color": "#000",
-                "fontWeight": "bold",
-              },
-            ]
+            {
+              "flex": 1,
+            }
           }
         >
-           (in 5 days)
-        </Text>
-      </Text>
-      <Text
-        style={
-          [
-            {
-              "color": "#1D3557",
-            },
-            {
-              "fontSize": 16,
-              "lineHeight": 24,
-            },
-            undefined,
-            undefined,
-            undefined,
-            undefined,
-            {
-              "color": "#000",
-              "fontSize": 12,
-              "marginTop": 5,
-            },
-          ]
-        }
-      >
-        1 Jan
-         -
-        5 Jan
-      </Text>
+          <Text
+            style={
+              [
+                {
+                  "color": "#1D3557",
+                },
+                {
+                  "fontSize": 16,
+                  "lineHeight": 24,
+                },
+                undefined,
+                undefined,
+                undefined,
+                undefined,
+                {
+                  "color": "#000",
+                },
+              ]
+            }
+          >
+            1 Jan
+            <Text
+              style={
+                [
+                  {
+                    "color": "#1D3557",
+                  },
+                  {
+                    "fontSize": 16,
+                    "lineHeight": 24,
+                  },
+                  undefined,
+                  undefined,
+                  undefined,
+                  undefined,
+                  {
+                    "color": "#000",
+                    "fontWeight": "bold",
+                  },
+                ]
+              }
+            >
+               (in 5 days)
+            </Text>
+          </Text>
+          <Text
+            style={
+              [
+                {
+                  "color": "#1D3557",
+                },
+                {
+                  "fontSize": 16,
+                  "lineHeight": 24,
+                },
+                undefined,
+                undefined,
+                undefined,
+                undefined,
+                {
+                  "color": "#000",
+                  "fontSize": 12,
+                  "marginTop": 5,
+                },
+              ]
+            }
+          >
+            1 Jan
+             -
+            5 Jan
+          </Text>
+        </View>
+      </View>
     </View>
     <View
       accessibilityLabel="Predicted period starting 1 Feb, in 36 days, ending 5 Feb"
@@ -149,6 +167,7 @@ exports[`PredictionSummary renders correctly 1`] = `
               "padding": 12,
             },
             {
+              "backgroundColor": undefined,
               "borderColor": "#000",
               "borderWidth": 1,
             },
@@ -156,77 +175,94 @@ exports[`PredictionSummary renders correctly 1`] = `
         ]
       }
     >
-      <Text
+      <View
         style={
-          [
-            {
-              "color": "#1D3557",
-            },
-            {
-              "fontSize": 16,
-              "lineHeight": 24,
-            },
-            undefined,
-            undefined,
-            undefined,
-            undefined,
-            {
-              "color": "#000",
-            },
-          ]
+          {
+            "alignItems": "center",
+            "flexDirection": "row",
+          }
         }
       >
-        1 Feb
-        <Text
+        <View
           style={
-            [
-              {
-                "color": "#1D3557",
-              },
-              {
-                "fontSize": 16,
-                "lineHeight": 24,
-              },
-              undefined,
-              undefined,
-              undefined,
-              undefined,
-              {
-                "color": "#000",
-                "fontWeight": "bold",
-              },
-            ]
+            {
+              "flex": 1,
+            }
           }
         >
-           (in 36 days)
-        </Text>
-      </Text>
-      <Text
-        style={
-          [
-            {
-              "color": "#1D3557",
-            },
-            {
-              "fontSize": 16,
-              "lineHeight": 24,
-            },
-            undefined,
-            undefined,
-            undefined,
-            undefined,
-            {
-              "color": "#000",
-              "fontSize": 12,
-              "marginTop": 5,
-            },
-          ]
-        }
-      >
-        1 Feb
-         -
-        5 Feb
-      </Text>
+          <Text
+            style={
+              [
+                {
+                  "color": "#1D3557",
+                },
+                {
+                  "fontSize": 16,
+                  "lineHeight": 24,
+                },
+                undefined,
+                undefined,
+                undefined,
+                undefined,
+                {
+                  "color": "#000",
+                },
+              ]
+            }
+          >
+            1 Feb
+            <Text
+              style={
+                [
+                  {
+                    "color": "#1D3557",
+                  },
+                  {
+                    "fontSize": 16,
+                    "lineHeight": 24,
+                  },
+                  undefined,
+                  undefined,
+                  undefined,
+                  undefined,
+                  {
+                    "color": "#000",
+                    "fontWeight": "bold",
+                  },
+                ]
+              }
+            >
+               (in 36 days)
+            </Text>
+          </Text>
+          <Text
+            style={
+              [
+                {
+                  "color": "#1D3557",
+                },
+                {
+                  "fontSize": 16,
+                  "lineHeight": 24,
+                },
+                undefined,
+                undefined,
+                undefined,
+                undefined,
+                {
+                  "color": "#000",
+                  "fontSize": 12,
+                  "marginTop": 5,
+                },
+              ]
+            }
+          >
+            1 Feb
+             -
+            5 Feb
+          </Text>
+        </View>
+      </View>
     </View>
   </View>,
   <View
@@ -281,6 +317,7 @@ exports[`PredictionSummary renders correctly 1`] = `
               "padding": 12,
             },
             {
+              "backgroundColor": undefined,
               "borderColor": "#000",
               "borderWidth": 1,
             },
@@ -288,79 +325,96 @@ exports[`PredictionSummary renders correctly 1`] = `
         ]
       }
     >
-      <Text
+      <View
         style={
-          [
-            {
-              "color": "#1D3557",
-            },
-            {
-              "fontSize": 16,
-              "lineHeight": 24,
-            },
-            undefined,
-            undefined,
-            undefined,
-            undefined,
-            {
-              "color": "#000",
-            },
-          ]
+          {
+            "alignItems": "center",
+            "flexDirection": "row",
+          }
         }
       >
-        Ovulation:
-        14 Jan
-        <Text
+        <View
           style={
-            [
-              {
-                "color": "#1D3557",
-              },
-              {
-                "fontSize": 16,
-                "lineHeight": 24,
-              },
-              undefined,
-              undefined,
-              undefined,
-              undefined,
-              {
-                "color": "#000",
-                "fontWeight": "bold",
-              },
-            ]
+            {
+              "flex": 1,
+            }
           }
         >
-           (in 18 days)
-        </Text>
-      </Text>
-      <Text
-        style={
-          [
-            {
-              "color": "#1D3557",
-            },
-            {
-              "fontSize": 16,
-              "lineHeight": 24,
-            },
-            undefined,
-            undefined,
-            undefined,
-            undefined,
-            {
-              "color": "#000",
-              "fontSize": 12,
-              "marginTop": 5,
-            },
-          ]
-        }
-      >
-        Fertile Window:
-        9 Jan
-         -
-        14 Jan
-      </Text>
+          <Text
+            style={
+              [
+                {
+                  "color": "#1D3557",
+                },
+                {
+                  "fontSize": 16,
+                  "lineHeight": 24,
+                },
+                undefined,
+                undefined,
+                undefined,
+                undefined,
+                {
+                  "color": "#000",
+                },
+              ]
+            }
+          >
+            Ovulation:
+            14 Jan
+            <Text
+              style={
+                [
+                  {
+                    "color": "#1D3557",
+                  },
+                  {
+                    "fontSize": 16,
+                    "lineHeight": 24,
+                  },
+                  undefined,
+                  undefined,
+                  undefined,
+                  undefined,
+                  {
+                    "color": "#000",
+                    "fontWeight": "bold",
+                  },
+                ]
+              }
+            >
+               (in 18 days)
+            </Text>
+          </Text>
+          <Text
+            style={
+              [
+                {
+                  "color": "#1D3557",
+                },
+                {
+                  "fontSize": 16,
+                  "lineHeight": 24,
+                },
+                undefined,
+                undefined,
+                undefined,
+                undefined,
+                {
+                  "color": "#000",
+                  "fontSize": 12,
+                  "marginTop": 5,
+                },
+              ]
+            }
+          >
+            Fertile Window:
+            9 Jan
+             -
+            14 Jan
+          </Text>
+        </View>
+      </View>
     </View>
     <View
       accessibilityLabel="Ovulation on 14 Feb, in 49 days. Fertile window from 9 Feb to 14 Feb"
@@ -377,6 +431,7 @@ exports[`PredictionSummary renders correctly 1`] = `
               "padding": 12,
             },
             {
+              "backgroundColor": undefined,
               "borderColor": "#000",
               "borderWidth": 1,
             },
@@ -384,79 +439,96 @@ exports[`PredictionSummary renders correctly 1`] = `
         ]
       }
     >
-      <Text
+      <View
         style={
-          [
-            {
-              "color": "#1D3557",
-            },
-            {
-              "fontSize": 16,
-              "lineHeight": 24,
-            },
-            undefined,
-            undefined,
-            undefined,
-            undefined,
-            {
-              "color": "#000",
-            },
-          ]
+          {
+            "alignItems": "center",
+            "flexDirection": "row",
+          }
         }
       >
-        Ovulation:
-        14 Feb
-        <Text
+        <View
           style={
-            [
-              {
-                "color": "#1D3557",
-              },
-              {
-                "fontSize": 16,
-                "lineHeight": 24,
-              },
-              undefined,
-              undefined,
-              undefined,
-              undefined,
-              {
-                "color": "#000",
-                "fontWeight": "bold",
-              },
-            ]
+            {
+              "flex": 1,
+            }
           }
         >
-           (in 49 days)
-        </Text>
-      </Text>
-      <Text
-        style={
-          [
-            {
-              "color": "#1D3557",
-            },
-            {
-              "fontSize": 16,
-              "lineHeight": 24,
-            },
-            undefined,
-            undefined,
-            undefined,
-            undefined,
-            {
-              "color": "#000",
-              "fontSize": 12,
-              "marginTop": 5,
-            },
-          ]
-        }
-      >
-        Fertile Window:
-        9 Feb
-         -
-        14 Feb
-      </Text>
+          <Text
+            style={
+              [
+                {
+                  "color": "#1D3557",
+                },
+                {
+                  "fontSize": 16,
+                  "lineHeight": 24,
+                },
+                undefined,
+                undefined,
+                undefined,
+                undefined,
+                {
+                  "color": "#000",
+                },
+              ]
+            }
+          >
+            Ovulation:
+            14 Feb
+            <Text
+              style={
+                [
+                  {
+                    "color": "#1D3557",
+                  },
+                  {
+                    "fontSize": 16,
+                    "lineHeight": 24,
+                  },
+                  undefined,
+                  undefined,
+                  undefined,
+                  undefined,
+                  {
+                    "color": "#000",
+                    "fontWeight": "bold",
+                  },
+                ]
+              }
+            >
+               (in 49 days)
+            </Text>
+          </Text>
+          <Text
+            style={
+              [
+                {
+                  "color": "#1D3557",
+                },
+                {
+                  "fontSize": 16,
+                  "lineHeight": 24,
+                },
+                undefined,
+                undefined,
+                undefined,
+                undefined,
+                {
+                  "color": "#000",
+                  "fontSize": 12,
+                  "marginTop": 5,
+                },
+              ]
+            }
+          >
+            Fertile Window:
+            9 Feb
+             -
+            14 Feb
+          </Text>
+        </View>
+      </View>
     </View>
   </View>,
 ]
