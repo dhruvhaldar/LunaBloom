@@ -1,5 +1,5 @@
 import React, { memo, useRef, useEffect } from 'react';
-import { StyleSheet, View, TouchableOpacity, Animated } from 'react-native';
+import { StyleSheet, View, TouchableOpacity, Animated, Platform } from 'react-native';
 import { IconSymbol } from '@/components/ui/IconSymbol';
 import { ThemedText } from '@/components/ThemedText';
 
@@ -46,40 +46,68 @@ const SelectionButton = memo(function SelectionButton({
   accessibilityLabel,
   accessibilityHint,
 }: SelectionButtonProps) {
+  const scale = useRef(new Animated.Value(1)).current;
+
+  const handlePressIn = () => {
+    Animated.spring(scale, {
+      toValue: 0.95,
+      useNativeDriver: true,
+      speed: 20,
+      bounciness: 4,
+    }).start();
+  };
+
+  const handlePressOut = () => {
+    Animated.spring(scale, {
+      toValue: 1,
+      useNativeDriver: true,
+      speed: 20,
+      bounciness: 4,
+    }).start();
+  };
+
   return (
-    <TouchableOpacity
-      style={[
-        styles.button,
-        { borderColor: colors.borderColor },
-        isSelected && { backgroundColor: colors.selectedBackgroundColor },
-      ]}
-      onPress={() => onToggle(label)}
-      accessibilityRole={type}
-      accessibilityState={{ checked: isSelected }}
-      accessibilityLabel={accessibilityLabel}
-      accessibilityHint={accessibilityHint}
-    >
-      <View style={styles.content}>
-        {isSelected && (
-          <AnimatedIcon>
-            <IconSymbol
-              name="checkmark"
-              size={16}
-              color={colors.textColor}
-              style={styles.icon}
-            />
-          </AnimatedIcon>
-        )}
-        <ThemedText
-          style={[
-            { color: colors.textColor },
-            isSelected && styles.selectedText,
-          ]}
-        >
-          {label}
-        </ThemedText>
-      </View>
-    </TouchableOpacity>
+    <Animated.View style={{ transform: [{ scale }] }}>
+      <TouchableOpacity
+        style={[
+          styles.button,
+          { borderColor: colors.borderColor },
+          isSelected && { backgroundColor: colors.selectedBackgroundColor },
+        ]}
+        onPress={() => onToggle(label)}
+        onPressIn={handlePressIn}
+        onPressOut={handlePressOut}
+        accessibilityRole={type}
+        accessibilityState={{ checked: isSelected }}
+        accessibilityLabel={accessibilityLabel}
+        accessibilityHint={accessibilityHint}
+        // Important for web accessibility to ensure click events fire correctly
+        activeOpacity={0.7}
+        // Force aria-checked on web if accessibilityState fails
+        {...(Platform.OS === 'web' ? { 'aria-checked': isSelected } : {})}
+      >
+        <View style={styles.content}>
+          {isSelected && (
+            <AnimatedIcon>
+              <IconSymbol
+                name="checkmark"
+                size={16}
+                color={colors.textColor}
+                style={styles.icon}
+              />
+            </AnimatedIcon>
+          )}
+          <ThemedText
+            style={[
+              { color: colors.textColor },
+              isSelected && styles.selectedText,
+            ]}
+          >
+            {label}
+          </ThemedText>
+        </View>
+      </TouchableOpacity>
+    </Animated.View>
   );
 });
 
