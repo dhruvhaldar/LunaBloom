@@ -1,5 +1,7 @@
 import React, { useState, forwardRef, useImperativeHandle, useRef, useCallback } from 'react';
 import { TextInput, View, TouchableOpacity, ActivityIndicator, StyleSheet, Platform } from 'react-native';
+import Animated, { useSharedValue, useAnimatedStyle, withSequence, withTiming } from 'react-native-reanimated';
+import * as Haptics from 'expo-haptics';
 import { ThemedText } from './ThemedText';
 import { IconSymbol } from '@/components/ui/IconSymbol';
 import { MAX_INPUT_LENGTH } from '@/utils/validation';
@@ -22,6 +24,15 @@ export const ChatInput = forwardRef<ChatInputHandle, ChatInputProps>(({ onSubmit
   const [isFocused, setIsFocused] = useState(false);
   const inputRef = useRef<TextInput>(null);
 
+  // Animation value for shake
+  const shake = useSharedValue(0);
+
+  const shakeStyle = useAnimatedStyle(() => {
+    return {
+      transform: [{ translateX: shake.value }],
+    };
+  });
+
   useImperativeHandle(ref, () => ({
     getText: () => text,
     setText: (t: string) => setText(t),
@@ -35,6 +46,29 @@ export const ChatInput = forwardRef<ChatInputHandle, ChatInputProps>(({ onSubmit
     if (!isButtonDisabled) {
       onSubmit(text.trim());
       setText(''); // Auto-clear on submit
+    }
+  };
+
+  const handleTextChange = (newText: string) => {
+    if (newText.length > MAX_INPUT_LENGTH) {
+      // Trigger shake animation
+      shake.value = withSequence(
+        withTiming(-10, { duration: 50 }),
+        withTiming(10, { duration: 50 }),
+        withTiming(-10, { duration: 50 }),
+        withTiming(10, { duration: 50 }),
+        withTiming(0, { duration: 50 })
+      );
+
+      // Haptic feedback
+      if (Platform.OS !== 'web') {
+        Haptics.notificationAsync(Haptics.NotificationFeedbackType.Warning);
+      }
+
+      // Clamp text
+      setText(newText.slice(0, MAX_INPUT_LENGTH));
+    } else {
+      setText(newText);
     }
   };
 
@@ -64,7 +98,7 @@ export const ChatInput = forwardRef<ChatInputHandle, ChatInputProps>(({ onSubmit
               placeholder="Ask a menstrual health question..."
               placeholderTextColor={placeholderTextColor}
               value={text}
-              onChangeText={setText}
+              onChangeText={handleTextChange}
               onFocus={() => setIsFocused(true)}
               onBlur={() => setIsFocused(false)}
               editable={!isLoading}
@@ -72,7 +106,8 @@ export const ChatInput = forwardRef<ChatInputHandle, ChatInputProps>(({ onSubmit
               accessibilityHint="Double tap to enter text. Submit sends the question."
               returnKeyType="send"
               onSubmitEditing={handleSubmit}
-              maxLength={MAX_INPUT_LENGTH}
+              // Removed maxLength to allow custom handling with feedback
+              // maxLength={MAX_INPUT_LENGTH}
           />
           {text.length > 0 && !isLoading && (
             <TouchableOpacity
@@ -86,17 +121,20 @@ export const ChatInput = forwardRef<ChatInputHandle, ChatInputProps>(({ onSubmit
             </TouchableOpacity>
           )}
           {text.length > 0 && (
-            <ThemedText
-              style={{
-                textAlign: 'right',
-                fontSize: 12,
-                marginTop: 4,
-                marginRight: 5,
-                color: text.length > MAX_INPUT_LENGTH * 0.9 ? '#E63946' : placeholderTextColor,
-              }}
-            >
-              {text.length}/{MAX_INPUT_LENGTH}
-            </ThemedText>
+            <Animated.View style={shakeStyle}>
+              <ThemedText
+                style={{
+                  textAlign: 'right',
+                  fontSize: 12,
+                  marginTop: 4,
+                  marginRight: 5,
+                  color: text.length > MAX_INPUT_LENGTH * 0.9 ? '#E63946' : placeholderTextColor,
+                  fontWeight: text.length >= MAX_INPUT_LENGTH ? 'bold' : 'normal',
+                }}
+              >
+                {text.length}/{MAX_INPUT_LENGTH}
+              </ThemedText>
+            </Animated.View>
           )}
         </View>
 

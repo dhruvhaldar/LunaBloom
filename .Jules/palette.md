@@ -37,3 +37,7 @@
 ## 2026-03-01 - Haptic Limit Feedback
 **Learning:** Visual-only character limits (like red text) are missed by users focused on the keyboard or when typing quickly.
 **Action:** Combine visual feedback (color change) with distinct haptic feedback (e.g., `Haptics.notificationAsync(Warning)`) when the user attempts to type past the limit to reinforce the constraint.
+
+## 2026-03-10 - Feedback for Input Overflow
+**Learning:** Setting `maxLength` on a TextInput prevents the `onChangeText` event from firing when the user attempts to type beyond the limit, making it impossible to trigger feedback (like haptics or animation) for the overflow attempt.
+**Action:** Remove the `maxLength` prop and manually handle text truncation within the `onChangeText` handler. This allows detecting when the input length exceeds the limit, enabling immediate feedback (shake animation, haptics) before clamping the text.
