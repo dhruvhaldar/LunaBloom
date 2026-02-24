@@ -144,11 +144,11 @@ const PredictionSummary = React.memo(function PredictionSummary({
           let iconName: 'exclamationmark.triangle.fill' | 'sparkles' | undefined = undefined;
 
           if (diffDays === 0) {
-            statusText = ' (Today! 🥚)';
-            statusLabel = ', Today is ovulation day';
-            statusColor = '#E63946'; // Red/Warning color for importance
-            backgroundColor = 'rgba(230, 57, 70, 0.1)';
-            iconName = 'exclamationmark.triangle.fill';
+            statusText = ' (Peak Fertility! 🥚)';
+            statusLabel = ', Today is peak fertility day';
+            statusColor = '#2a9d8f'; // Teal/Success color for peak fertility
+            backgroundColor = 'rgba(42, 157, 143, 0.1)';
+            iconName = 'sparkles';
           } else if (diffDays > 0 && diffDays <= 5) {
             statusText = ' (High Chance 🌟)';
             statusLabel = ', High chance of fertility';
