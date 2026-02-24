@@ -41,3 +41,7 @@
 ## 2026-03-10 - Feedback for Input Overflow
 **Learning:** Setting `maxLength` on a TextInput prevents the `onChangeText` event from firing when the user attempts to type beyond the limit, making it impossible to trigger feedback (like haptics or animation) for the overflow attempt.
 **Action:** Remove the `maxLength` prop and manually handle text truncation within the `onChangeText` handler. This allows detecting when the input length exceeds the limit, enabling immediate feedback (shake animation, haptics) before clamping the text.
+
+## 2026-03-22 - Reframing Fertility Indicators
+**Learning:** Using warning icons (red triangles) for "Ovulation Day" in health apps can miscommunicate danger instead of a natural, positive biological event, causing unnecessary alarm.
+**Action:** Replace "warning" semantics with celebratory or neutral "success" indicators (e.g., sparkles, teal/gold colors) for peak fertility days to align with user goals (tracking health/conception) and reduce anxiety.
