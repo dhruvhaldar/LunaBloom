@@ -80,61 +80,61 @@ export const ChatInput = forwardRef<ChatInputHandle, ChatInputProps>(({ onSubmit
   return (
     <View style={styles.inputContainer}>
         <View style={styles.inputWrapper}>
-          <TextInput
-              ref={inputRef}
-              style={[
-                  styles.input,
-                  {
-                      color: textColor,
-                      borderWidth: isFocused ? 2 : 1,
-                      paddingRight: 40, // Add padding for clear button
-                      ...Platform.select({
-                          web: {
-                              outlineStyle: 'none'
-                          }
-                      })
-                  }
-              ]}
-              placeholder="Ask a menstrual health question..."
-              placeholderTextColor={placeholderTextColor}
-              value={text}
-              onChangeText={handleTextChange}
-              onFocus={() => setIsFocused(true)}
-              onBlur={() => setIsFocused(false)}
-              editable={!isLoading}
-              accessibilityLabel="Ask a menstrual health question"
-              accessibilityHint="Double tap to enter text. Submit sends the question."
-              returnKeyType="send"
-              onSubmitEditing={handleSubmit}
-              // Removed maxLength to allow custom handling with feedback
-              // maxLength={MAX_INPUT_LENGTH}
-          />
-          {text.length > 0 && !isLoading && (
-            <TouchableOpacity
-              style={styles.clearButton}
-              onPress={handleClear}
-              accessibilityLabel="Clear question"
-              accessibilityRole="button"
-              hitSlop={{ top: 10, bottom: 10, left: 10, right: 10 }}
-            >
-              <IconSymbol name="xmark.circle.fill" size={20} color={placeholderTextColor} />
-            </TouchableOpacity>
-          )}
-          {text.length > 0 && (
-            <Animated.View style={shakeStyle}>
-              <ThemedText
-                style={{
-                  textAlign: 'right',
-                  fontSize: 12,
-                  marginTop: 4,
-                  marginRight: 5,
-                  color: text.length > MAX_INPUT_LENGTH * 0.9 ? '#E63946' : placeholderTextColor,
-                  fontWeight: text.length >= MAX_INPUT_LENGTH ? 'bold' : 'normal',
-                }}
+          <Animated.View style={shakeStyle}>
+            <TextInput
+                ref={inputRef}
+                style={[
+                    styles.input,
+                    {
+                        color: textColor,
+                        borderWidth: isFocused ? 2 : 1,
+                        paddingRight: 40, // Add padding for clear button
+                        ...Platform.select({
+                            web: {
+                                outlineStyle: 'none'
+                            }
+                        })
+                    }
+                ]}
+                placeholder="Ask a menstrual health question..."
+                placeholderTextColor={placeholderTextColor}
+                value={text}
+                onChangeText={handleTextChange}
+                onFocus={() => setIsFocused(true)}
+                onBlur={() => setIsFocused(false)}
+                editable={!isLoading}
+                accessibilityLabel="Ask a menstrual health question"
+                accessibilityHint="Double tap to enter text. Submit sends the question."
+                returnKeyType="send"
+                onSubmitEditing={handleSubmit}
+                // Removed maxLength to allow custom handling with feedback
+                // maxLength={MAX_INPUT_LENGTH}
+            />
+            {text.length > 0 && !isLoading && (
+              <TouchableOpacity
+                style={styles.clearButton}
+                onPress={handleClear}
+                accessibilityLabel="Clear question"
+                accessibilityRole="button"
+                hitSlop={{ top: 10, bottom: 10, left: 10, right: 10 }}
               >
-                {text.length}/{MAX_INPUT_LENGTH}
-              </ThemedText>
-            </Animated.View>
+                <IconSymbol name="xmark.circle.fill" size={20} color={placeholderTextColor} />
+              </TouchableOpacity>
+            )}
+          </Animated.View>
+          {text.length > 0 && (
+            <ThemedText
+              style={{
+                textAlign: 'right',
+                fontSize: 12,
+                marginTop: 4,
+                marginRight: 5,
+                color: text.length > MAX_INPUT_LENGTH * 0.9 ? '#E63946' : placeholderTextColor,
+                fontWeight: text.length >= MAX_INPUT_LENGTH ? 'bold' : 'normal',
+              }}
+            >
+              {text.length}/{MAX_INPUT_LENGTH}
+            </ThemedText>
           )}
         </View>
 
