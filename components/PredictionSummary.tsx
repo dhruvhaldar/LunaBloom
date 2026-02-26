@@ -47,6 +47,7 @@ const PredictionSummary = React.memo(function PredictionSummary({
           let daysRemainingText = '';
           let daysRemainingLabel = '';
           let isLate = false;
+          let isUpcoming = false;
 
           const target = new Date(date);
           target.setHours(0, 0, 0, 0);
@@ -59,7 +60,11 @@ const PredictionSummary = React.memo(function PredictionSummary({
           } else if (diffDays === 1) {
             daysRemainingText = ' (Tomorrow)';
             daysRemainingLabel = ', starting tomorrow';
-          } else if (diffDays > 1) {
+          } else if (diffDays > 1 && diffDays <= 3) {
+            daysRemainingText = ` (in ${diffDays} days)`;
+            daysRemainingLabel = `, coming up in ${diffDays} days`;
+            isUpcoming = true;
+          } else if (diffDays > 3) {
             daysRemainingText = ` (in ${diffDays} days)`;
             daysRemainingLabel = `, in ${diffDays} days`;
           } else if (diffDays < 0) {
@@ -71,10 +76,12 @@ const PredictionSummary = React.memo(function PredictionSummary({
           }
 
           const lateColor = '#E63946';
-          const itemBorderColor = isLate ? lateColor : textColor;
-          const itemBorderWidth = isLate ? 2 : 1;
-          const daysTextColor = isLate ? lateColor : textColor;
-          const backgroundColor = isLate ? 'rgba(230, 57, 70, 0.1)' : undefined;
+          const upcomingColor = '#457B9D';
+
+          const itemBorderColor = isLate ? lateColor : (isUpcoming ? upcomingColor : textColor);
+          const itemBorderWidth = isLate || isUpcoming ? 2 : 1;
+          const daysTextColor = isLate ? lateColor : (isUpcoming ? upcomingColor : textColor);
+          const backgroundColor = isLate ? 'rgba(230, 57, 70, 0.1)' : (isUpcoming ? 'rgba(69, 123, 157, 0.1)' : undefined);
 
           return (
             <ThemedView
@@ -87,8 +94,13 @@ const PredictionSummary = React.memo(function PredictionSummary({
               accessibilityLabel={`Predicted period starting ${formatDate(date, DateFormats.MonthDay)}${daysRemainingLabel}, ending ${formatDate(periodEndDate, DateFormats.MonthDay)}`}
             >
               <View style={styles.row}>
-                {isLate && (
-                  <IconSymbol name="calendar.badge.exclamationmark" size={24} color={lateColor} style={{ marginRight: 10 }} />
+                {(isLate || isUpcoming) && (
+                  <IconSymbol
+                    name={isLate ? "calendar.badge.exclamationmark" : "calendar"}
+                    size={24}
+                    color={isLate ? lateColor : upcomingColor}
+                    style={{ marginRight: 10 }}
+                  />
                 )}
                 <View style={{ flex: 1 }}>
                   <ThemedText style={{ color: textColor }}>

@@ -31,6 +31,7 @@ const MAPPING = {
   'share': 'share',
   'sparkles': 'auto-awesome',
   'calendar.badge.exclamationmark': 'event-busy',
+  'calendar': 'calendar-today',
 } as Partial<
   Record<
     import('expo-symbols').SymbolViewProps['name'],
