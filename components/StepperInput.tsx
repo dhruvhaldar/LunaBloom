@@ -1,4 +1,4 @@
-import React, { useCallback, memo, useRef, useEffect } from 'react';
+import React, { useCallback, memo, useRef, useEffect, useState } from 'react';
 import {
   StyleSheet,
   TextInput,
@@ -35,6 +35,7 @@ export const StepperInput = memo(function StepperInput({
 }: StepperInputProps) {
   const textColor = useThemeColor({}, 'text');
   const borderColor = textColor;
+  const [isFocused, setIsFocused] = useState(false);
 
   // Ref to track value for interval callbacks to avoid stale closures
   const valueRef = useRef(value);
@@ -86,6 +87,17 @@ export const StepperInput = memo(function StepperInput({
     return () => stopTimer();
   }, [stopTimer]);
 
+  const handleFocus = useCallback(() => {
+    setIsFocused(true);
+  }, []);
+
+  const handleBlur = useCallback(() => {
+    setIsFocused(false);
+    if (onBlur) {
+      onBlur();
+    }
+  }, [onBlur]);
+
   const numericValue = parseInt(value, 10);
   const isAtMin = !isNaN(numericValue) && numericValue <= min;
   const isAtMax = !isNaN(numericValue) && numericValue >= max;
@@ -111,11 +123,24 @@ export const StepperInput = memo(function StepperInput({
       </TouchableOpacity>
 
       <TextInput
-        style={[styles.input, { color: textColor, borderColor }]}
+        style={[
+          styles.input,
+          {
+            color: textColor,
+            borderColor: isFocused ? '#E63946' : borderColor,
+            borderWidth: isFocused ? 2 : 1,
+            ...Platform.select({
+              web: {
+                outlineStyle: 'none',
+              },
+            }),
+          },
+        ]}
         keyboardType="numeric"
         value={value}
         onChangeText={onChangeText}
-        onBlur={onBlur}
+        onBlur={handleBlur}
+        onFocus={handleFocus}
         accessibilityLabel={label}
         accessibilityRole="spinbutton"
         accessibilityValue={{ min, max, now: numericValue || 0 }}
