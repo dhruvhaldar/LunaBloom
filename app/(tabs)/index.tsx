@@ -10,6 +10,7 @@ import { ThemedView } from '@/components/ThemedView';
 import ParallaxScrollView from '@/components/ParallaxScrollView';
 import { Image } from 'react-native';
 import PredictionSummary from '@/components/PredictionSummary';
+import { IconSymbol } from '@/components/ui/IconSymbol';
 import { StepperInput } from '@/components/StepperInput';
 import SelectionButton from '@/components/SelectionButton';
 import { NotesInput, NotesInputHandle } from '@/components/NotesInput';
@@ -362,8 +363,10 @@ export default function HomeScreen() {
           onPress={showDatepicker}
           style={[styles.dateButton, { borderColor: textColor }]}
           accessibilityLabel={`Select last period start date. Current: ${formattedLastPeriod}`}
+          accessibilityHint="Opens a date picker to select when your last period started"
           accessibilityRole="button"
         >
+          <IconSymbol name="calendar" size={16} color={textColor} />
           <ThemedText style={[styles.dateText, { color: textColor }]}>
             {formattedLastPeriod}
           </ThemedText>
@@ -551,6 +554,9 @@ const styles = StyleSheet.create({
     padding: 8,
     borderWidth: 1,
     borderRadius: 8,
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 6,
   },
   dateText: {
     color: '#6b46c1',

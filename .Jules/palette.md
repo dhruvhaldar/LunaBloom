@@ -45,3 +45,7 @@
 ## 2026-03-22 - Reframing Fertility Indicators
 **Learning:** Using warning icons (red triangles) for "Ovulation Day" in health apps can miscommunicate danger instead of a natural, positive biological event, causing unnecessary alarm.
 **Action:** Replace "warning" semantics with celebratory or neutral "success" indicators (e.g., sparkles, teal/gold colors) for peak fertility days to align with user goals (tracking health/conception) and reduce anxiety.
+
+## 2026-02-28 - Date Picker Affordance
+**Learning:** Custom date picker triggers can often look like static text or generic buttons, making it unintuitive for users to realize they are interactive fields.
+**Action:** Add standard icons (like a calendar) and horizontal alignment (gap: 6) to date picker buttons to significantly improve visual scannability and intuitive affordance.
