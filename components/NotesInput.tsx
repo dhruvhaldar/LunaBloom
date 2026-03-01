@@ -1,10 +1,11 @@
 import React, { useState, useCallback, useImperativeHandle, forwardRef, memo, useRef } from 'react';
 import { TextInput, StyleSheet, TouchableOpacity, View, Platform } from 'react-native';
+import Animated, { useSharedValue, useAnimatedStyle, withSequence, withTiming } from 'react-native-reanimated';
 import * as Haptics from 'expo-haptics';
 import { ThemedView } from '@/components/ThemedView';
 import { ThemedText } from '@/components/ThemedText';
 import { IconSymbol } from '@/components/ui/IconSymbol';
-import { validateInputLength, MAX_NOTES_LENGTH } from '@/utils/validation';
+import { MAX_NOTES_LENGTH } from '@/utils/validation';
 
 interface NotesInputProps {
   textColor: string;
@@ -28,20 +29,41 @@ export const NotesInput = memo(forwardRef<NotesInputHandle, NotesInputProps>(({
   const [isFocused, setIsFocused] = useState(false);
   const inputRef = useRef<TextInput>(null);
 
+  // Animation value for shake
+  const shake = useSharedValue(0);
+
+  const shakeStyle = useAnimatedStyle(() => {
+    return {
+      transform: [{ translateX: shake.value }],
+    };
+  });
+
   useImperativeHandle(ref, () => ({
     getNotes: () => notes,
     resetNotes: () => setNotes('')
   }));
 
   const handleNotesChange = useCallback((text: string) => {
-    if (!validateInputLength(text, MAX_NOTES_LENGTH)) {
+    if (text.length > MAX_NOTES_LENGTH) {
+        // Trigger shake animation
+        shake.value = withSequence(
+          withTiming(-10, { duration: 50 }),
+          withTiming(10, { duration: 50 }),
+          withTiming(-10, { duration: 50 }),
+          withTiming(10, { duration: 50 }),
+          withTiming(0, { duration: 50 })
+        );
+
         if (Platform.OS !== 'web') {
           Haptics.notificationAsync(Haptics.NotificationFeedbackType.Warning);
         }
-        return;
+
+        // Clamp text
+        setNotes(text.slice(0, MAX_NOTES_LENGTH));
+    } else {
+        setNotes(text);
     }
-    setNotes(text);
-  }, []);
+  }, [shake]);
 
   const handleClear = useCallback(() => {
     setNotes('');
@@ -54,7 +76,8 @@ export const NotesInput = memo(forwardRef<NotesInputHandle, NotesInputProps>(({
         Notes 🗒️
       </ThemedText>
       <View style={styles.inputContainer}>
-        <TextInput
+        <Animated.View style={shakeStyle}>
+          <TextInput
           ref={inputRef}
           style={[
             styles.notesInput,
@@ -71,21 +94,23 @@ export const NotesInput = memo(forwardRef<NotesInputHandle, NotesInputProps>(({
           onBlur={() => setIsFocused(false)}
           placeholder="Record any additional notes..."
           placeholderTextColor={placeholderTextColor}
-          accessibilityLabel="Notes"
-          accessibilityHint={`Maximum ${MAX_NOTES_LENGTH} characters`}
-          maxLength={MAX_NOTES_LENGTH}
-        />
-        {notes.length > 0 && (
-          <TouchableOpacity
-            style={styles.clearButton}
-            onPress={handleClear}
-            accessibilityLabel="Clear notes"
-            accessibilityRole="button"
-            hitSlop={{ top: 10, bottom: 10, left: 10, right: 10 }}
-          >
-            <IconSymbol name="xmark.circle.fill" size={20} color={placeholderTextColor} />
-          </TouchableOpacity>
-        )}
+            accessibilityLabel="Notes"
+            accessibilityHint={`Maximum ${MAX_NOTES_LENGTH} characters`}
+            // Removed maxLength to allow custom handling with feedback
+            // maxLength={MAX_NOTES_LENGTH}
+          />
+          {notes.length > 0 && (
+            <TouchableOpacity
+              style={styles.clearButton}
+              onPress={handleClear}
+              accessibilityLabel="Clear notes"
+              accessibilityRole="button"
+              hitSlop={{ top: 10, bottom: 10, left: 10, right: 10 }}
+            >
+              <IconSymbol name="xmark.circle.fill" size={20} color={placeholderTextColor} />
+            </TouchableOpacity>
+          )}
+        </Animated.View>
       </View>
       <ThemedText
         style={{
