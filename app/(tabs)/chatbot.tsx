@@ -99,31 +99,48 @@ export default function MenstruationScreen() {
             <ThemedText style={styles.setupText}>
               To use the offline AI assistant, you need to download the model (~800MB). This only needs to be done once.
             </ThemedText>
-            {isDownloading ? (
-              <View>
-                <ActivityIndicator size="large" color="#E63946" />
-                <ThemedText style={styles.progressText}>
-                  Downloading... {Math.round(downloadProgress * 100)}%
-                </ThemedText>
-              </View>
-            ) : (
-              <TouchableOpacity style={styles.button} onPress={downloadModel}>
+            <TouchableOpacity
+              style={[styles.button, isDownloading && styles.buttonDisabled]}
+              onPress={downloadModel}
+              disabled={isDownloading}
+              accessibilityRole="button"
+              accessibilityLabel={isDownloading ? `Downloading AI Model, ${Math.round(downloadProgress * 100)}% complete` : "Download AI Model"}
+              accessibilityState={{ disabled: isDownloading, busy: isDownloading }}
+            >
+              {isDownloading ? (
+                <View style={{ flexDirection: 'row', alignItems: 'center', gap: 10 }}>
+                  <ActivityIndicator size="small" color="#FFFFFF" />
+                  <ThemedText style={styles.buttonText}>
+                    Downloading... {Math.round(downloadProgress * 100)}%
+                  </ThemedText>
+                </View>
+              ) : (
                 <ThemedText style={styles.buttonText}>Download Model</ThemedText>
-              </TouchableOpacity>
-            )}
+              )}
+            </TouchableOpacity>
           </View>
         ) : !isReady ? (
            <View style={styles.setupContainer}>
             <ThemedText style={styles.setupText}>
               Model downloaded. Load it to start chatting.
             </ThemedText>
-             {isInitializing ? (
-               <ActivityIndicator size="large" color="#E63946" />
-             ) : (
-              <TouchableOpacity style={styles.button} onPress={initializeLlama}>
+            <TouchableOpacity
+              style={[styles.button, isInitializing && styles.buttonDisabled]}
+              onPress={initializeLlama}
+              disabled={isInitializing}
+              accessibilityRole="button"
+              accessibilityLabel={isInitializing ? "Loading AI Model" : "Load AI Model"}
+              accessibilityState={{ disabled: isInitializing, busy: isInitializing }}
+            >
+              {isInitializing ? (
+                <View style={{ flexDirection: 'row', alignItems: 'center', gap: 10 }}>
+                  <ActivityIndicator size="small" color="#FFFFFF" />
+                  <ThemedText style={styles.buttonText}>Loading...</ThemedText>
+                </View>
+              ) : (
                 <ThemedText style={styles.buttonText}>Load AI</ThemedText>
-              </TouchableOpacity>
-             )}
+              )}
+            </TouchableOpacity>
            </View>
         ) : (
           <>
