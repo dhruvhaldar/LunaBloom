@@ -49,3 +49,6 @@
 ## 2026-02-28 - Date Picker Affordance
 **Learning:** Custom date picker triggers can often look like static text or generic buttons, making it unintuitive for users to realize they are interactive fields.
 **Action:** Add standard icons (like a calendar) and horizontal alignment (gap: 6) to date picker buttons to significantly improve visual scannability and intuitive affordance.
+## 2026-03-02 - Accessible Async Button States
+**Learning:** Conditionally rendering a separate `<ActivityIndicator>` instead of a `<TouchableOpacity>` during an async action (like a file download) causes the focused element to disappear, breaking keyboard/screen reader focus and leading to a jarring user experience.
+**Action:** Embed the `<ActivityIndicator>` directly inside the `<TouchableOpacity>`, set `disabled={isLoading}`, and use `accessibilityState={{ busy: isLoading, disabled: isLoading }}` to provide continuous, semantic feedback without breaking focus.
