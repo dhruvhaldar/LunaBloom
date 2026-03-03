@@ -170,6 +170,11 @@ const PredictionSummary = React.memo(function PredictionSummary({
           } else if (diffDays > 5) {
             statusText = ` (in ${diffDays} days)`;
             statusLabel = `, in ${diffDays} days`;
+          } else if (diffDays < 0) {
+            const absDays = Math.abs(diffDays);
+            const daysString = absDays === 1 ? 'day' : 'days';
+            statusText = ` (${absDays} ${daysString} ago)`;
+            statusLabel = `, ${absDays} ${daysString} ago`;
           }
 
           const itemBorderColor = iconName ? statusColor : textColor;
