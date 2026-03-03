@@ -52,3 +52,7 @@
 ## 2026-03-02 - Accessible Async Button States
 **Learning:** Conditionally rendering a separate `<ActivityIndicator>` instead of a `<TouchableOpacity>` during an async action (like a file download) causes the focused element to disappear, breaking keyboard/screen reader focus and leading to a jarring user experience.
 **Action:** Embed the `<ActivityIndicator>` directly inside the `<TouchableOpacity>`, set `disabled={isLoading}`, and use `accessibilityState={{ busy: isLoading, disabled: isLoading }}` to provide continuous, semantic feedback without breaking focus.
+
+## 2026-03-03 - Past Date Context in Predictions
+**Learning:** In prediction summaries, calculating the difference between a past date and today without a handler for negative values results in an empty status string, leaving users confused about the timeline of past events.
+**Action:** Always provide explicit relative time labels for both future ("in X days") and past ("X days ago") predictions, ensuring continuity and immediate context for all timeline events.
