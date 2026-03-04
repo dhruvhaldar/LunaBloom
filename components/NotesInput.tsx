@@ -85,6 +85,11 @@ export const NotesInput = memo(forwardRef<NotesInputHandle, NotesInputProps>(({
               color: textColor,
               borderColor: isFocused ? '#E63946' : borderColor,
               borderWidth: isFocused ? 2 : 1,
+              ...Platform.select({
+                web: {
+                  outlineStyle: 'none'
+                }
+              })
             },
           ]}
           multiline
