@@ -40,7 +40,7 @@ const AnimatedTabButton = (props: any) => {
       {...rest}
       onPressIn={handlePressIn}
       onPressOut={handlePressOut}
-      style={styles.tabButtonContainer}
+      style={[rest.style, styles.tabButtonContainer]}
       hitSlop={{ top: 20, bottom: 20, left: 20, right: 20 }}
     >
       <Animated.View style={{
