@@ -149,6 +149,8 @@ export default function MenstruationScreen() {
               style={[styles.responseContainer, { backgroundColor: responseBackgroundColor }]}
               accessibilityLiveRegion="polite"
               onContentSizeChange={() => scrollViewRef.current?.scrollToEnd({ animated: true })}
+              keyboardDismissMode="on-drag"
+              keyboardShouldPersistTaps="handled"
             >
               {isLoading ? (
                 <View style={styles.loadingContainer}>
