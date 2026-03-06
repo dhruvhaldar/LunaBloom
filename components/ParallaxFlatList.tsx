@@ -105,6 +105,8 @@ export default function ParallaxFlatList<T>({
             null
         }
         ListEmptyComponent={emptyComponent}
+        keyboardDismissMode="on-drag"
+        keyboardShouldPersistTaps="handled"
       />
     </ThemedView>
   );
