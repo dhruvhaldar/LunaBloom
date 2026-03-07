@@ -2,7 +2,7 @@ import React, { useCallback, memo, useRef, useEffect, useState } from 'react';
 import {
   StyleSheet,
   TextInput,
-  TouchableOpacity,
+  Pressable,
   View,
   Platform,
   ViewStyle,
@@ -109,18 +109,26 @@ export const StepperInput = memo(function StepperInput({
 
   return (
     <View style={[styles.container, style]}>
-      <TouchableOpacity
+      <Pressable
         onPress={performDecrement}
         onLongPress={startRapidDecrement}
         onPressOut={stopTimer}
-        style={[styles.button, { borderColor, opacity: isAtMin ? 0.5 : 1 }]}
+        style={({ pressed, hovered, focused }: any) => [
+          styles.button,
+          {
+            borderColor,
+            opacity: isAtMin ? 0.5 : pressed ? 0.7 : 1,
+            backgroundColor: hovered || focused ? 'rgba(0,0,0,0.05)' : 'transparent',
+            ...(Platform.OS === 'web' && focused && { outlineStyle: 'solid', outlineWidth: 2, outlineColor: '#E63946' })
+          }
+        ]}
         accessibilityRole="button"
         accessibilityLabel={`Decrease ${label}`}
         disabled={isAtMin}
         delayLongPress={300}
       >
         <IconSymbol name="minus" size={20} color={textColor} />
-      </TouchableOpacity>
+      </Pressable>
 
       <TextInput
         style={[
@@ -149,18 +157,26 @@ export const StepperInput = memo(function StepperInput({
         maxLength={3}
       />
 
-      <TouchableOpacity
+      <Pressable
         onPress={performIncrement}
         onLongPress={startRapidIncrement}
         onPressOut={stopTimer}
-        style={[styles.button, { borderColor, opacity: isAtMax ? 0.5 : 1 }]}
+        style={({ pressed, hovered, focused }: any) => [
+          styles.button,
+          {
+            borderColor,
+            opacity: isAtMax ? 0.5 : pressed ? 0.7 : 1,
+            backgroundColor: hovered || focused ? 'rgba(0,0,0,0.05)' : 'transparent',
+            ...(Platform.OS === 'web' && focused && { outlineStyle: 'solid', outlineWidth: 2, outlineColor: '#E63946' })
+          }
+        ]}
         accessibilityRole="button"
         accessibilityLabel={`Increase ${label}`}
         disabled={isAtMax}
         delayLongPress={300}
       >
         <IconSymbol name="plus" size={20} color={textColor} />
-      </TouchableOpacity>
+      </Pressable>
     </View>
   );
 });
