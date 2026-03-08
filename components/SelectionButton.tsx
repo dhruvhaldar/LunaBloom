@@ -1,5 +1,5 @@
 import React, { memo, useRef, useEffect } from 'react';
-import { StyleSheet, View, TouchableOpacity, Animated, Platform } from 'react-native';
+import { StyleSheet, View, Pressable, Animated, Platform } from 'react-native';
 import { IconSymbol } from '@/components/ui/IconSymbol';
 import { ThemedText } from '@/components/ThemedText';
 
@@ -68,11 +68,18 @@ const SelectionButton = memo(function SelectionButton({
 
   return (
     <Animated.View style={{ transform: [{ scale }] }}>
-      <TouchableOpacity
-        style={[
+      <Pressable
+        style={({ pressed, hovered, focused }: any) => [
           styles.button,
           { borderColor: colors.borderColor },
           isSelected && { backgroundColor: colors.selectedBackgroundColor },
+          pressed && { opacity: 0.7 },
+          (hovered || focused) && !isSelected && { backgroundColor: 'rgba(0,0,0,0.05)' },
+          Platform.OS === 'web' && focused && {
+            outlineStyle: 'solid',
+            outlineWidth: 2,
+            outlineColor: colors.borderColor
+          }
         ]}
         onPress={() => onToggle(label)}
         onPressIn={handlePressIn}
@@ -81,8 +88,6 @@ const SelectionButton = memo(function SelectionButton({
         accessibilityState={{ checked: isSelected }}
         accessibilityLabel={accessibilityLabel}
         accessibilityHint={accessibilityHint}
-        // Important for web accessibility to ensure click events fire correctly
-        activeOpacity={0.7}
         // Force aria-checked on web if accessibilityState fails
         {...(Platform.OS === 'web' ? { 'aria-checked': isSelected } : {})}
       >
@@ -106,7 +111,7 @@ const SelectionButton = memo(function SelectionButton({
             {label}
           </ThemedText>
         </View>
-      </TouchableOpacity>
+      </Pressable>
     </Animated.View>
   );
 });
