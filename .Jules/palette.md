@@ -56,3 +56,7 @@
 ## 2026-03-03 - Past Date Context in Predictions
 **Learning:** In prediction summaries, calculating the difference between a past date and today without a handler for negative values results in an empty status string, leaving users confused about the timeline of past events.
 **Action:** Always provide explicit relative time labels for both future ("in X days") and past ("X days ago") predictions, ensuring continuity and immediate context for all timeline events.
+
+## 2026-03-12 - Settings Helper Text
+**Learning:** Medical or technical app settings (like "Luteal Phase Calculation") are confusing to average users without context, leading to hesitation in using helpful features. Relying solely on a post-toggle alert forces the user to interact blindly.
+**Action:** Always provide inline helper text or subtitles for complex settings, ensuring users understand the value and purpose before they decide to interact with the control.
