@@ -320,8 +320,14 @@ export default function SettingsScreen() {
                         accessibilityRole="switch"
                         accessibilityState={{ checked: lutealPhase }}
                         accessibilityLabel="Luteal Phase Calculation"
+                        accessibilityHint="Improves ovulation prediction by using a 14-day phase."
                     >
-                        <ThemedText style={[styles.settingText, { color: textColor }]}>Luteal Phase Calculation</ThemedText>
+                        <View style={styles.settingTextContainer}>
+                            <ThemedText style={[styles.settingText, { color: textColor }]}>Luteal Phase Calculation</ThemedText>
+                            <ThemedText style={[styles.settingDescription, { color: textColor }]}>
+                                Improves ovulation prediction by using a 14-day phase.
+                            </ThemedText>
+                        </View>
                         <Switch
                             value={lutealPhase}
                             onValueChange={handleLutealPhaseToggle}
@@ -338,8 +344,14 @@ export default function SettingsScreen() {
                         accessibilityRole="switch"
                         accessibilityState={{ checked: preventScreenshots }}
                         accessibilityLabel="Prevent Screenshots"
+                        accessibilityHint="Blocks screen captures to protect your privacy."
                     >
-                        <ThemedText style={[styles.settingText, { color: textColor }]}>Prevent Screenshots</ThemedText>
+                        <View style={styles.settingTextContainer}>
+                            <ThemedText style={[styles.settingText, { color: textColor }]}>Prevent Screenshots</ThemedText>
+                            <ThemedText style={[styles.settingDescription, { color: textColor }]}>
+                                Blocks screen captures to protect your privacy.
+                            </ThemedText>
+                        </View>
                         <Switch
                             value={preventScreenshots}
                             onValueChange={handleScreenshotToggle}
@@ -430,10 +442,20 @@ const styles = StyleSheet.create({
         alignItems: 'center',
         paddingVertical: 12,
     },
+    settingTextContainer: {
+        flex: 1,
+        paddingRight: 16,
+    },
     settingText: {
         fontSize: 17,
         color: '#ffffff',
         opacity: 0.9,
+    },
+    settingDescription: {
+        fontSize: 13,
+        opacity: 0.6,
+        marginTop: 4,
+        lineHeight: 18,
     },
     switch: {
         transform: [{ scaleX: 0.9 }, { scaleY: 0.9 }],
