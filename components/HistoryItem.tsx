@@ -1,5 +1,5 @@
 import React, { useMemo } from 'react';
-import { StyleSheet, View, TouchableOpacity } from 'react-native';
+import { StyleSheet, View, Pressable, Platform } from 'react-native';
 import { IconSymbol } from '@/components/ui/IconSymbol';
 import { formatDate } from '@/utils/dateFormatter';
 import { ThemedText } from '@/components/ThemedText';
@@ -101,14 +101,23 @@ const HistoryItem = React.memo(function HistoryItem({ item, onDelete, textColor,
           <ThemedText style={{ color: textColor }}>🕒 Log Date: {logDate}</ThemedText>
         </View>
 
-        <TouchableOpacity
-          style={styles.deleteIconContainer}
+        <Pressable
+          style={({ pressed, hovered, focused }: any) => [
+            styles.deleteIconContainer,
+            pressed && { opacity: 0.7 },
+            (hovered || focused) && { backgroundColor: 'rgba(230, 57, 70, 0.1)' },
+            Platform.OS === 'web' && focused && {
+              outlineStyle: 'solid',
+              outlineWidth: 2,
+              outlineColor: deleteIconColor
+            }
+          ]}
           onPress={() => onDelete(item.date)}
           accessibilityLabel={`Delete entry from ${logDate}`}
           accessibilityRole="button"
         >
           <IconSymbol name="trash.fill" size={24} color={deleteIconColor} />
-        </TouchableOpacity>
+        </Pressable>
       </View>
     </View>
   );
@@ -131,6 +140,7 @@ const styles = StyleSheet.create({
   },
   deleteIconContainer: {
     padding: 10,
+    borderRadius: 8,
   },
 });
 

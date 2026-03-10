@@ -1,5 +1,5 @@
 import React, { useState, useCallback, useImperativeHandle, forwardRef, memo, useRef } from 'react';
-import { TextInput, StyleSheet, TouchableOpacity, View, Platform } from 'react-native';
+import { TextInput, StyleSheet, Pressable, View, Platform } from 'react-native';
 import Animated, { useSharedValue, useAnimatedStyle, withSequence, withTiming } from 'react-native-reanimated';
 import * as Haptics from 'expo-haptics';
 import { ThemedView } from '@/components/ThemedView';
@@ -105,15 +105,24 @@ export const NotesInput = memo(forwardRef<NotesInputHandle, NotesInputProps>(({
             // maxLength={MAX_NOTES_LENGTH}
           />
           {notes.length > 0 && (
-            <TouchableOpacity
-              style={styles.clearButton}
+            <Pressable
+              style={({ pressed, hovered, focused }: any) => [
+                styles.clearButton,
+                pressed && { opacity: 0.7 },
+                (hovered || focused) && { backgroundColor: 'rgba(0,0,0,0.05)' },
+                Platform.OS === 'web' && focused && {
+                  outlineStyle: 'solid',
+                  outlineWidth: 2,
+                  outlineColor: placeholderTextColor
+                }
+              ]}
               onPress={handleClear}
               accessibilityLabel="Clear notes"
               accessibilityRole="button"
               hitSlop={{ top: 10, bottom: 10, left: 10, right: 10 }}
             >
               <IconSymbol name="xmark.circle.fill" size={20} color={placeholderTextColor} />
-            </TouchableOpacity>
+            </Pressable>
           )}
         </Animated.View>
       </View>
@@ -155,5 +164,6 @@ const styles = StyleSheet.create({
     right: 10,
     top: 10,
     padding: 5,
+    borderRadius: 15,
   },
 });

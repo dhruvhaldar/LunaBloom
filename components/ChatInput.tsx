@@ -1,5 +1,5 @@
 import React, { useState, forwardRef, useImperativeHandle, useRef, useCallback } from 'react';
-import { TextInput, View, TouchableOpacity, ActivityIndicator, StyleSheet, Platform } from 'react-native';
+import { TextInput, View, Pressable, ActivityIndicator, StyleSheet, Platform } from 'react-native';
 import Animated, { useSharedValue, useAnimatedStyle, withSequence, withTiming } from 'react-native-reanimated';
 import * as Haptics from 'expo-haptics';
 import { ThemedText } from './ThemedText';
@@ -111,15 +111,24 @@ export const ChatInput = forwardRef<ChatInputHandle, ChatInputProps>(({ onSubmit
                 // maxLength={MAX_INPUT_LENGTH}
             />
             {text.length > 0 && !isLoading && (
-              <TouchableOpacity
-                style={styles.clearButton}
+              <Pressable
+                style={({ pressed, hovered, focused }: any) => [
+                  styles.clearButton,
+                  pressed && { opacity: 0.7 },
+                  (hovered || focused) && { backgroundColor: 'rgba(0,0,0,0.05)' },
+                  Platform.OS === 'web' && focused && {
+                    outlineStyle: 'solid',
+                    outlineWidth: 2,
+                    outlineColor: placeholderTextColor
+                  }
+                ]}
                 onPress={handleClear}
                 accessibilityLabel="Clear question"
                 accessibilityRole="button"
                 hitSlop={{ top: 10, bottom: 10, left: 10, right: 10 }}
               >
                 <IconSymbol name="xmark.circle.fill" size={20} color={placeholderTextColor} />
-              </TouchableOpacity>
+              </Pressable>
             )}
           </Animated.View>
           {text.length > 0 && (
@@ -138,8 +147,19 @@ export const ChatInput = forwardRef<ChatInputHandle, ChatInputProps>(({ onSubmit
           )}
         </View>
 
-        <TouchableOpacity
-            style={[styles.button, isButtonDisabled && styles.buttonDisabled]}
+        <Pressable
+            style={({ pressed, hovered, focused }: any) => [
+                styles.button,
+                isButtonDisabled && styles.buttonDisabled,
+                pressed && !isButtonDisabled && { opacity: 0.7 },
+                (hovered || focused) && !isButtonDisabled && { backgroundColor: '#c5303c' },
+                Platform.OS === 'web' && focused && {
+                    outlineStyle: 'solid',
+                    outlineWidth: 2,
+                    outlineColor: '#E63946',
+                    outlineOffset: 2,
+                }
+            ]}
             onPress={handleSubmit}
             disabled={isButtonDisabled}
             accessibilityLabel="Send question to AI assistant"
@@ -147,7 +167,7 @@ export const ChatInput = forwardRef<ChatInputHandle, ChatInputProps>(({ onSubmit
             accessibilityState={{ disabled: isButtonDisabled, busy: isLoading }}
         >
             {isLoading ? <ActivityIndicator color="#F1FAEE" /> : <ThemedText style={styles.buttonText}>Ask 🔍</ThemedText>}
-        </TouchableOpacity>
+        </Pressable>
     </View>
   );
 });
@@ -176,6 +196,7 @@ const styles = StyleSheet.create({
     right: 10,
     top: 15, // Vertically centered (60 - 30) / 2
     padding: 5,
+    borderRadius: 15,
   },
   button: {
     backgroundColor: '#E63946',
