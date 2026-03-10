@@ -9,3 +9,7 @@
 ## 2025-05-24 - Relative Time Context for Future Dates
 **Learning:** Users often struggle with mental math when viewing future dates (e.g., "Is Oct 24 in 3 weeks or 4?"). Providing relative time (e.g., "in 32 days") alongside absolute dates reduces cognitive load significantly.
 **Action:** Always include relative time context for future dates in list views or summaries, not just for the immediate next item.
+
+## 2025-05-24 - Web Accessibility Focus and Hover States on Buttons
+**Learning:** React Native Web mapping for `TouchableOpacity` doesn't always handle keyboard navigation focus effectively on the web, often failing to show custom focus rings or missing subtle hover states on icon buttons.
+**Action:** Replace `TouchableOpacity` with `Pressable` for interactive elements (especially icon buttons) when web support is needed. Utilize the `({ pressed, hovered, focused })` state parameters to add explicit background color changes on hover/focus, and `Platform.select({ web: { outlineStyle: 'solid' } })` to ensure keyboard focus is always visible.
