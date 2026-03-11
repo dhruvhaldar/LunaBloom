@@ -1,9 +1,9 @@
 import React, { useState, useEffect, useMemo, useCallback, useRef } from 'react';
-import { StyleSheet, TouchableOpacity, Alert, useColorScheme, View, ActivityIndicator, Keyboard, Platform } from 'react-native';
+import { StyleSheet, Pressable, Alert, useColorScheme, View, ActivityIndicator, Keyboard, Platform } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import DateTimePicker from '@react-native-community/datetimepicker';
 import * as Haptics from 'expo-haptics';
-import { sanitizeInput, containsSuspiciousPatterns, parseSafePeriodEntries } from '@/utils/validation';
+import { sanitizeInput, containsSuspiciousPatterns } from '@/utils/validation';
 import { formatDate, DateFormats } from '@/utils/dateFormatter';
 import { ThemedText } from '@/components/ThemedText';
 import { ThemedView } from '@/components/ThemedView';
@@ -359,9 +359,19 @@ export default function HomeScreen() {
       {/* Last Period Date */}
       <ThemedView style={styles.inputGroup}>
         <ThemedText style={{ color: textColor }}>Last Period Start</ThemedText>
-        <TouchableOpacity
+        <Pressable
           onPress={showDatepicker}
-          style={[styles.dateButton, { borderColor: textColor }]}
+          style={({ pressed, hovered, focused }: any) => [
+            styles.dateButton,
+            { borderColor: textColor },
+            pressed && { opacity: 0.7 },
+            (hovered || focused) && { backgroundColor: 'rgba(0,0,0,0.05)' },
+            Platform.OS === 'web' && focused && {
+              outlineStyle: 'solid',
+              outlineWidth: 2,
+              outlineColor: '#E63946'
+            }
+          ]}
           accessibilityLabel={`Select last period start date. Current: ${formattedLastPeriod}`}
           accessibilityHint="Opens a date picker to select when your last period started"
           accessibilityRole="button"
@@ -370,7 +380,7 @@ export default function HomeScreen() {
           <ThemedText style={[styles.dateText, { color: textColor }]}>
             {formattedLastPeriod}
           </ThemedText>
-        </TouchableOpacity>
+        </Pressable>
         {show && (
           <DateTimePicker
             testID="dateTimePicker"
@@ -476,11 +486,19 @@ export default function HomeScreen() {
 
         {/* Log Period Button */}
         {useMemo(() => (
-          <TouchableOpacity
-            style={[
+          <Pressable
+            style={({ pressed, hovered, focused }: any) => [
               styles.logButton,
               isLogging && styles.logButtonDisabled,
-              showSuccess && { backgroundColor: '#198754' }
+              showSuccess && { backgroundColor: '#198754' },
+              pressed && !isLogging && !showSuccess && { opacity: 0.7 },
+              (hovered || focused) && !isLogging && !showSuccess && { backgroundColor: '#c5303c' },
+              Platform.OS === 'web' && focused && {
+                outlineStyle: 'solid',
+                outlineWidth: 2,
+                outlineColor: '#E63946',
+                outlineOffset: 2,
+              }
             ]}
             onPress={logPeriod}
             disabled={isLogging || showSuccess}
@@ -499,7 +517,7 @@ export default function HomeScreen() {
                 Log Period Entry 📖
               </ThemedText>
             )}
-          </TouchableOpacity>
+          </Pressable>
         ), [isLogging, showSuccess, logPeriod])}
 
         {/* Predicted Periods */}

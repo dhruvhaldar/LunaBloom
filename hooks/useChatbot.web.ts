@@ -1,4 +1,4 @@
-import { useState, useCallback, useRef, useEffect } from 'react';
+import { useState, useCallback, useRef } from 'react';
 import { Keyboard } from 'react-native';
 import { validateInputLength, sanitizeInput, sanitizePromptInput, containsSuspiciousPatterns, MAX_INPUT_LENGTH } from '@/utils/validation';
 
