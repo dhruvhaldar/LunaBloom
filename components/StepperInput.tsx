@@ -102,11 +102,6 @@ export const StepperInput = memo(function StepperInput({
   const isAtMin = !isNaN(numericValue) && numericValue <= min;
   const isAtMax = !isNaN(numericValue) && numericValue >= max;
 
-  // Security: Prevent DoS by limiting input length.
-  // Using a safe limit (20) that accommodates negatives, decimals, and reasonably large numbers
-  // while still preventing massive paste attacks.
-  const maxLength = 20;
-
   return (
     <View style={[styles.container, style]}>
       <Pressable
