@@ -78,7 +78,8 @@ const SelectionButton = memo(function SelectionButton({
           Platform.OS === 'web' && focused && {
             outlineStyle: 'solid',
             outlineWidth: 2,
-            outlineColor: colors.borderColor
+            outlineColor: '#E63946',
+            outlineOffset: 2
           }
         ]}
         onPress={() => onToggle(label)}
