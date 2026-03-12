@@ -1,40 +1,40 @@
-import time
-from playwright.sync_api import sync_playwright
+from playwright.sync_api import sync_playwright, expect
 
-def verify_selection_button_focus():
+def verify_focus():
     with sync_playwright() as p:
         browser = p.chromium.launch(headless=True)
-        # Give the server a generous amount of time to build initially (~30-60s)
         page = browser.new_page()
 
-        print("Waiting for Expo Web server to bundle and load...")
-        # Increase timeout to 120s for the first load due to Metro bundler
-        page.goto("http://localhost:8081", timeout=120000)
+        print("Navigating to local server...")
+        # Increase timeout since dev server might take a bit to start Metro bundler initially
+        page.goto("http://localhost:8081", timeout=60000)
 
-        page.wait_for_timeout(5000)
+        print("Waiting for page to load...")
+        # Wait for the "Light" flow button to appear
+        light_btn = page.locator("div[role='radio']", has_text="Light")
+        light_btn.wait_for(state="visible", timeout=60000)
 
-        # Test Focus State (Keyboard Navigation)
-        print("Testing Focus State...")
-        # Press Tab until we focus the 'Normal' button. We can just focus it programmatically
-        # The 'Normal' flow option is a SelectionButton
+        print("Focusing the 'Light' button via keyboard navigation...")
+        # Wait a moment for animations/render
+        page.wait_for_timeout(2000)
 
-        # In react native web, touchables might not be natively focusable with locator.focus(), so let's use the actual DOM node or keyboard tab
-        # We'll tab through the page
-        page.keyboard.press("Tab")
-        page.keyboard.press("Tab")
-        page.keyboard.press("Tab")
-        page.keyboard.press("Tab")
-        page.keyboard.press("Tab")
-        page.keyboard.press("Tab")
-        page.keyboard.press("Tab")
-        page.keyboard.press("Tab")
-        page.keyboard.press("Tab")
+        # Click somewhere safe, then press Tab to focus
+        page.locator("text='Period Tracker'").click()
 
-        page.wait_for_timeout(1000)
-        page.screenshot(path="before_focus.png")
-        print("Saved before_focus.png")
+        # Tab multiple times until we reach the "Light" button.
+        # Alternatively, we can use Playwright's focus method, but let's see if that triggers the :focus-visible / focused state correctly.
+        light_btn.focus()
 
+        # Wait a bit for the focus ring to render
+        page.wait_for_timeout(500)
+
+        print("Taking screenshot...")
+        # Take screenshot of the specific section to see the focus ring clearly
+        section = page.locator("text='Period Flow 🩸'").locator("..")
+        section.screenshot(path="focus_verification.png")
+
+        print("Verification complete.")
         browser.close()
 
 if __name__ == "__main__":
-    verify_selection_button_focus()
+    verify_focus()
