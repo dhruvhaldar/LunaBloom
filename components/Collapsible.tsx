@@ -1,5 +1,5 @@
 import { PropsWithChildren, useState } from 'react';
-import { StyleSheet, TouchableOpacity } from 'react-native';
+import { StyleSheet, Pressable, Platform } from 'react-native';
 
 import { ThemedText } from '@/components/ThemedText';
 import { ThemedView } from '@/components/ThemedView';
@@ -13,10 +13,19 @@ export function Collapsible({ children, title }: PropsWithChildren & { title: st
 
   return (
     <ThemedView>
-      <TouchableOpacity
-        style={styles.heading}
+      <Pressable
+        style={({ pressed, hovered, focused }: any) => [
+          styles.heading,
+          pressed && { opacity: 0.8 },
+          (hovered || focused) && { backgroundColor: theme === 'light' ? 'rgba(0,0,0,0.05)' : 'rgba(255,255,255,0.05)' },
+          Platform.OS === 'web' && focused && {
+            outlineStyle: 'solid',
+            outlineWidth: 2,
+            outlineColor: theme === 'light' ? Colors.light.icon : Colors.dark.icon,
+            outlineOffset: 2
+          }
+        ]}
         onPress={() => setIsOpen((value) => !value)}
-        activeOpacity={0.8}
         accessibilityRole="button"
         accessibilityState={{ expanded: isOpen }}
         accessibilityLabel={title}
@@ -31,7 +40,7 @@ export function Collapsible({ children, title }: PropsWithChildren & { title: st
         />
 
         <ThemedText type="defaultSemiBold">{title}</ThemedText>
-      </TouchableOpacity>
+      </Pressable>
       {isOpen && <ThemedView style={styles.content}>{children}</ThemedView>}
     </ThemedView>
   );
@@ -42,6 +51,10 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     gap: 6,
+    padding: 6,
+    marginVertical: -6,
+    marginHorizontal: -6,
+    borderRadius: 6,
   },
   content: {
     marginTop: 6,
