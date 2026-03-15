@@ -319,7 +319,7 @@ export default function HomeScreen() {
             type="radio"
             colors={selectionButtonColors}
             accessibilityLabel={`Select ${flow} flow`}
-            accessibilityHint="Selects the intensity of your flow"
+            accessibilityHint={selectedFlow === flow ? "Selected. Tap to deselect." : "Selects the intensity of your flow"}
           />
         ))}
       </ThemedView>
@@ -342,7 +342,7 @@ export default function HomeScreen() {
             type="checkbox"
             colors={selectionButtonColors}
             accessibilityLabel={`Select ${symptom} symptom`}
-            accessibilityHint="Toggles this symptom for today"
+            accessibilityHint={selectedSymptoms.includes(symptom) ? "Tap to remove this symptom" : "Tap to add this symptom"}
           />
         ))}
       </ThemedView>
