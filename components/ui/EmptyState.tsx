@@ -1,5 +1,5 @@
 import React, { useEffect, useRef } from 'react';
-import { StyleSheet, TouchableOpacity, ViewStyle, Animated, Easing } from 'react-native';
+import { StyleSheet, Pressable, ViewStyle, Animated, Easing, Platform } from 'react-native';
 import { ThemedText } from '@/components/ThemedText';
 import { ThemedView } from '@/components/ThemedView';
 import { IconSymbol, IconSymbolName } from '@/components/ui/IconSymbol';
@@ -111,14 +111,23 @@ export function EmptyState({ title, message, icon, actionLabel, onAction, style 
           {message}
         </ThemedText>
         {actionLabel && onAction && (
-          <TouchableOpacity
-            style={styles.button}
+          <Pressable
+            style={({ pressed, hovered, focused }: { pressed: boolean; hovered?: boolean; focused?: boolean }) => [
+              styles.button,
+              pressed && { opacity: 0.7 },
+              Platform.OS === 'web' && focused && {
+                outlineStyle: 'solid',
+                outlineWidth: 2,
+                outlineColor: '#E63946',
+                outlineOffset: 2,
+              }
+            ]}
             onPress={onAction}
             accessibilityRole="button"
             accessibilityLabel={actionLabel}
           >
             <ThemedText style={styles.buttonText}>{actionLabel}</ThemedText>
-          </TouchableOpacity>
+          </Pressable>
         )}
       </Animated.View>
     </ThemedView>
