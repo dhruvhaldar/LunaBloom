@@ -1,5 +1,5 @@
 import React, { useMemo, useCallback, useRef } from 'react';
-import { StyleSheet, View, Image, useColorScheme, TouchableOpacity, ScrollView, ActivityIndicator, Platform, Share, Alert } from 'react-native';
+import { StyleSheet, View, Image, useColorScheme, TouchableOpacity, Pressable, ScrollView, ActivityIndicator, Platform, Share, Alert } from 'react-native';
 import { ThemedText } from '@/components/ThemedText';
 import { ThemedView } from '@/components/ThemedView';
 import ParallaxScrollView from '@/components/ParallaxScrollView';
@@ -41,15 +41,26 @@ export default function MenstruationScreen() {
   const suggestionsList = useMemo(() => (
     <View style={styles.suggestionsContainer}>
       {suggestedQuestions.map((q, index) => (
-        <TouchableOpacity
+        <Pressable
           key={index}
-          style={[styles.suggestionChip, { borderColor: textColor }]}
+          style={({ pressed, hovered, focused }: any) => [
+            styles.suggestionChip,
+            { borderColor: textColor },
+            pressed && { opacity: 0.7 },
+            (hovered || focused) && { backgroundColor: 'rgba(0,0,0,0.05)' },
+            Platform.OS === 'web' && focused && {
+              outlineStyle: 'solid',
+              outlineWidth: 2,
+              outlineColor: '#E63946',
+              outlineOffset: 2,
+            }
+          ]}
           onPress={() => handleChat(q)}
           accessibilityLabel={`Ask: ${q}`}
           accessibilityRole="button"
         >
           <ThemedText style={styles.suggestionText}>{q}</ThemedText>
-        </TouchableOpacity>
+        </Pressable>
       ))}
     </View>
   ), [textColor, handleChat]);
