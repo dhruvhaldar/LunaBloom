@@ -171,15 +171,25 @@ export default function MenstruationScreen() {
               ) : response ? (
                 <View>
                   <ThemedText style={styles.response}>{response}</ThemedText>
-                  <TouchableOpacity
-                    style={styles.shareButton}
+                  <Pressable
+                    style={({ pressed, hovered, focused }: any) => [
+                      styles.shareButton,
+                      pressed && { opacity: 0.7 },
+                      (hovered || focused) && { backgroundColor: 'rgba(0,0,0,0.05)' },
+                      Platform.OS === 'web' && focused && {
+                        outlineStyle: 'solid',
+                        outlineWidth: 2,
+                        outlineColor: textColor,
+                        outlineOffset: 2,
+                      }
+                    ]}
                     onPress={handleShare}
                     accessibilityLabel="Share response"
                     accessibilityRole="button"
                   >
                     <IconSymbol name="share" size={20} color={textColor} />
                     <ThemedText style={[styles.shareButtonText, { color: textColor }]}>Share</ThemedText>
-                  </TouchableOpacity>
+                  </Pressable>
                 </View>
               ) : (
                 <View>
