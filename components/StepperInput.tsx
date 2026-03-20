@@ -114,7 +114,7 @@ export const StepperInput = memo(function StepperInput({
             borderColor,
             opacity: isAtMin ? 0.5 : pressed ? 0.7 : 1,
             backgroundColor: hovered || focused ? 'rgba(0,0,0,0.05)' : 'transparent',
-            ...(Platform.OS === 'web' && focused && { outlineStyle: 'solid', outlineWidth: 2, outlineColor: '#E63946' })
+            ...(Platform.OS === 'web' && focused && { outlineStyle: 'solid', outlineWidth: 2, outlineColor: '#E63946', outlineOffset: 2 })
           }
         ]}
         accessibilityRole="button"
@@ -162,7 +162,7 @@ export const StepperInput = memo(function StepperInput({
             borderColor,
             opacity: isAtMax ? 0.5 : pressed ? 0.7 : 1,
             backgroundColor: hovered || focused ? 'rgba(0,0,0,0.05)' : 'transparent',
-            ...(Platform.OS === 'web' && focused && { outlineStyle: 'solid', outlineWidth: 2, outlineColor: '#E63946' })
+            ...(Platform.OS === 'web' && focused && { outlineStyle: 'solid', outlineWidth: 2, outlineColor: '#E63946', outlineOffset: 2 })
           }
         ]}
         accessibilityRole="button"

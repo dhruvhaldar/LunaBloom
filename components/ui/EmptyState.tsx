@@ -115,6 +115,7 @@ export function EmptyState({ title, message, icon, actionLabel, onAction, style 
             style={({ pressed, hovered, focused }: { pressed: boolean; hovered?: boolean; focused?: boolean }) => [
               styles.button,
               pressed && { opacity: 0.7 },
+              (hovered || focused) && { backgroundColor: '#c5303c' },
               Platform.OS === 'web' && focused && {
                 outlineStyle: 'solid',
                 outlineWidth: 2,

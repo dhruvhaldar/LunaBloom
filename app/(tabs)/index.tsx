@@ -369,7 +369,8 @@ export default function HomeScreen() {
             Platform.OS === 'web' && focused && {
               outlineStyle: 'solid',
               outlineWidth: 2,
-              outlineColor: '#E63946'
+              outlineColor: '#E63946',
+              outlineOffset: 2
             }
           ]}
           accessibilityLabel={`Select last period start date. Current: ${formattedLastPeriod}`}
