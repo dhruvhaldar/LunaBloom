@@ -1,6 +1,6 @@
 import { Tabs } from 'expo-router';
 import React, { useRef } from 'react';
-import { StyleSheet, TouchableOpacity, ViewStyle, Animated, View } from 'react-native';
+import { StyleSheet, Pressable, Platform, ViewStyle, Animated, View } from 'react-native';
 
 import { IconSymbol } from '@/components/ui/IconSymbol';
 import TabBarBackground from '@/components/ui/TabBarBackground';
@@ -36,11 +36,23 @@ const AnimatedTabButton = (props: any) => {
   };
 
   return (
-    <TouchableOpacity
+    <Pressable
       {...rest}
       onPressIn={handlePressIn}
       onPressOut={handlePressOut}
-      style={[rest.style, styles.tabButtonContainer]}
+      style={({ pressed, hovered, focused }: any) => [
+        rest.style,
+        styles.tabButtonContainer,
+        { opacity: pressed ? 0.7 : 1 },
+        Platform.select({
+          web: {
+            outlineStyle: focused ? 'solid' : 'none',
+            outlineWidth: 2,
+            outlineColor: '#E63946',
+            outlineOffset: 2,
+          } as any,
+        }),
+      ]}
       hitSlop={{ top: 20, bottom: 20, left: 20, right: 20 }}
     >
       <Animated.View style={{
@@ -50,7 +62,7 @@ const AnimatedTabButton = (props: any) => {
       }}>
         {children}
       </Animated.View>
-    </TouchableOpacity>
+    </Pressable>
   );
 };
 
