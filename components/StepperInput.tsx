@@ -119,6 +119,7 @@ export const StepperInput = memo(function StepperInput({
         ]}
         accessibilityRole="button"
         accessibilityLabel={`Decrease ${label}`}
+        accessibilityState={{ disabled: isAtMin }}
         disabled={isAtMin}
         delayLongPress={300}
       >
@@ -167,6 +168,7 @@ export const StepperInput = memo(function StepperInput({
         ]}
         accessibilityRole="button"
         accessibilityLabel={`Increase ${label}`}
+        accessibilityState={{ disabled: isAtMax }}
         disabled={isAtMax}
         delayLongPress={300}
       >
