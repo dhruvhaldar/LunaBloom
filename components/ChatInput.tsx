@@ -141,6 +141,7 @@ export const ChatInput = forwardRef<ChatInputHandle, ChatInputProps>(({ onSubmit
                 color: text.length > MAX_INPUT_LENGTH * 0.9 ? '#E63946' : placeholderTextColor,
                 fontWeight: text.length >= MAX_INPUT_LENGTH ? 'bold' : 'normal',
               }}
+              accessibilityLabel={`${text.length} characters used out of ${MAX_INPUT_LENGTH}`}
             >
               {text.length}/{MAX_INPUT_LENGTH}
             </ThemedText>
