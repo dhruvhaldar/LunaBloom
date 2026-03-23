@@ -21,3 +21,7 @@
 ## 2025-05-24 - Preserving Legacy Touch Feedback When Migrating to Pressable
 **Learning:** When substituting `TouchableOpacity` with `Pressable` for enhanced web accessibility (hover/focus rings), the native mobile touch feedback (opacity reduction) is lost if not explicitly re-implemented. This creates an inconsistent and unresponsive feel on mobile devices.
 **Action:** When making this migration, always ensure the `pressed` state explicitly returns `{ opacity: 0.7 }` to maintain the expected native mobile UX alongside the new web enhancements.
+
+## 2024-03-24 - Improve screen reader support for ChatInput character count
+**Learning:** The character limit indicator in the `ChatInput` component was purely visual. Providing this context (e.g., '0 characters used out of 200') to screen readers using `accessibilityLabel` ensures an equitable experience and aligns with the pattern used in `NotesInput`.
+**Action:** Add `accessibilityLabel` to text components acting as character counters to make their purpose and status explicit to assistive technology.
