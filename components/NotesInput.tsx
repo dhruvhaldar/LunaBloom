@@ -1,5 +1,5 @@
 import React, { useState, useCallback, useImperativeHandle, forwardRef, memo, useRef } from 'react';
-import { TextInput, StyleSheet, Pressable, View, Platform } from 'react-native';
+import { TextInput, StyleSheet, Pressable, View, Platform, AccessibilityInfo } from 'react-native';
 import Animated, { useSharedValue, useAnimatedStyle, withSequence, withTiming } from 'react-native-reanimated';
 import * as Haptics from 'expo-haptics';
 import { ThemedView } from '@/components/ThemedView';
@@ -45,6 +45,9 @@ export const NotesInput = memo(forwardRef<NotesInputHandle, NotesInputProps>(({
 
   const handleNotesChange = useCallback((text: string) => {
     if (text.length > MAX_NOTES_LENGTH) {
+        // Announce to screen readers since native maxLength is removed
+        AccessibilityInfo.announceForAccessibility(`Maximum character limit of ${MAX_NOTES_LENGTH} reached`);
+
         // Trigger shake animation
         shake.value = withSequence(
           withTiming(-10, { duration: 50 }),
