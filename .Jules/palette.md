@@ -25,3 +25,7 @@
 ## 2024-03-24 - Improve screen reader support for ChatInput character count
 **Learning:** The character limit indicator in the `ChatInput` component was purely visual. Providing this context (e.g., '0 characters used out of 200') to screen readers using `accessibilityLabel` ensures an equitable experience and aligns with the pattern used in `NotesInput`.
 **Action:** Add `accessibilityLabel` to text components acting as character counters to make their purpose and status explicit to assistive technology.
+
+## 2024-05-18 - Input Limit Accessibility
+**Learning:** Custom visual/haptic feedback for input limits (like "shake" animations) leaves screen reader users unaware of why their input is clamped when native `maxLength` is removed to facilitate the custom feedback.
+**Action:** Always pair custom programmatic input clamping with `AccessibilityInfo.announceForAccessibility` to ensure equitable, immediate feedback for screen reader users.

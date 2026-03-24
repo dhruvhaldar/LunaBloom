@@ -1,5 +1,5 @@
 import React, { useState, forwardRef, useImperativeHandle, useRef, useCallback } from 'react';
-import { TextInput, View, Pressable, ActivityIndicator, StyleSheet, Platform } from 'react-native';
+import { TextInput, View, Pressable, ActivityIndicator, StyleSheet, Platform, AccessibilityInfo } from 'react-native';
 import Animated, { useSharedValue, useAnimatedStyle, withSequence, withTiming } from 'react-native-reanimated';
 import * as Haptics from 'expo-haptics';
 import { ThemedText } from './ThemedText';
@@ -51,6 +51,9 @@ export const ChatInput = forwardRef<ChatInputHandle, ChatInputProps>(({ onSubmit
 
   const handleTextChange = (newText: string) => {
     if (newText.length > MAX_INPUT_LENGTH) {
+      // Announce to screen readers since native maxLength is removed
+      AccessibilityInfo.announceForAccessibility(`Maximum character limit of ${MAX_INPUT_LENGTH} reached`);
+
       // Trigger shake animation
       shake.value = withSequence(
         withTiming(-10, { duration: 50 }),
