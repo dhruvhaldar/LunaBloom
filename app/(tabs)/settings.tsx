@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useMemo } from 'react';
-import { StyleSheet, View, Alert, useColorScheme, TouchableOpacity, Image, ActivityIndicator } from 'react-native';
+import { StyleSheet, View, Alert, useColorScheme, Pressable, Platform, Image, ActivityIndicator } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { PeriodStorage } from '@/utils/storage';
 import { IconSymbol } from '@/components/ui/IconSymbol';
@@ -313,10 +313,20 @@ export default function SettingsScreen() {
                 <View style={styles.section}>
                     <ThemedText style={[styles.sectionTitle, { color: textColor }]}>Other Settings</ThemedText>
                     
-                    <TouchableOpacity
-                        style={styles.settingRow}
+                    <Pressable
+                        style={({ pressed, hovered, focused }: any) => [
+                            styles.settingRow,
+                            pressed && { opacity: 0.7 },
+                            (hovered || focused) && { backgroundColor: 'rgba(0,0,0,0.05)', borderRadius: 8 },
+                            Platform.OS === 'web' && focused && {
+                                outlineStyle: 'solid',
+                                outlineWidth: 2,
+                                outlineColor: textColor,
+                                outlineOffset: 2,
+                                borderRadius: 8,
+                            }
+                        ]}
                         onPress={() => handleLutealPhaseToggle(!lutealPhase)}
-                        activeOpacity={0.7}
                         accessibilityRole="switch"
                         accessibilityState={{ checked: lutealPhase }}
                         accessibilityLabel="Luteal Phase Calculation"
@@ -335,12 +345,22 @@ export default function SettingsScreen() {
                             accessible={false}
                             pointerEvents="none"
                         />
-                    </TouchableOpacity>
+                    </Pressable>
 
-                    <TouchableOpacity
-                        style={styles.settingRow}
+                    <Pressable
+                        style={({ pressed, hovered, focused }: any) => [
+                            styles.settingRow,
+                            pressed && { opacity: 0.7 },
+                            (hovered || focused) && { backgroundColor: 'rgba(0,0,0,0.05)', borderRadius: 8 },
+                            Platform.OS === 'web' && focused && {
+                                outlineStyle: 'solid',
+                                outlineWidth: 2,
+                                outlineColor: textColor,
+                                outlineOffset: 2,
+                                borderRadius: 8,
+                            }
+                        ]}
                         onPress={() => handleScreenshotToggle(!preventScreenshots)}
-                        activeOpacity={0.7}
                         accessibilityRole="switch"
                         accessibilityState={{ checked: preventScreenshots }}
                         accessibilityLabel="Prevent Screenshots"
@@ -359,17 +379,28 @@ export default function SettingsScreen() {
                             accessible={false}
                             pointerEvents="none"
                         />
-                    </TouchableOpacity>
+                    </Pressable>
                 </View>
 
                 {/* Backup Section */}
                 <View style={styles.section}>
                     <ThemedText style={[styles.sectionTitle, { color: textColor }]}>Data Management</ThemedText>
                     <View style={styles.actionButtonsContainer}>
-                        <TouchableOpacity
+                        <Pressable
                             onPress={restoreData}
                             disabled={isImporting}
-                            style={[styles.actionButton, { backgroundColor: '#457B9D', opacity: isImporting ? 0.7 : 1 }]}
+                            style={({ pressed, hovered, focused }: any) => [
+                                styles.actionButton,
+                                { backgroundColor: '#457B9D', opacity: isImporting ? 0.7 : 1 },
+                                pressed && !isImporting && { opacity: 0.7 },
+                                (hovered || focused) && !isImporting && { backgroundColor: '#345e7b' },
+                                Platform.OS === 'web' && focused && {
+                                    outlineStyle: 'solid',
+                                    outlineWidth: 2,
+                                    outlineColor: '#457B9D',
+                                    outlineOffset: 2,
+                                }
+                            ]}
                             accessibilityRole="button"
                             accessibilityLabel="Import data from file"
                             accessibilityHint="Restores your period history from a backup file"
@@ -381,12 +412,23 @@ export default function SettingsScreen() {
                                 <IconSymbol name="square.and.arrow.down" size={20} color="#FFFFFF" style={{ marginRight: 8 }} />
                             )}
                             <ThemedText style={styles.actionButtonText}>{isImporting ? 'Importing...' : 'Import'}</ThemedText>
-                        </TouchableOpacity>
+                        </Pressable>
 
-                        <TouchableOpacity
+                        <Pressable
                             onPress={backupData}
                             disabled={isImporting}
-                            style={[styles.actionButton, { backgroundColor: '#E63946', opacity: isImporting ? 0.7 : 1 }]}
+                            style={({ pressed, hovered, focused }: any) => [
+                                styles.actionButton,
+                                { backgroundColor: '#E63946', opacity: isImporting ? 0.7 : 1 },
+                                pressed && !isImporting && { opacity: 0.7 },
+                                (hovered || focused) && !isImporting && { backgroundColor: '#c5303c' },
+                                Platform.OS === 'web' && focused && {
+                                    outlineStyle: 'solid',
+                                    outlineWidth: 2,
+                                    outlineColor: '#E63946',
+                                    outlineOffset: 2,
+                                }
+                            ]}
                             accessibilityRole="button"
                             accessibilityLabel="Export data to file"
                             accessibilityHint="Creates a backup file of your period history"
@@ -394,21 +436,32 @@ export default function SettingsScreen() {
                         >
                             <IconSymbol name="square.and.arrow.up" size={20} color="#FFFFFF" style={{ marginRight: 8 }} />
                             <ThemedText style={styles.actionButtonText}>Export</ThemedText>
-                        </TouchableOpacity>
+                        </Pressable>
                     </View>
                 </View>
 
                 {/* About Section */}
                 <View style={styles.aboutSection}>
-                    <TouchableOpacity
+                    <Pressable
                         onPress={aboutOption}
-                        style={styles.aboutButton}
+                        style={({ pressed, hovered, focused }: any) => [
+                            styles.aboutButton,
+                            pressed && { opacity: 0.7 },
+                            (hovered || focused) && { backgroundColor: 'rgba(0,0,0,0.05)', borderRadius: 8 },
+                            Platform.OS === 'web' && focused && {
+                                outlineStyle: 'solid',
+                                outlineWidth: 2,
+                                outlineColor: textColor,
+                                outlineOffset: 2,
+                                borderRadius: 8,
+                            }
+                        ]}
                         accessibilityRole="button"
                         accessibilityLabel="About the app"
                     >
                          <IconSymbol name="info.circle" size={20} color="#457B9D" style={{ marginRight: 6 }} />
                         <ThemedText style={styles.aboutAppText}>About</ThemedText>
-                    </TouchableOpacity>
+                    </Pressable>
                     <ThemedText style={[styles.versionText, { color: textColor }]}>
                         App Version: 2.1-beta
                     </ThemedText>
