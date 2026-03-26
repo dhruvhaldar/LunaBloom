@@ -1,9 +1,9 @@
 import React, { useEffect, useRef } from 'react';
-import { Animated, TouchableOpacity, StyleSheet, Platform, ColorValue, TouchableOpacityProps } from 'react-native';
+import { Animated, Pressable, StyleSheet, Platform, ColorValue, PressableProps } from 'react-native';
 import * as Haptics from 'expo-haptics';
 import { IconSymbol } from '@/components/ui/IconSymbol';
 
-interface SwitchProps extends Omit<TouchableOpacityProps, 'value' | 'style' | 'onPress'> {
+interface SwitchProps extends Omit<PressableProps, 'value' | 'style' | 'onPress'> {
   value: boolean;
   onValueChange: (value: boolean) => void;
   accessibilityLabel: string;
@@ -46,14 +46,22 @@ export function Switch({
   });
 
   return (
-    <TouchableOpacity
+    <Pressable
+      style={({ focused }: any) => [
+        Platform.OS === 'web' && focused && {
+            outlineStyle: 'solid',
+            outlineWidth: 2,
+            outlineColor: activeColor as string,
+            outlineOffset: 2,
+            borderRadius: 15,
+        }
+      ]}
       onPress={() => {
         if (Platform.OS !== 'web') {
           Haptics.selectionAsync();
         }
         onValueChange(!value);
       }}
-      activeOpacity={0.8}
       accessibilityRole="switch"
       accessibilityState={{ checked: value }}
       accessibilityLabel={accessibilityLabel}
@@ -66,7 +74,7 @@ export function Switch({
            </Animated.View>
         </Animated.View>
       </Animated.View>
-    </TouchableOpacity>
+    </Pressable>
   );
 }
 

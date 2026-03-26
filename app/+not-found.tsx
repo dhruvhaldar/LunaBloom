@@ -1,5 +1,5 @@
 import { Link, Stack } from 'expo-router';
-import { StyleSheet, TouchableOpacity } from 'react-native';
+import { StyleSheet, Pressable, Platform } from 'react-native';
 
 import { ThemedText } from '@/components/ThemedText';
 import { ThemedView } from '@/components/ThemedView';
@@ -30,15 +30,25 @@ export default function NotFoundScreen() {
         </ThemedText>
 
         <Link href="/" asChild>
-          <TouchableOpacity
-            style={styles.button}
+          <Pressable
+            style={({ pressed, hovered, focused }: any) => [
+              styles.button,
+              pressed && { opacity: 0.7 },
+              (hovered || focused) && { backgroundColor: '#c5303c' },
+              Platform.OS === 'web' && focused && {
+                outlineStyle: 'solid',
+                outlineWidth: 2,
+                outlineColor: '#E63946',
+                outlineOffset: 2,
+              }
+            ]}
             accessibilityRole="button"
             accessibilityLabel="Go to home screen"
           >
             <ThemedText style={styles.buttonText}>
               Go Home 🏠
             </ThemedText>
-          </TouchableOpacity>
+          </Pressable>
         </Link>
       </ThemedView>
     </>

@@ -1,5 +1,5 @@
 import React, { useMemo, useCallback, useRef } from 'react';
-import { StyleSheet, View, Image, useColorScheme, TouchableOpacity, Pressable, ScrollView, ActivityIndicator, Platform, Share, Alert } from 'react-native';
+import { StyleSheet, View, Image, useColorScheme, Pressable, ScrollView, ActivityIndicator, Platform, Share, Alert } from 'react-native';
 import { ThemedText } from '@/components/ThemedText';
 import { ThemedView } from '@/components/ThemedView';
 import ParallaxScrollView from '@/components/ParallaxScrollView';
@@ -110,8 +110,19 @@ export default function MenstruationScreen() {
             <ThemedText style={styles.setupText}>
               To use the offline AI assistant, you need to download the model (~800MB). This only needs to be done once.
             </ThemedText>
-            <TouchableOpacity
-              style={[styles.button, isDownloading && styles.buttonDisabled]}
+            <Pressable
+              style={({ pressed, hovered, focused }: any) => [
+                styles.button,
+                isDownloading && styles.buttonDisabled,
+                pressed && !isDownloading && { opacity: 0.7 },
+                (hovered || focused) && !isDownloading && { backgroundColor: '#c5303c' },
+                Platform.OS === 'web' && focused && {
+                  outlineStyle: 'solid',
+                  outlineWidth: 2,
+                  outlineColor: '#E63946',
+                  outlineOffset: 2,
+                }
+              ]}
               onPress={downloadModel}
               disabled={isDownloading}
               accessibilityRole="button"
@@ -128,15 +139,26 @@ export default function MenstruationScreen() {
               ) : (
                 <ThemedText style={styles.buttonText}>Download Model</ThemedText>
               )}
-            </TouchableOpacity>
+            </Pressable>
           </View>
         ) : !isReady ? (
            <View style={styles.setupContainer}>
             <ThemedText style={styles.setupText}>
               Model downloaded. Load it to start chatting.
             </ThemedText>
-            <TouchableOpacity
-              style={[styles.button, isInitializing && styles.buttonDisabled]}
+            <Pressable
+              style={({ pressed, hovered, focused }: any) => [
+                styles.button,
+                isInitializing && styles.buttonDisabled,
+                pressed && !isInitializing && { opacity: 0.7 },
+                (hovered || focused) && !isInitializing && { backgroundColor: '#c5303c' },
+                Platform.OS === 'web' && focused && {
+                  outlineStyle: 'solid',
+                  outlineWidth: 2,
+                  outlineColor: '#E63946',
+                  outlineOffset: 2,
+                }
+              ]}
               onPress={initializeLlama}
               disabled={isInitializing}
               accessibilityRole="button"
@@ -151,7 +173,7 @@ export default function MenstruationScreen() {
               ) : (
                 <ThemedText style={styles.buttonText}>Load AI</ThemedText>
               )}
-            </TouchableOpacity>
+            </Pressable>
            </View>
         ) : (
           <>
