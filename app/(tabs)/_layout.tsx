@@ -40,13 +40,13 @@ const AnimatedTabButton = (props: any) => {
       {...rest}
       onPressIn={handlePressIn}
       onPressOut={handlePressOut}
-      style={({ pressed, hovered, focused }: any) => [
-        rest.style,
+      style={(state: any) => [
+        typeof rest.style === 'function' ? rest.style(state) : rest.style,
         styles.tabButtonContainer,
-        { opacity: pressed ? 0.7 : 1 },
+        { opacity: state.pressed ? 0.7 : 1 },
         Platform.select({
           web: {
-            outlineStyle: focused ? 'solid' : 'none',
+            outlineStyle: state.focused ? 'solid' : 'none',
             outlineWidth: 2,
             outlineColor: '#E63946',
             outlineOffset: 2,
