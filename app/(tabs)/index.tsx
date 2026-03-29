@@ -62,6 +62,9 @@ export default function HomeScreen() {
       source={require('@/assets/images/LunaBloom_adaptive.png')}
       style={styles.reactLogo}
       resizeMode="contain"
+      accessible={true}
+      accessibilityRole="image"
+      accessibilityLabel="LunaBloom logo"
     />
   ), []);
 

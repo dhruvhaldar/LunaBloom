@@ -134,6 +134,8 @@ export default function TabTwoScreen() {
       source={require('@/assets/images/history2.png')}
       style={styles.reactLogo}
       resizeMode="contain"
+      accessible={false}
+      importantForAccessibility="no"
     />
   ), []);
 
