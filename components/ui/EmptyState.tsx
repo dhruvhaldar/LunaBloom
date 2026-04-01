@@ -92,8 +92,9 @@ export function EmptyState({ title, message, icon, actionLabel, onAction, style 
               { translateY: floatAnim }
             ]
           }}
-          accessibilityRole="image"
-          accessibilityLabel={`${title} illustration`}
+          accessible={false}
+          importantForAccessibility="no"
+          testID="empty-state-icon-container"
         >
           <IconSymbol
             name={icon}

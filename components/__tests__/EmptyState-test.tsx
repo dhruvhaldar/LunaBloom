@@ -60,8 +60,8 @@ describe('EmptyState', () => {
     expect(onAction).toHaveBeenCalled();
   });
 
-  it('renders icon with accessibility props', () => {
-    const { getByLabelText } = render(
+  it('renders icon and hides it from screen readers', () => {
+    const { getByTestId } = render(
       <EmptyState
         title="No Insights"
         message="Log more data"
@@ -69,9 +69,9 @@ describe('EmptyState', () => {
       />
     );
 
-    // Query by label text which I added
-    const iconContainer = getByLabelText('No Insights illustration');
+    const iconContainer = getByTestId('empty-state-icon-container');
     expect(iconContainer).toBeTruthy();
-    expect(iconContainer.props.accessibilityRole).toBe('image');
+    expect(iconContainer.props.accessible).toBe(false);
+    expect(iconContainer.props.importantForAccessibility).toBe('no');
   });
 });
