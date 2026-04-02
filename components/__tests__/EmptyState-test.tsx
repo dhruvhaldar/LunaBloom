@@ -48,6 +48,7 @@ describe('EmptyState', () => {
         title="No Data"
         message="Message"
         actionLabel="Retry"
+        actionHint="Tap to retry loading data"
         onAction={onAction}
       />
     );
@@ -55,6 +56,7 @@ describe('EmptyState', () => {
     // Check button role
     const button = getByRole('button', { name: 'Retry' });
     expect(button).toBeTruthy();
+    expect(button.props.accessibilityHint).toBe('Tap to retry loading data');
 
     fireEvent.press(button);
     expect(onAction).toHaveBeenCalled();

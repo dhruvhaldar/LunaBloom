@@ -101,6 +101,7 @@ export default function TabTwoScreen() {
         message="Track your first period to start seeing your history here."
         icon="clock.fill"
         actionLabel="Log Period"
+        actionHint="Navigates to the home screen to log a new period"
         onAction={handleEmptyAction}
       />
     )

@@ -220,6 +220,7 @@ export default function InsightsScreen() {
                   message="Log more periods to unlock trends and insights."
                   icon="chart.bar.fill"
                   actionLabel="Log Now"
+                  actionHint="Navigates to the home screen to log a new period"
                   onAction={() => router.push('/')}
                   style={{ marginTop: 10, padding: 20 }}
                 />
