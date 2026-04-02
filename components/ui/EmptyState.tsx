@@ -10,11 +10,12 @@ interface EmptyStateProps {
   message: string;
   icon?: IconSymbolName;
   actionLabel?: string;
+  actionHint?: string;
   onAction?: () => void;
   style?: ViewStyle;
 }
 
-export function EmptyState({ title, message, icon, actionLabel, onAction, style }: EmptyStateProps) {
+export function EmptyState({ title, message, icon, actionLabel, actionHint, onAction, style }: EmptyStateProps) {
   const colorScheme = useColorScheme();
   const iconColor = colorScheme === 'dark' ? '#457B9D' : '#A8DADC'; // Muted brand color
   const textColor = colorScheme === 'dark' ? '#F1FAEE' : '#1D3557';
@@ -127,6 +128,7 @@ export function EmptyState({ title, message, icon, actionLabel, onAction, style 
             onPress={onAction}
             accessibilityRole="button"
             accessibilityLabel={actionLabel}
+            accessibilityHint={actionHint}
           >
             <ThemedText style={styles.buttonText}>{actionLabel}</ThemedText>
           </Pressable>
