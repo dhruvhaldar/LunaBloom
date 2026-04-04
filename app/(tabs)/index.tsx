@@ -361,7 +361,7 @@ export default function HomeScreen() {
 
       {/* Last Period Date */}
       <ThemedView style={styles.inputGroup}>
-        <ThemedText style={{ color: textColor }}>Last Period Start</ThemedText>
+        <ThemedText nativeID="last-period-label" style={{ color: textColor }}>Last Period Start</ThemedText>
         <Pressable
           onPress={showDatepicker}
           style={({ pressed, hovered, focused }: any) => [
@@ -379,6 +379,8 @@ export default function HomeScreen() {
           accessibilityLabel={`Select last period start date. Current: ${formattedLastPeriod}`}
           accessibilityHint="Opens a date picker to select when your last period started"
           accessibilityRole="button"
+          aria-labelledby="last-period-label"
+          aria-haspopup="dialog"
         >
           <IconSymbol name="calendar" size={16} color={textColor} />
           <ThemedText style={[styles.dateText, { color: textColor }]}>
@@ -399,7 +401,7 @@ export default function HomeScreen() {
       {/* Cycle Length */}
       <View>
         <ThemedView style={styles.inputGroup}>
-          <ThemedText style={{ color: textColor }}>Cycle Length (days)</ThemedText>
+          <ThemedText nativeID="cycle-length-label" style={{ color: textColor }}>Cycle Length (days)</ThemedText>
           <StepperInput
             value={cycleLength}
             onChangeText={handleCycleLengthChange}
@@ -407,6 +409,7 @@ export default function HomeScreen() {
             min={15}
             max={120}
             label="Cycle length in days"
+            aria-labelledby="cycle-length-label"
           />
         </ThemedView>
         {cycleWarning && (
@@ -422,7 +425,7 @@ export default function HomeScreen() {
       {/* Period Duration */}
       <View>
         <ThemedView style={styles.inputGroup}>
-          <ThemedText style={{ color: textColor }}>Period Duration (days)</ThemedText>
+          <ThemedText nativeID="period-duration-label" style={{ color: textColor }}>Period Duration (days)</ThemedText>
           <StepperInput
             value={periodDuration}
             onChangeText={handlePeriodDurationChange}
@@ -430,6 +433,7 @@ export default function HomeScreen() {
             min={1}
             max={14}
             label="Period duration in days"
+            aria-labelledby="period-duration-label"
           />
         </ThemedView>
         {periodWarning && (
