@@ -361,8 +361,9 @@ export default function HomeScreen() {
 
       {/* Last Period Date */}
       <ThemedView style={styles.inputGroup}>
-        <ThemedText style={{ color: textColor }}>Last Period Start</ThemedText>
+        <ThemedText nativeID="last-period-label" style={{ color: textColor }}>Last Period Start</ThemedText>
         <Pressable
+          aria-labelledby="last-period-label"
           onPress={showDatepicker}
           style={({ pressed, hovered, focused }: any) => [
             styles.dateButton,
@@ -399,8 +400,9 @@ export default function HomeScreen() {
       {/* Cycle Length */}
       <View>
         <ThemedView style={styles.inputGroup}>
-          <ThemedText style={{ color: textColor }}>Cycle Length (days)</ThemedText>
+          <ThemedText nativeID="cycle-length-label" style={{ color: textColor }}>Cycle Length (days)</ThemedText>
           <StepperInput
+            aria-labelledby="cycle-length-label"
             value={cycleLength}
             onChangeText={handleCycleLengthChange}
             onBlur={validateCycleLength}
@@ -422,8 +424,9 @@ export default function HomeScreen() {
       {/* Period Duration */}
       <View>
         <ThemedView style={styles.inputGroup}>
-          <ThemedText style={{ color: textColor }}>Period Duration (days)</ThemedText>
+          <ThemedText nativeID="period-duration-label" style={{ color: textColor }}>Period Duration (days)</ThemedText>
           <StepperInput
+            aria-labelledby="period-duration-label"
             value={periodDuration}
             onChangeText={handlePeriodDurationChange}
             onBlur={validatePeriodDuration}

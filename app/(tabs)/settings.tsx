@@ -316,6 +316,7 @@ export default function SettingsScreen() {
                     <ThemedText style={[styles.sectionTitle, { color: textColor }]}>Other Settings</ThemedText>
                     
                     <Pressable
+                        aria-labelledby="luteal-phase-label"
                         style={({ pressed, hovered, focused }: any) => [
                             styles.settingRow,
                             pressed && { opacity: 0.7 },
@@ -335,7 +336,7 @@ export default function SettingsScreen() {
                         accessibilityHint="Improves ovulation prediction by using a 14-day phase."
                     >
                         <View style={styles.settingTextContainer}>
-                            <ThemedText style={[styles.settingText, { color: textColor }]}>Luteal Phase Calculation</ThemedText>
+                            <ThemedText nativeID="luteal-phase-label" style={[styles.settingText, { color: textColor }]}>Luteal Phase Calculation</ThemedText>
                             <ThemedText style={[styles.settingDescription, { color: textColor }]}>
                                 Improves ovulation prediction by using a 14-day phase.
                             </ThemedText>
@@ -350,6 +351,7 @@ export default function SettingsScreen() {
                     </Pressable>
 
                     <Pressable
+                        aria-labelledby="prevent-screenshots-label"
                         style={({ pressed, hovered, focused }: any) => [
                             styles.settingRow,
                             pressed && { opacity: 0.7 },
@@ -369,7 +371,7 @@ export default function SettingsScreen() {
                         accessibilityHint="Blocks screen captures to protect your privacy."
                     >
                         <View style={styles.settingTextContainer}>
-                            <ThemedText style={[styles.settingText, { color: textColor }]}>Prevent Screenshots</ThemedText>
+                            <ThemedText nativeID="prevent-screenshots-label" style={[styles.settingText, { color: textColor }]}>Prevent Screenshots</ThemedText>
                             <ThemedText style={[styles.settingDescription, { color: textColor }]}>
                                 Blocks screen captures to protect your privacy.
                             </ThemedText>
