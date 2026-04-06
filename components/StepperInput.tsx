@@ -113,12 +113,13 @@ export const StepperInput = memo(function StepperInput({
           {
             borderColor,
             opacity: isAtMin ? 0.5 : pressed ? 0.7 : 1,
-            backgroundColor: hovered || focused ? 'rgba(0,0,0,0.05)' : 'transparent',
+            backgroundColor: (hovered || focused) && !isAtMin ? 'rgba(0,0,0,0.05)' : 'transparent',
             ...(Platform.OS === 'web' && focused && { outlineStyle: 'solid', outlineWidth: 2, outlineColor: '#E63946', outlineOffset: 2 })
           }
         ]}
         accessibilityRole="button"
         accessibilityLabel={`Decrease ${label}`}
+        accessibilityHint={isAtMin ? 'Minimum value reached' : undefined}
         accessibilityState={{ disabled: isAtMin }}
         disabled={isAtMin}
         delayLongPress={300}
@@ -162,12 +163,13 @@ export const StepperInput = memo(function StepperInput({
           {
             borderColor,
             opacity: isAtMax ? 0.5 : pressed ? 0.7 : 1,
-            backgroundColor: hovered || focused ? 'rgba(0,0,0,0.05)' : 'transparent',
+            backgroundColor: (hovered || focused) && !isAtMax ? 'rgba(0,0,0,0.05)' : 'transparent',
             ...(Platform.OS === 'web' && focused && { outlineStyle: 'solid', outlineWidth: 2, outlineColor: '#E63946', outlineOffset: 2 })
           }
         ]}
         accessibilityRole="button"
         accessibilityLabel={`Increase ${label}`}
+        accessibilityHint={isAtMax ? 'Maximum value reached' : undefined}
         accessibilityState={{ disabled: isAtMax }}
         disabled={isAtMax}
         delayLongPress={300}
