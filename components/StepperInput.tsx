@@ -20,6 +20,7 @@ interface StepperInputProps {
   max?: number;
   label: string;
   style?: StyleProp<ViewStyle>;
+  "aria-labelledby"?: string;
 }
 
 // Optimization: Use memo to prevent re-renders when parent state changes (e.g. typing notes)
@@ -32,6 +33,7 @@ export const StepperInput = memo(function StepperInput({
   max = 100,
   label,
   style,
+  "aria-labelledby": ariaLabelledBy,
 }: StepperInputProps) {
   const textColor = useThemeColor({}, 'text');
   const borderColor = textColor;
@@ -149,6 +151,7 @@ export const StepperInput = memo(function StepperInput({
         accessibilityLabel={label}
         accessibilityRole="spinbutton"
         accessibilityValue={{ min, max, now: numericValue || 0 }}
+        aria-labelledby={ariaLabelledBy}
         selectTextOnFocus={true}
         returnKeyType="done"
         maxLength={3}
