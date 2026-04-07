@@ -460,6 +460,7 @@ export default function SettingsScreen() {
                         ]}
                         accessibilityRole="button"
                         accessibilityLabel="About the app"
+                        accessibilityHint="Shows information about the app"
                     >
                          <IconSymbol name="info.circle" size={20} color="#457B9D" style={{ marginRight: 6 }} />
                         <ThemedText style={styles.aboutAppText}>About</ThemedText>
