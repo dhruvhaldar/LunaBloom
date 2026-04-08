@@ -129,6 +129,7 @@ export default function MenstruationScreen() {
               disabled={isDownloading}
               accessibilityRole="button"
               accessibilityLabel={isDownloading ? `Downloading AI Model, ${Math.round(downloadProgress * 100)}% complete` : "Download AI Model"}
+              accessibilityHint={isDownloading ? "Please wait while the offline AI model is being downloaded" : "Downloads the offline AI model to your device"}
               accessibilityState={{ disabled: isDownloading, busy: isDownloading }}
             >
               {isDownloading ? (
@@ -165,6 +166,7 @@ export default function MenstruationScreen() {
               disabled={isInitializing}
               accessibilityRole="button"
               accessibilityLabel={isInitializing ? "Loading AI Model" : "Load AI Model"}
+              accessibilityHint={isInitializing ? "Please wait while the AI model is loading into memory" : "Loads the downloaded AI model to start chatting"}
               accessibilityState={{ disabled: isInitializing, busy: isInitializing }}
             >
               {isInitializing ? (

@@ -511,6 +511,11 @@ export default function HomeScreen() {
             onPress={logPeriod}
             disabled={isLogging || showSuccess}
             accessibilityLabel={showSuccess ? "Entry successfully logged" : "Log Period Entry"}
+            accessibilityHint={
+              isLogging ? "Please wait while your entry is being saved" :
+              showSuccess ? "Your entry has been saved successfully" :
+              "Saves your period tracking details to history"
+            }
             accessibilityRole="button"
             accessibilityState={{ disabled: isLogging || showSuccess, busy: isLogging }}
           >

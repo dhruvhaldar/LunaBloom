@@ -167,6 +167,11 @@ export const ChatInput = forwardRef<ChatInputHandle, ChatInputProps>(({ onSubmit
             onPress={handleSubmit}
             disabled={isButtonDisabled}
             accessibilityLabel="Send question to AI assistant"
+            accessibilityHint={
+                isButtonDisabled
+                    ? (isLoading ? 'Please wait while AI generates a response' : 'Please enter a question first')
+                    : 'Sends your question to the AI assistant'
+            }
             accessibilityRole="button"
             accessibilityState={{ disabled: isButtonDisabled, busy: isLoading }}
         >
