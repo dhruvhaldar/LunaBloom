@@ -171,7 +171,12 @@ export default function TabLayout() {
           title: 'MenstruAI',
           tabBarIcon: ({ color, focused }) => (
             <View style={styles.tabItemContainer}>
-              <Image source={require('@/assets/images/ai.png')} style={styles.tinyLogo}/>
+              <Image
+                source={require('@/assets/images/ai.png')}
+                style={styles.tinyLogo}
+                accessible={false}
+                importantForAccessibility="no"
+              />
             </View>
           ),
         }}
