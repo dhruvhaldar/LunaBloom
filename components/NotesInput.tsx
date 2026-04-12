@@ -75,13 +75,14 @@ export const NotesInput = memo(forwardRef<NotesInputHandle, NotesInputProps>(({
 
   return (
     <ThemedView style={styles.section}>
-      <ThemedText type="subtitle" style={{ color: headingColor, marginBottom: 10 }}>
+      <ThemedText nativeID="notes-label" type="subtitle" style={{ color: headingColor, marginBottom: 10 }}>
         Notes 🗒️
       </ThemedText>
       <View style={styles.inputContainer}>
         <Animated.View style={shakeStyle}>
           <TextInput
           ref={inputRef}
+          aria-labelledby="notes-label"
           style={[
             styles.notesInput,
             {
