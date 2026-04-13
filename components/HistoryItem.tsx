@@ -114,6 +114,7 @@ const HistoryItem = React.memo(function HistoryItem({ item, onDelete, textColor,
           ]}
           onPress={() => onDelete(item.date)}
           accessibilityLabel={`Delete entry from ${logDate}`}
+          accessibilityHint="Permanently deletes this entry from your history"
           accessibilityRole="button"
         >
           <IconSymbol name="trash.fill" size={24} color={deleteIconColor} />
