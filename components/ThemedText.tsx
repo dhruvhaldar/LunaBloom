@@ -19,6 +19,7 @@ export function ThemedText({
 
   return (
     <Text
+      accessibilityRole={type === 'title' || type === 'subtitle' ? 'header' : undefined}
       style={[
         { color },
         type === 'default' ? styles.default : undefined,
