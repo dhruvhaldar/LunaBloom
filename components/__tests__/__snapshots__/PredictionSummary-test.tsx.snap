@@ -17,6 +17,7 @@ exports[`PredictionSummary renders correctly 1`] = `
     }
   >
     <Text
+      accessibilityRole="header"
       style={
         [
           {
@@ -280,6 +281,7 @@ exports[`PredictionSummary renders correctly 1`] = `
     }
   >
     <Text
+      accessibilityRole="header"
       style={
         [
           {
