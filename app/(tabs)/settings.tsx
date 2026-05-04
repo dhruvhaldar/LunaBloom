@@ -37,6 +37,7 @@ export default function SettingsScreen() {
     const [lutealPhase, setLutealPhase] = useState(false);
     const [preventScreenshots, setPreventScreenshots] = useState(false);
     const [isImporting, setIsImporting] = useState(false);
+    const [isExporting, setIsExporting] = useState(false);
 
     // Load saved settings
     useEffect(() => {
@@ -151,6 +152,7 @@ export default function SettingsScreen() {
                     text: 'Proceed & Save',
                     style: 'destructive',
                     onPress: async () => {
+                      setIsExporting(true);
                       // Create a temporary file path
                       const fileName = `period_tracker_backup_${new Date().toISOString().split('T')[0]}.json`;
                       const fileUri = `${FileSystem.cacheDirectory}${fileName}`;
@@ -185,6 +187,7 @@ export default function SettingsScreen() {
                           // Log error but don't alert user as the main task might have succeeded
                           console.error('⚠️ Failed to clean up temporary backup file:', deleteError instanceof Error ? deleteError.message : String(deleteError));
                         }
+                        setIsExporting(false);
                       }
                     }
                   }
@@ -418,12 +421,12 @@ export default function SettingsScreen() {
 
                         <Pressable
                             onPress={backupData}
-                            disabled={isImporting}
+                            disabled={isImporting || isExporting}
                             style={({ pressed, hovered, focused }: any) => [
                                 styles.actionButton,
-                                { backgroundColor: '#E63946', opacity: isImporting ? 0.7 : 1 },
-                                pressed && !isImporting && { opacity: 0.7 },
-                                (hovered || focused) && !isImporting && { backgroundColor: '#c5303c' },
+                                { backgroundColor: '#E63946', opacity: (isImporting || isExporting) ? 0.7 : 1 },
+                                pressed && !(isImporting || isExporting) && { opacity: 0.7 },
+                                (hovered || focused) && !(isImporting || isExporting) && { backgroundColor: '#c5303c' },
                                 Platform.OS === 'web' && focused && {
                                     outlineStyle: 'solid',
                                     outlineWidth: 2,
@@ -434,10 +437,14 @@ export default function SettingsScreen() {
                             accessibilityRole="button"
                             accessibilityLabel="Export data to file"
                             accessibilityHint="Creates a backup file of your period history"
-                            accessibilityState={{ disabled: isImporting }}
+                            accessibilityState={{ disabled: isImporting || isExporting, busy: isExporting }}
                         >
-                            <IconSymbol name="square.and.arrow.up" size={20} color="#FFFFFF" style={{ marginRight: 8 }} />
-                            <ThemedText style={styles.actionButtonText}>Export</ThemedText>
+                            {isExporting ? (
+                                <ActivityIndicator color="#FFFFFF" style={{ marginRight: 8 }} />
+                            ) : (
+                                <IconSymbol name="square.and.arrow.up" size={20} color="#FFFFFF" style={{ marginRight: 8 }} />
+                            )}
+                            <ThemedText style={styles.actionButtonText}>{isExporting ? 'Exporting...' : 'Export'}</ThemedText>
                         </Pressable>
                     </View>
                 </View>

@@ -7,3 +7,7 @@
 ## 2026-04-19 - [Add Header Accessibility Role to Title Text]
 **Learning:** Screen reader navigation by semantic headers relies on specific traits or roles being properly exposed. In React Native, text elements formatted visually as titles or subtitles do not automatically receive header semantics, making it difficult for users to jump through sections.
 **Action:** When a reusable text component (like `ThemedText`) exposes a `type='title'` or `type='subtitle'`, explicitly pass `accessibilityRole='header'` to the underlying `Text` component.
+
+## 2024-05-18 - Async Loading States
+**Learning:** Transient loading states for async actions like `navigator.share` can appear briefly or not at all depending on platform capabilities (like mocked APIs in Expo Web), leading to poor or missing user feedback. The "Export" button was doing this.
+**Action:** Always wrap async actions on interactive elements with explicit loading state variables (e.g., `isExporting`), render visual feedback (like `ActivityIndicator` and updated label), and explicitly update `accessibilityState={{ busy: true, disabled: true }}` to notify screen readers.
