@@ -18,6 +18,7 @@ exports[`PredictionSummary renders correctly 1`] = `
   >
     <Text
       accessibilityRole="header"
+      aria-level={2}
       style={
         [
           {
@@ -282,6 +283,7 @@ exports[`PredictionSummary renders correctly 1`] = `
   >
     <Text
       accessibilityRole="header"
+      aria-level={2}
       style={
         [
           {

@@ -20,6 +20,7 @@ export function ThemedText({
   return (
     <Text
       accessibilityRole={type === 'title' || type === 'subtitle' ? 'header' : undefined}
+      aria-level={type === 'title' ? 1 : type === 'subtitle' ? 2 : undefined}
       style={[
         { color },
         type === 'default' ? styles.default : undefined,
