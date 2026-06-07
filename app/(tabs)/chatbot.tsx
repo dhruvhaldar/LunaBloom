@@ -1,4 +1,4 @@
-import React, { useMemo, useCallback, useRef } from 'react';
+import React, { useState, useMemo, useCallback, useRef } from 'react';
 import { StyleSheet, View, Image, useColorScheme, Pressable, ScrollView, ActivityIndicator, Platform, Share, Alert } from 'react-native';
 import { ThemedText } from '@/components/ThemedText';
 import { ThemedView } from '@/components/ThemedView';
@@ -35,6 +35,7 @@ export default function MenstruationScreen() {
   const responseBackgroundColor = colorScheme === 'dark' ? '#457B9D' : '#A8DADC';
   const textColor = colorScheme === 'dark' ? '#F1FAEE' : '#1D3557';
   const placeholderTextColor = colorScheme === 'dark' ? '#F1FAEE' : '#1D3557';
+  const [isSharing, setIsSharing] = useState(false);
 
   // Optimization: Memoize suggestions list to prevent re-rendering chips on every keystroke
   // handleChat is now stable from the hook, so this will only re-render if theme colors change
@@ -67,6 +68,7 @@ export default function MenstruationScreen() {
 
   const handleShare = useCallback(async () => {
     if (!response) return;
+    setIsSharing(true);
     try {
       await Share.share({
         message: response,
@@ -79,6 +81,7 @@ export default function MenstruationScreen() {
       }
       console.error(error.message);
     }
+    setIsSharing(false);
   }, [response]);
 
   // Optimization: Memoize header props to prevent re-rendering ParallaxScrollView header
@@ -200,8 +203,9 @@ export default function MenstruationScreen() {
                   <Pressable
                     style={({ pressed, hovered, focused }: any) => [
                       styles.shareButton,
-                      pressed && { opacity: 0.7 },
-                      (hovered || focused) && { backgroundColor: 'rgba(0,0,0,0.05)' },
+                      isSharing && { opacity: 0.7 },
+                      pressed && !isSharing && { opacity: 0.7 },
+                      (hovered || focused) && !isSharing && { backgroundColor: 'rgba(0,0,0,0.05)' },
                       Platform.OS === 'web' && focused && {
                         outlineStyle: 'solid',
                         outlineWidth: 2,
@@ -210,11 +214,20 @@ export default function MenstruationScreen() {
                       }
                     ]}
                     onPress={handleShare}
-                    accessibilityLabel="Share response"
+                    disabled={isSharing}
+                    accessibilityLabel={isSharing ? "Sharing response..." : "Share response"}
+                    accessibilityHint={isSharing ? "Please wait while sharing dialog opens" : undefined}
                     accessibilityRole="button"
+                    accessibilityState={{ disabled: isSharing, busy: isSharing }}
                   >
-                    <IconSymbol name="share" size={20} color={textColor} />
-                    <ThemedText style={[styles.shareButtonText, { color: textColor }]}>Share</ThemedText>
+                    {isSharing ? (
+                      <ActivityIndicator size="small" color={textColor} />
+                    ) : (
+                      <IconSymbol name="share" size={20} color={textColor} />
+                    )}
+                    <ThemedText style={[styles.shareButtonText, { color: textColor }]}>
+                      {isSharing ? 'Sharing...' : 'Share'}
+                    </ThemedText>
                   </Pressable>
                 </View>
               ) : (
