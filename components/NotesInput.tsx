@@ -122,8 +122,10 @@ export const NotesInput = memo(forwardRef<NotesInputHandle, NotesInputProps>(({
               ]}
               onPress={handleClear}
               accessibilityLabel="Clear notes"
+              accessibilityHint="Clears the current notes"
               accessibilityRole="button"
               hitSlop={{ top: 10, bottom: 10, left: 10, right: 10 }}
+              {...(Platform.OS === 'web' ? { title: 'Clear notes' } : {})}
             >
               <IconSymbol name="xmark.circle.fill" size={20} color={placeholderTextColor} />
             </Pressable>
