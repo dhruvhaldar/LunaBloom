@@ -127,8 +127,10 @@ export const ChatInput = forwardRef<ChatInputHandle, ChatInputProps>(({ onSubmit
                 ]}
                 onPress={handleClear}
                 accessibilityLabel="Clear question"
+                accessibilityHint="Clears the current question"
                 accessibilityRole="button"
                 hitSlop={{ top: 10, bottom: 10, left: 10, right: 10 }}
+                {...(Platform.OS === 'web' ? { title: 'Clear question' } : {})}
               >
                 <IconSymbol name="xmark.circle.fill" size={20} color={placeholderTextColor} />
               </Pressable>

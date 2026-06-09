@@ -15,3 +15,4 @@
 ## 2024-05-18 - Async Loading States
 **Learning:** Transient loading states for async actions like `navigator.share` can appear briefly or not at all depending on platform capabilities (like mocked APIs in Expo Web), leading to poor or missing user feedback. The "Export" button was doing this, and the "Share" button also suffered from it.
 **Action:** Always wrap async actions on interactive elements with explicit loading state variables (e.g., `isSharing`), render visual feedback (like `ActivityIndicator` and updated label), and explicitly update `accessibilityState={{ busy: true, disabled: true }}` to notify screen readers.
+## 2024-05-18 - Tooltips on Icon Buttons\n**Learning:** Icon-only buttons using `Pressable` on React Native Web can lack visual context on hover for mouse users. \n**Action:** Add tooltips by conditionally spreading the `title` HTML attribute using `{...(Platform.OS === 'web' ? { title: 'Action text' } : {})}`.
