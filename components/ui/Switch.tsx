@@ -65,6 +65,7 @@ export function Switch({
       accessibilityRole="switch"
       accessibilityState={{ checked: value }}
       accessibilityLabel={accessibilityLabel}
+      {...(Platform.OS === 'web' ? { 'aria-checked': value } : {})}
       {...props}
     >
       <Animated.View style={[styles.container, { backgroundColor }]}>
