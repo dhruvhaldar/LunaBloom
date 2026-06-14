@@ -117,7 +117,8 @@ export const NotesInput = memo(forwardRef<NotesInputHandle, NotesInputProps>(({
                 Platform.OS === 'web' && focused && {
                   outlineStyle: 'solid',
                   outlineWidth: 2,
-                  outlineColor: placeholderTextColor
+                  outlineColor: placeholderTextColor,
+                  outlineOffset: 2
                 }
               ]}
               onPress={handleClear}

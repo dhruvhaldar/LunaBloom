@@ -109,7 +109,8 @@ const HistoryItem = React.memo(function HistoryItem({ item, onDelete, textColor,
             Platform.OS === 'web' && focused && {
               outlineStyle: 'solid',
               outlineWidth: 2,
-              outlineColor: deleteIconColor
+              outlineColor: deleteIconColor,
+              outlineOffset: 2
             }
           ]}
           onPress={() => onDelete(item.date)}

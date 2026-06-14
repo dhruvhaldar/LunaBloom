@@ -19,3 +19,7 @@
 ## 2026-06-13 - Explicit aria-checked on Web Switch
 **Learning:** React Native Web's translation of `accessibilityState={{ checked: value }}` may not consistently expose the required `aria-checked` property on custom toggle elements across all versions/browsers.
 **Action:** When building custom web-compatible Switch or Toggle components in React Native using `Pressable`, explicitly pass `{...(Platform.OS === 'web' ? { 'aria-checked': value } : {})}` to ensure robust screen reader compatibility.
+
+## 2024-05-25 - Verify Conditional UI Elements in Verification Scripts
+**Learning:** When using Playwright to verify a UI element that only appears conditionally (e.g., a "Clear" button that appears only when an input is populated), the script must explicitly perform the prerequisite actions to trigger visibility before targeting the element.
+**Action:** Always mock or input prerequisite state (like using `fill` on an input via `page.get_by_placeholder`) in verification scripts before interacting with conditionally rendered UI components.
