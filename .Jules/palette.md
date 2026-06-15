@@ -23,3 +23,6 @@
 ## 2024-05-25 - Verify Conditional UI Elements in Verification Scripts
 **Learning:** When using Playwright to verify a UI element that only appears conditionally (e.g., a "Clear" button that appears only when an input is populated), the script must explicitly perform the prerequisite actions to trigger visibility before targeting the element.
 **Action:** Always mock or input prerequisite state (like using `fill` on an input via `page.get_by_placeholder`) in verification scripts before interacting with conditionally rendered UI components.
+## 2026-06-15 - Explicit ARIA Value Attributes for Web Spinbuttons
+**Learning:** React Native's `accessibilityValue` may not seamlessly translate to ARIA properties for web inputs functioning as a `spinbutton`, which can leave screen readers without critical context about min, max, and current values on web.
+**Action:** When building web-compatible spinbutton components in React Native, explicitly add `aria-valuemin`, `aria-valuemax`, and `aria-valuenow` to the underlying input component for robust screen reader compatibility.

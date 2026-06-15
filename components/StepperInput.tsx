@@ -152,6 +152,11 @@ export const StepperInput = memo(function StepperInput({
         accessibilityRole="spinbutton"
         accessibilityValue={{ min, max, now: numericValue || 0 }}
         aria-labelledby={ariaLabelledBy}
+        {...(Platform.OS === 'web' ? {
+          'aria-valuemin': min,
+          'aria-valuemax': max,
+          'aria-valuenow': numericValue || 0
+        } : {})}
         selectTextOnFocus={true}
         returnKeyType="done"
         maxLength={3}
