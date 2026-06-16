@@ -94,7 +94,13 @@ export default function TabTwoScreen() {
   // Optimization: Memoize empty state component to prevent re-mounting/re-rendering
   const emptyState = useMemo(() => (
     isLoading ? (
-       <ActivityIndicator size="large" color={textColor} style={{ marginTop: 20 }} />
+       <ActivityIndicator
+         size="large"
+         color={textColor}
+         style={{ marginTop: 20 }}
+         accessibilityLabel="Loading period history"
+         accessibilityRole="progressbar"
+       />
     ) : (
       <EmptyState
         title="No Entries Yet"

@@ -26,3 +26,6 @@
 ## 2026-06-15 - Explicit ARIA Value Attributes for Web Spinbuttons
 **Learning:** React Native's `accessibilityValue` may not seamlessly translate to ARIA properties for web inputs functioning as a `spinbutton`, which can leave screen readers without critical context about min, max, and current values on web.
 **Action:** When building web-compatible spinbutton components in React Native, explicitly add `aria-valuemin`, `aria-valuemax`, and `aria-valuenow` to the underlying input component for robust screen reader compatibility.
+## 2024-06-16 - Add ActivityIndicator Accessibility
+**Learning:** React Native's `ActivityIndicator` is visually obvious but completely silent to screen readers by default. When an entire section of UI (like a list of items) is replaced by an `ActivityIndicator`, screen reader users might think the app is frozen or empty because there's no verbal cue.
+**Action:** Always add `accessibilityRole="progressbar"` and a clear `accessibilityLabel` (e.g., "Loading data...") to standalone `ActivityIndicator` components that represent primary loading states.
