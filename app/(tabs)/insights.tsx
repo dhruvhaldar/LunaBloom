@@ -197,7 +197,7 @@ export default function InsightsScreen() {
         <ThemedText type="title" style={[styles.title, { color: sectionHeadingtextColor }]}>Cycle Insights</ThemedText>
 
         {isLoading ? (
-          <ActivityIndicator size="large" color={barColor} style={{ marginTop: 50 }} />
+          <ActivityIndicator size="large" color={barColor} style={{ marginTop: 50 }} accessibilityRole="progressbar" accessibilityLabel="Loading cycle insights" />
         ) : (
           <>
             {/* Previous Cycles Section */}
