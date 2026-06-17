@@ -29,3 +29,7 @@
 ## 2024-06-16 - Add ActivityIndicator Accessibility
 **Learning:** React Native's `ActivityIndicator` is visually obvious but completely silent to screen readers by default. When an entire section of UI (like a list of items) is replaced by an `ActivityIndicator`, screen reader users might think the app is frozen or empty because there's no verbal cue.
 **Action:** Always add `accessibilityRole="progressbar"` and a clear `accessibilityLabel` (e.g., "Loading data...") to standalone `ActivityIndicator` components that represent primary loading states.
+
+## 2026-06-17 - Add ActivityIndicator Accessibility
+**Learning:** React Native's `ActivityIndicator` is visually obvious but completely silent to screen readers by default. When an entire section of UI (like a list of items) is replaced by an `ActivityIndicator`, screen reader users might think the app is frozen or empty because there's no verbal cue.
+**Action:** Always add `accessibilityRole="progressbar"` and a clear `accessibilityLabel` (e.g., "Loading data...") to standalone `ActivityIndicator` components that represent primary loading states.
