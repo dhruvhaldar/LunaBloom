@@ -194,7 +194,7 @@ export default function MenstruationScreen() {
             >
               {isLoading ? (
                 <View style={styles.loadingContainer}>
-                  <ActivityIndicator size="large" color={textColor} />
+                  <ActivityIndicator size="large" color={textColor} accessibilityRole="progressbar" accessibilityLabel="Generating response" />
                   <ThemedText style={styles.loadingText}>Generating response...</ThemedText>
                 </View>
               ) : response ? (
