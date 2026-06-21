@@ -177,7 +177,7 @@ export const ChatInput = forwardRef<ChatInputHandle, ChatInputProps>(({ onSubmit
             accessibilityRole="button"
             accessibilityState={{ disabled: isButtonDisabled, busy: isLoading }}
         >
-            {isLoading ? <ActivityIndicator color="#F1FAEE" /> : <ThemedText style={styles.buttonText}>Ask 🔍</ThemedText>}
+            {isLoading ? <ActivityIndicator color="#F1FAEE" accessibilityRole="progressbar" accessibilityLabel="Sending question" /> : <ThemedText style={styles.buttonText}>Ask 🔍</ThemedText>}
         </Pressable>
     </View>
   );

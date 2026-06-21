@@ -412,7 +412,7 @@ export default function SettingsScreen() {
                             accessibilityState={{ busy: isImporting, disabled: isImporting }}
                         >
                             {isImporting ? (
-                                <ActivityIndicator color="#FFFFFF" style={{ marginRight: 8 }} />
+                                <ActivityIndicator color="#FFFFFF" style={{ marginRight: 8 }} accessibilityRole="progressbar" accessibilityLabel="Importing data" />
                             ) : (
                                 <IconSymbol name="square.and.arrow.down" size={20} color="#FFFFFF" style={{ marginRight: 8 }} />
                             )}
@@ -440,7 +440,7 @@ export default function SettingsScreen() {
                             accessibilityState={{ disabled: isImporting || isExporting, busy: isExporting }}
                         >
                             {isExporting ? (
-                                <ActivityIndicator color="#FFFFFF" style={{ marginRight: 8 }} />
+                                <ActivityIndicator color="#FFFFFF" style={{ marginRight: 8 }} accessibilityRole="progressbar" accessibilityLabel="Exporting data" />
                             ) : (
                                 <IconSymbol name="square.and.arrow.up" size={20} color="#FFFFFF" style={{ marginRight: 8 }} />
                             )}

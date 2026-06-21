@@ -137,7 +137,7 @@ export default function MenstruationScreen() {
             >
               {isDownloading ? (
                 <View style={{ flexDirection: 'row', alignItems: 'center', gap: 10 }}>
-                  <ActivityIndicator size="small" color="#FFFFFF" />
+                  <ActivityIndicator size="small" color="#FFFFFF" accessibilityRole="progressbar" accessibilityLabel="Downloading AI Model" />
                   <ThemedText style={styles.buttonText}>
                     Downloading... {Math.round(downloadProgress * 100)}%
                   </ThemedText>
@@ -174,7 +174,7 @@ export default function MenstruationScreen() {
             >
               {isInitializing ? (
                 <View style={{ flexDirection: 'row', alignItems: 'center', gap: 10 }}>
-                  <ActivityIndicator size="small" color="#FFFFFF" />
+                  <ActivityIndicator size="small" color="#FFFFFF" accessibilityRole="progressbar" accessibilityLabel="Loading AI Model" />
                   <ThemedText style={styles.buttonText}>Loading...</ThemedText>
                 </View>
               ) : (
@@ -221,7 +221,7 @@ export default function MenstruationScreen() {
                     accessibilityState={{ disabled: isSharing, busy: isSharing }}
                   >
                     {isSharing ? (
-                      <ActivityIndicator size="small" color={textColor} />
+                      <ActivityIndicator size="small" color={textColor} accessibilityRole="progressbar" accessibilityLabel="Sharing response" />
                     ) : (
                       <IconSymbol name="share" size={20} color={textColor} />
                     )}

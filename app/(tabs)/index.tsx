@@ -520,7 +520,7 @@ export default function HomeScreen() {
             accessibilityState={{ disabled: isLogging || showSuccess, busy: isLogging }}
           >
             {isLogging ? (
-              <ActivityIndicator color="#ffffff" />
+              <ActivityIndicator color="#ffffff" accessibilityRole="progressbar" accessibilityLabel="Saving period entry" />
             ) : showSuccess ? (
               <ThemedText style={styles.logButtonText} accessibilityLiveRegion="polite">
                 Entry Logged! 🎉
