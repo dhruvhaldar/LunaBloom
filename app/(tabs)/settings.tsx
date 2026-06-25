@@ -348,7 +348,9 @@ export default function SettingsScreen() {
                             onValueChange={handleLutealPhaseToggle}
                             accessibilityLabel="Luteal Phase Calculation"
                             accessible={false}
+                            importantForAccessibility="no-hide-descendants"
                             pointerEvents="none"
+                            {...(Platform.OS === 'web' ? { tabIndex: -1, 'aria-hidden': true } : {})}
                         />
                     </Pressable>
 
@@ -382,7 +384,9 @@ export default function SettingsScreen() {
                             onValueChange={handleScreenshotToggle}
                             accessibilityLabel="Prevent Screenshots"
                             accessible={false}
+                            importantForAccessibility="no-hide-descendants"
                             pointerEvents="none"
+                            {...(Platform.OS === 'web' ? { tabIndex: -1, 'aria-hidden': true } : {})}
                         />
                     </Pressable>
                 </View>
