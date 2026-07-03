@@ -412,7 +412,7 @@ export default function SettingsScreen() {
                             ]}
                             accessibilityRole="button"
                             accessibilityLabel="Import data from file"
-                            accessibilityHint="Restores your period history from a backup file"
+                            accessibilityHint={isImporting ? 'Please wait while data is being imported' : 'Restores your period history from a backup file'}
                             accessibilityState={{ busy: isImporting, disabled: isImporting }}
                         >
                             {isImporting ? (
@@ -440,7 +440,7 @@ export default function SettingsScreen() {
                             ]}
                             accessibilityRole="button"
                             accessibilityLabel="Export data to file"
-                            accessibilityHint="Creates a backup file of your period history"
+                            accessibilityHint={isExporting ? 'Please wait while data is being exported' : (isImporting ? 'Please wait while data is being imported' : 'Creates a backup file of your period history')}
                             accessibilityState={{ disabled: isImporting || isExporting, busy: isExporting }}
                         >
                             {isExporting ? (

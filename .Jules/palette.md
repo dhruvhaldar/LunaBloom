@@ -42,3 +42,6 @@
 ## 2026-06-25 - Prevent Duplicate Accessibility Roles in Compound Components
 **Learning:** When building compound interactive elements (like a setting row `Pressable` wrapping a `Switch`), React Native screen readers will double-announce roles and states if both the parent and child expose them.
 **Action:** Let the interactive parent handle focus and roles (e.g., `accessibilityRole="switch"`), and explicitly hide the purely visual inner component from screen readers using `importantForAccessibility="no-hide-descendants"` and `{...(Platform.OS === 'web' ? { tabIndex: -1, 'aria-hidden': true } : {})}`.
+## 2024-06-25 - Never manually edit auto-generated Jest snapshot files
+**Learning:** Never manually edit auto-generated Jest snapshot files (e.g., `.snap` files), as manual modifications easily introduce mismatch formatting that causes CI test suites to fail. Always update snapshots programmatically by running `pnpm test -u` after making intentional changes to the underlying components.
+**Action:** Use `pnpm test -u` to update snapshots instead of editing them by hand.
