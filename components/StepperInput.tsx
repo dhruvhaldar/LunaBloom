@@ -149,6 +149,7 @@ export const StepperInput = memo(function StepperInput({
         onBlur={handleBlur}
         onFocus={handleFocus}
         accessibilityLabel={label}
+        accessibilityHint={`Enter a value between ${min} and ${max}`}
         accessibilityRole="spinbutton"
         accessibilityValue={{ min, max, now: numericValue || 0 }}
         aria-labelledby={ariaLabelledBy}
