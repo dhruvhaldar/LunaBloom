@@ -45,3 +45,6 @@
 ## 2024-06-25 - Never manually edit auto-generated Jest snapshot files
 **Learning:** Never manually edit auto-generated Jest snapshot files (e.g., `.snap` files), as manual modifications easily introduce mismatch formatting that causes CI test suites to fail. Always update snapshots programmatically by running `pnpm test -u` after making intentional changes to the underlying components.
 **Action:** Use `pnpm test -u` to update snapshots instead of editing them by hand.
+## 2026-07-04 - Semantic Grouping for Form Controls
+**Learning:** When displaying a set of options (like radio buttons or checkboxes) in React Native, users of screen readers can lose context if the elements are not programmatically grouped together, as standard Views do not convey group boundaries.
+**Action:** Always wrap grouped form controls in a container with `accessibilityRole="radiogroup"` or `"group"`. Additionally, assign a `nativeID` to the group's visual title `Text` component and use the corresponding `aria-labelledby` property on the container to properly announce the group's context.
