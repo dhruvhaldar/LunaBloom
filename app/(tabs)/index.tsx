@@ -309,10 +309,10 @@ export default function HomeScreen() {
   // Optimized: Memoize flow section to prevent re-renders when notes/date change
   const flowSection = useMemo(() => (
     <ThemedView style={styles.section}>
-      <ThemedText type="subtitle" style={{ color: sectionHeadingtextColor, marginBottom: 10 }}>
+      <ThemedText nativeID="flow-group-label" type="subtitle" style={{ color: sectionHeadingtextColor, marginBottom: 10 }}>
         Period Flow 🩸
       </ThemedText>
-      <ThemedView style={styles.symptomsGrid}>
+      <ThemedView style={styles.symptomsGrid} accessibilityRole="radiogroup" aria-labelledby="flow-group-label">
         {flowTypes.map((flow) => (
           <SelectionButton
             key={flow}
@@ -332,10 +332,10 @@ export default function HomeScreen() {
   // Optimized: Memoize symptoms section
   const symptomsSection = useMemo(() => (
     <ThemedView style={styles.section}>
-      <ThemedText type="subtitle" style={{ color: sectionHeadingtextColor, marginBottom: 10 }}>
+      <ThemedText nativeID="symptoms-group-label" type="subtitle" style={{ color: sectionHeadingtextColor, marginBottom: 10 }}>
         Today's Symptoms 😟
       </ThemedText>
-      <ThemedView style={styles.symptomsGrid}>
+      <ThemedView style={styles.symptomsGrid} accessibilityRole="group" aria-labelledby="symptoms-group-label">
         {symptomsList.map((symptom) => (
           <SelectionButton
             key={symptom}
