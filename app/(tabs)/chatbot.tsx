@@ -58,6 +58,7 @@ export default function MenstruationScreen() {
           ]}
           onPress={() => handleChat(q)}
           accessibilityLabel={`Ask: ${q}`}
+          accessibilityHint="Fills the chat input and sends this question to the AI assistant"
           accessibilityRole="button"
         >
           <ThemedText style={styles.suggestionText}>{q}</ThemedText>
